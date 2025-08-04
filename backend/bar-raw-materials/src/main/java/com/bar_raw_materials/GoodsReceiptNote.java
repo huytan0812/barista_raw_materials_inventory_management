@@ -1,0 +1,57 @@
+package com.bar_raw_materials;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
+
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.LocalDate;
+
+@Getter
+@Setter
+@Entity
+@Table(name = "goods_receipt_note")
+public class GoodsReceiptNote {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
+    private Integer id;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "vendorId", nullable = false)
+    private com.bar_raw_materials.Vendor vendor;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "createdBy", nullable = false)
+    private com.bar_raw_materials.User createdBy;
+
+    @Column(name = "dateCreate")
+    private Instant dateCreate;
+
+    @Column(name = "totalAmount", precision = 20, scale = 6)
+    private BigDecimal totalAmount;
+
+    @Size(max = 30)
+    @NotNull
+    @Column(name = "invoiceNumber", nullable = false, length = 30)
+    private String invoiceNumber;
+
+    @ColumnDefault("(0)")
+    @Column(name = "invoiceDate")
+    private LocalDate invoiceDate;
+
+    @Size(max = 255)
+    @Column(name = "invoiceImage")
+    private String invoiceImage;
+
+    @NotNull
+    @Column(name = "isConfirmed", nullable = false)
+    private Boolean isConfirmed = false;
+
+}
