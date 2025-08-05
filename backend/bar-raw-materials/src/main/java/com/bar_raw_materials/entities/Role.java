@@ -1,4 +1,4 @@
-package com.bar_raw_materials;
+package com.bar_raw_materials.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;

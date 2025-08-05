@@ -1,4 +1,4 @@
-package com.bar_raw_materials;
+package com.bar_raw_materials.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -27,7 +27,7 @@ public class SalesOrder {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "createdBy", nullable = false)
-    private com.bar_raw_materials.User createdBy;
+    private User createdBy;
 
     @NotNull
     @Column(name = "dateCreated", nullable = false)

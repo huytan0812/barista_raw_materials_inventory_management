@@ -1,4 +1,4 @@
-package com.bar_raw_materials;
+package com.bar_raw_materials.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -22,7 +22,7 @@ public class MonthlyInventory {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @ColumnDefault("0")
     @JoinColumn(name = "productId", nullable = false)
-    private com.bar_raw_materials.Product product;
+    private Product product;
 
     @NotNull
     @Column(name = "month", nullable = false)

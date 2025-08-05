@@ -1,4 +1,4 @@
-package com.bar_raw_materials;
+package com.bar_raw_materials.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -22,7 +22,7 @@ public class ExportItemDetail {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "orderItemId", nullable = false)
-    private com.bar_raw_materials.SalesOrderItem orderItem;
+    private SalesOrderItem orderItem;
 
     @Size(max = 50)
     @NotNull

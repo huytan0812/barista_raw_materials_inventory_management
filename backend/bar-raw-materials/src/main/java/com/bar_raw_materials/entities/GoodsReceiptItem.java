@@ -1,4 +1,4 @@
-package com.bar_raw_materials;
+package com.bar_raw_materials.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -24,13 +24,13 @@ public class GoodsReceiptItem {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @ColumnDefault("0")
     @JoinColumn(name = "productId", nullable = false)
-    private com.bar_raw_materials.Product product;
+    private Product product;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @ColumnDefault("0")
     @JoinColumn(name = "grnId", nullable = false)
-    private com.bar_raw_materials.GoodsReceiptNote grn;
+    private GoodsReceiptNote grn;
 
     @NotNull
     @ColumnDefault("0")

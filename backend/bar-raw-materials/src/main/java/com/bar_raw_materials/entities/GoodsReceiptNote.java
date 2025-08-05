@@ -1,4 +1,4 @@
-package com.bar_raw_materials;
+package com.bar_raw_materials.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -24,12 +24,12 @@ public class GoodsReceiptNote {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "vendorId", nullable = false)
-    private com.bar_raw_materials.Vendor vendor;
+    private Vendor vendor;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "createdBy", nullable = false)
-    private com.bar_raw_materials.User createdBy;
+    private User createdBy;
 
     @Column(name = "dateCreate")
     private Instant dateCreate;

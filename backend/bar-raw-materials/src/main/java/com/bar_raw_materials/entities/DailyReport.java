@@ -1,4 +1,4 @@
-package com.bar_raw_materials;
+package com.bar_raw_materials.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -32,7 +32,7 @@ public class DailyReport {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @ColumnDefault("(0)")
     @JoinColumn(name = "createdBy", nullable = false)
-    private com.bar_raw_materials.User createdBy;
+    private User createdBy;
 
     @NotNull
     @ColumnDefault("(0)")
