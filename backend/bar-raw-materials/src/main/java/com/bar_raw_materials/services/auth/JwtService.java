@@ -25,6 +25,11 @@ public class JwtService {
     private long refreshExpiration;
 
     public String extractUsername(String token) {
+        // username is set as subject when build
+        return extractClaim(token, Claims::getSubject);
+    }
+
+    public String extractRole(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
