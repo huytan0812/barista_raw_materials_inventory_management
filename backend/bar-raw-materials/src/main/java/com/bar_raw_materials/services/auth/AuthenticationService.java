@@ -23,13 +23,16 @@ public class AuthenticationService {
 
     public AuthenticationResponse login(User request) {
         // get user by username if username is valid
+        // check if username is valid
         User user = userRepository.findByUsername(request.getUsername());
         if (user == null) {
             throw new UsernameNotFoundException("Tài khoản không tồn tại");
         }
+        // check if password is match
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new UsernameNotFoundException("Mật khẩu sai");
         }
+
         UserDetails userDetails = new UserDetailsServiceImpl.UserDetailsImpl(user);
         String jwtToken = jwtService.generateToken(userDetails);
         String refreshToken = jwtService.generateRefreshToken(userDetails);

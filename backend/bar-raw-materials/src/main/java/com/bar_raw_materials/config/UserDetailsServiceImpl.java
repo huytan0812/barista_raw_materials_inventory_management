@@ -45,12 +45,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         @Override
         public String getPassword() {
-            return "";
+            return this.user.getPassword();
         }
 
         @Override
         public String getUsername() {
-            return "";
+            return this.user.getUsername();
         }
 
         @Override
