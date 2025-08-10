@@ -17,7 +17,6 @@ import java.time.LocalDate;
 @Table(name = "goods_receipt_note")
 public class GoodsReceiptNote {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
 
@@ -30,6 +29,11 @@ public class GoodsReceiptNote {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "createdBy", nullable = false)
     private User createdBy;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "businessPeriodId", nullable = false)
+    private BusinessPeriod businessPeriod;
 
     @Column(name = "dateCreate")
     private Instant dateCreate;

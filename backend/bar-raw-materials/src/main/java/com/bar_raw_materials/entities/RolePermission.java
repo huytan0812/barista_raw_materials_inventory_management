@@ -12,7 +12,6 @@ import org.hibernate.annotations.ColumnDefault;
 @Table(name = "role_permission")
 public class RolePermission {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
 

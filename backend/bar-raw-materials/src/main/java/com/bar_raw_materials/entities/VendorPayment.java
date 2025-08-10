@@ -24,6 +24,11 @@ public class VendorPayment {
     private Vendor vendor;
 
     @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "businessPeriodId", nullable = false)
+    private BusinessPeriod businessPeriod;
+
+    @NotNull
     @Column(name = "amount", nullable = false)
     private Integer amount;
 

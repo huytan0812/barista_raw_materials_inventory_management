@@ -16,7 +16,6 @@ import java.time.LocalDate;
 @Table(name = "daily_reports")
 public class DailyReport {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
 
@@ -48,11 +47,6 @@ public class DailyReport {
     @ColumnDefault("(0)")
     @Column(name = "cogs", nullable = false, precision = 20, scale = 6)
     private BigDecimal cogs;
-
-    @NotNull
-    @ColumnDefault("(0)")
-    @Column(name = "itemImport", nullable = false)
-    private Integer itemImport;
 
     @NotNull
     @ColumnDefault("(0)")

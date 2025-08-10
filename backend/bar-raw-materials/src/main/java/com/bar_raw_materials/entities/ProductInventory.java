@@ -11,10 +11,9 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @Entity
-@Table(name = "monthly_inventory")
-public class MonthlyInventory {
+@Table(name = "product_inventory")
+public class ProductInventory {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
 
@@ -23,6 +22,12 @@ public class MonthlyInventory {
     @ColumnDefault("0")
     @JoinColumn(name = "productId", nullable = false)
     private Product product;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ColumnDefault("0")
+    @JoinColumn(name = "businessPeriodId", nullable = false)
+    private BusinessPeriod businessPeriod;
 
     @NotNull
     @Column(name = "month", nullable = false)

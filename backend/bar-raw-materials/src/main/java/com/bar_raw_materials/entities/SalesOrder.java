@@ -15,7 +15,6 @@ import java.time.Instant;
 @Table(name = "sales_order")
 public class SalesOrder {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
 
@@ -28,6 +27,11 @@ public class SalesOrder {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "createdBy", nullable = false)
     private User createdBy;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "businessPeriodId", nullable = false)
+    private BusinessPeriod businessPeriod;
 
     @NotNull
     @Column(name = "dateCreated", nullable = false)
