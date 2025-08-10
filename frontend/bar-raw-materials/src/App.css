@@ -13,3 +13,7 @@ p, span, a, li, h3 {
 .menu-item {
   font-size: 1.4rem;
 }
+
+.ant-card-head-title {
+  font-size: 1.4rem;
+}
