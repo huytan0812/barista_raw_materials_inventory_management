@@ -17,8 +17,8 @@ const ImsHeader = () => {
         }}>
             <div>
                 <p>
-                    <strong>
-                        Inventory Management Project
+                    <strong style={{fontSize: '2.4rem'}}>
+                        Bar Raw Materials Inventory Management
                     </strong>
                 </p>
             </div>

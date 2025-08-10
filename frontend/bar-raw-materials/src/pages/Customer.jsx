@@ -1,9 +1,9 @@
 import React from 'react'
 
-const Agency = () => {
+const Customer = () => {
   return (
-    <div>Agency</div>
+    <div>Customer</div>
   )
 }
 
-export default Agency
+export default Customer

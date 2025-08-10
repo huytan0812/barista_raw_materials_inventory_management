@@ -6,6 +6,10 @@
   font-size: 62.5%;
 }
 
-p, span, a {
+p, span, a, li, h3 {
   font-size: 1.6rem;
+}
+
+.menu-item {
+  font-size: 1.4rem;
 }

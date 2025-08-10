@@ -17,16 +17,25 @@ const items = [
         label: (
             <NavLink to="/">
                 <DashboardOutlined />
-                <span>Dashboard</span>
+                <span className={"menu-item"}>Dashboard</span>
             </NavLink>
         ),
+    },
+    {
+        key: 'dashboard2',
+        label: (
+            <NavLink to="/dashboard2">
+                <DashboardOutlined />
+                <span className={"menu-item"}>Dashboard 2</span>
+            </NavLink>
+        )
     },
     {
         key: 'inventory',
         label: (
             <NavLink to="/menu">
                 <AppstoreOutlined />
-                <span>Hàng tồn kho</span>
+                <span className={"menu-item"}>Hàng tồn kho</span>
             </NavLink>
         ),
     },
@@ -35,7 +44,7 @@ const items = [
         label: (
             <NavLink to="/categories">
                 <ApartmentOutlined />
-                <span>Danh mục</span>
+                <span className={"menu-item"}>Danh mục</span>
             </NavLink>
         ),
     },
@@ -44,25 +53,25 @@ const items = [
         label: (
             <NavLink to="/products">
                 <ProductOutlined />
-                <span>Sản phẩm</span>
+                <span className={"menu-item"}>Sản phẩm</span>
             </NavLink>
         ),
     },
     {
-        key: 'Supplier',
+        key: 'Vendor',
         label: (
-            <NavLink to="/supplier">
+            <NavLink to="/vendor">
                 <BankOutlined />
-                <span>Nhà cung cấp</span>
+                <span className={"menu-item"}>Nhà cung cấp</span>
             </NavLink>
         ),
     },
     {
-        key: 'Agency',
+        key: 'Customer',
         label: (
-            <NavLink to="/agency">
+            <NavLink to="/customer">
                 <DesktopOutlined />
-                <span>Nhà cung cấp</span>
+                <span className={"menu-item"}>Khách hàng</span>
             </NavLink>
         ),
     },
@@ -71,7 +80,7 @@ const items = [
         label: (
             <NavLink to="/permissions">
                 <DesktopOutlined />
-                <span>Phân quyền</span>
+                <span className={"menu-item"}>Phân quyền</span>
             </NavLink>
         ),
     },
@@ -80,7 +89,7 @@ const items = [
         label: (
             <NavLink to="/reports">
                 <DesktopOutlined />
-                <span>Thống kê</span>
+                <span className={"menu-item"}>Thống kê</span>
             </NavLink>
         ),
     },
