@@ -10,26 +10,23 @@ import org.hibernate.annotations.ColumnDefault;
 @Getter
 @Setter
 @Entity
-@Table(name = "category")
-public class Category {
+@Table(name = "base_unit")
+public class BaseUnit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
 
-    @Size(max = 100)
+    @Size(max = 20)
     @NotNull
-    @ColumnDefault("'0'")
-    @Column(name = "name", nullable = false, length = 100)
+    @ColumnDefault("''")
+    @Column(name = "name", nullable = false, length = 20)
     private String name;
 
-    @Lob
-    @Column(name = "description")
-    private String description;
-
-    @Size(max = 255)
+    @Size(max = 10)
+    @NotNull
     @ColumnDefault("''")
-    @Column(name = "imageName")
-    private String imageName;
+    @Column(name = "notation", nullable = false, length = 10)
+    private String notation;
 
 }

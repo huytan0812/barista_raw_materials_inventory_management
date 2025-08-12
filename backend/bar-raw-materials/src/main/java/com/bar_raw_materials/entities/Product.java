@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 @Table(name = "product")
 public class Product {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
 
@@ -30,11 +31,17 @@ public class Product {
     @Column(name = "name", nullable = false, length = 100)
     private String name;
 
-    @Size(max = 100)
+    // Consider to implement native query to optimize code as EAGER is expensive
     @NotNull
-    @ColumnDefault("'0'")
-    @Column(name = "unit", nullable = false, length = 100)
-    private String unit;
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @ColumnDefault("(0)")
+    @JoinColumn(name = "baseUnitId", nullable = false)
+    private BaseUnit baseUnit;
+
+    @NotNull
+    @ColumnDefault("0.000000")
+    @Column(name = "packSize", nullable = false, precision = 20, scale = 6)
+    private BigDecimal packSize;
 
     @Lob
     @Column(name = "description")
@@ -45,7 +52,7 @@ public class Product {
     @Column(name = "imageName")
     private String imageName;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "categoryId")
     private Category category;
 
