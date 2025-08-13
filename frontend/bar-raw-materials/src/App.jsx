@@ -17,7 +17,7 @@ function App() {
   return (
     <Routes>
       <Route path='/login' element={<Login />}></Route>
-      <Route path='/' element={<MainLayout />}>
+      <Route path='/' element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
         <Route index element={<Dashboard />} />
         <Route path='/menu' element={<Inventory />} />
         <Route path='/categories' element={<Category /> } />

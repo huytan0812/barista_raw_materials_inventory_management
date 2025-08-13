@@ -1,7 +1,7 @@
 import { default as axios } from 'axios';
 
 const axiosHTTP = axios.create({
-    baseURL: "http://localhost:8080/api/auth/login",
+    baseURL: "http://localhost:8080/api/auth",
     headers: {
         'Content-Type': 'application/json'
     }
