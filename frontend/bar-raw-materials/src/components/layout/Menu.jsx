@@ -22,15 +22,6 @@ const items = [
         ),
     },
     {
-        key: 'dashboard2',
-        label: (
-            <NavLink to="/dashboard2">
-                <DashboardOutlined />
-                <span className={"menu-item"}>Dashboard 2</span>
-            </NavLink>
-        )
-    },
-    {
         key: 'inventory',
         label: (
             <NavLink to="/menu">

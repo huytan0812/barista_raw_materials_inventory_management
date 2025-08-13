@@ -3,7 +3,6 @@ import './App.css'
 import MainLayout from './layouts/MainLayout'
 import Category from './pages/Category'
 import Dashboard from './pages/Dashboard'
-import Dashboard2 from './pages/Dashboard2'
 import Inventory from './pages/Inventory'
 import Login from './pages/Login'
 import Product from './pages/Product'
@@ -18,7 +17,6 @@ function App() {
       <Route path='/login' element={<Login />}></Route>
       <Route path='/' element={<MainLayout />}>
         <Route index element={<Dashboard />} />
-        <Route path='/dashboard2' element={<Dashboard2 />} />
         <Route path='/menu' element={<Inventory />} />
         <Route path='/categories' element={<Category /> } />
         <Route path='/products' element={<Product /> } />

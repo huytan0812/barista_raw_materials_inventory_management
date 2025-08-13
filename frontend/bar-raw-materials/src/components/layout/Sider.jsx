@@ -14,6 +14,7 @@ const ImsSider = () => {
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
+                    marginTop: '1.6rem'
             }}>
                     <JavaScriptOutlined style={{ fontSize: '32px', color: '#fff' }} />
             </div>

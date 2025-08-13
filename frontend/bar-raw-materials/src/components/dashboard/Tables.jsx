@@ -11,7 +11,7 @@ const Tables = () => {
     return (
         <Row gutter={16} style={{marginTop: '1.6rem'}}>
             <Col xs={24} md={8}>
-            <Card title="Top Seller Products">
+            <Card title="Hàng bán chạy">
                 <List
                 dataSource={products}
                 renderItem={(item) => (
@@ -24,7 +24,7 @@ const Tables = () => {
             </Card>
             </Col>
             <Col xs={24} md={8}>
-            <Card title="Slow Seller Products">
+            <Card title="Hàng bán chậm">
                 <List
                 dataSource={[...products].reverse()}
                 renderItem={(item) => (
@@ -37,7 +37,7 @@ const Tables = () => {
             </Card>
             </Col>
             <Col xs={24} md={8}>
-            <Card title="Low Quantity Products">
+            <Card title="Hàng sắp hết">
                 <List
                 dataSource={products.filter((p) => p.qty < 300)}
                 renderItem={(item) => (

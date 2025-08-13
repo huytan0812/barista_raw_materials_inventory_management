@@ -3,6 +3,8 @@ import {Row, Col, Card, Select} from 'antd'
 import RevenueChart from './RevenueChart'
 import InventoryChart from './InventoryChart'
 
+const { Option } = Select;
+
 const MainCharts = () => {
     const [filter, setFilter] = useState('month');
     // use prop and state to pass chartHeight to RevenueChart and InventoryChart
