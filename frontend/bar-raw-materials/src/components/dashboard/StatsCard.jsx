@@ -15,7 +15,7 @@ const StatsCard = () => {
             <Row gutter={16} style={{ marginBottom: 16 }}>
                 {stats.map((item, index) => (
                     <Col xs={24} sm={12} md={6} key={index}>
-                        <Card style={{ backgroundColor: item.color }} bordered={false}>
+                        <Card style={{ backgroundColor: item.color }}>
                         <Row align="middle" gutter={16}>
                             <Col>{item.icon}</Col>
                             <Col>

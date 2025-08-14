@@ -18,10 +18,8 @@ const InventoryChart = ({chartHeight}) => {
         autoFit: true,
         height: chartHeight,
         label: {
-            type: 'inner',
-            offset: '-30%',
-            content: '{value}%',
-            style: { fontSize: 14, textAlign: 'center' },
+            text: 'value',
+            style: { fontSize: '1.2rem', textAlign: 'center' },
         },
     };
 

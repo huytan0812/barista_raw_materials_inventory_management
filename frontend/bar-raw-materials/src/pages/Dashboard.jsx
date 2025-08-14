@@ -8,10 +8,17 @@ const Dashboard = () => {
   return (
     <React.Fragment>
         <div>
-            <Breadcrumb>
-                <Breadcrumb.Item>Home</Breadcrumb.Item>
-                <Breadcrumb.Item>Dashboard</Breadcrumb.Item>
-            </Breadcrumb>
+            <Breadcrumb 
+              items={
+                [ {
+                    title: 'Home'
+                  },
+                  {
+                    title: 'Dashboard'
+                  }
+                ]
+              }
+            />
         </div>
         <Sales />
         <MainCharts />
