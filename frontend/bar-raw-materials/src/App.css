@@ -17,3 +17,7 @@ p, span, a, li, h3 {
 .ant-card-head-title {
   font-size: 1.4rem;
 }
+
+.ant-select-item-option-content {
+  font-size: 1.2rem;
+}

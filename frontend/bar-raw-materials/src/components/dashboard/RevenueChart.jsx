@@ -19,6 +19,18 @@ const RevenueChart = ({ chartHeight }) => {
         autoFit: true,
         height: chartHeight,
         padding: 'auto',
+        point: {
+            shapeField: 'circle',
+            sizeField: 1.5,
+        },
+        interaction: {
+            tooltip: {
+                marker: false,
+            },
+        },
+        style: {
+            lineWidth: 1.5,
+        }
     };
 
     return (
