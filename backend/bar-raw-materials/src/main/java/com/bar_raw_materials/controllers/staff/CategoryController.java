@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/staff/category")
+@RequestMapping("${apiStaff}/category")
 @RequiredArgsConstructor
 public class CategoryController {
     private final CategoryService categoryService;

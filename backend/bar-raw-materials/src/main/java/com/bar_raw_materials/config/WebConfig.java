@@ -9,6 +9,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebConfig implements WebMvcConfigurer {
     @Override
     public void configurePathMatch(PathMatchConfigurer configurer) {
+        // add /api prefix for all endpoints from controllers package
         configurer.addPathPrefix(
                 "/api",
                 controller -> controller.getPackageName()
