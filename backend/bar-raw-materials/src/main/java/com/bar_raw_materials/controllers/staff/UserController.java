@@ -12,12 +12,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("${apiStaff}/user")
-@RequiredArgsConstructor
-public class UserController {
-    private final UserService userService;
+public class UserController extends BaseStaffController {
+    UserService userService;
 
-    @GetMapping("users")
-    public List<User> getUsers() {
-        return userService.getUsers();
+    public UserController(UserService userService) {
+        super(userService);
+        this.userService = userService;
     }
 }

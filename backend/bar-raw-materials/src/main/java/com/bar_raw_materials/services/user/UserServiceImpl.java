@@ -13,7 +13,12 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
-    public List<User> getUsers() {
+    public List<User> getAll() {
         return userRepository.findAll();
+    }
+
+    @Override
+    public User getDetails(int id) {
+        return userRepository.findById(id);
     }
 }

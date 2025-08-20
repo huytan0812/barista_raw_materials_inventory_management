@@ -32,4 +32,8 @@ public class Category {
     @Column(name = "imageName")
     private String imageName;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "parentId")
+    private Category parent;
+
 }

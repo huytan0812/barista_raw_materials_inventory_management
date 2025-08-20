@@ -1,6 +1,8 @@
 package com.bar_raw_materials.controllers.staff;
 
+import com.bar_raw_materials.services.product.ProductServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,12 +15,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("${apiStaff}/product")
-@RequiredArgsConstructor
-public class ProductController {
-    private final ProductService productService;
+public class ProductController extends BaseStaffController {
+    ProductService productService;
 
-    @GetMapping("products")
-    public List<Product> getProducts() {
-        return productService.getProducts();
+    // why put @autowired here or without @autowired, everything will run well
+    @Autowired
+    public ProductController(ProductService productService) {
+        super(productService);
+        this.productService = productService;
     }
 }
