@@ -24,7 +24,7 @@ const items = [
     {
         key: 'inventory',
         label: (
-            <NavLink to="/menu">
+            <NavLink to="/inventory">
                 <AppstoreOutlined />
                 <span className={"menu-item"}>Hàng tồn kho</span>
             </NavLink>

@@ -19,7 +19,7 @@ function App() {
       <Route path='/login' element={<Login />}></Route>
       <Route path='/' element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
         <Route index element={<Dashboard />} />
-        <Route path='/menu' element={<Inventory />} />
+        <Route path='/inventory' element={<Inventory />} />
         <Route path='/categories' element={<Category /> } />
         <Route path='/products' element={<Product /> } />
         <Route path='/vendor' element={<Vendor /> } />
