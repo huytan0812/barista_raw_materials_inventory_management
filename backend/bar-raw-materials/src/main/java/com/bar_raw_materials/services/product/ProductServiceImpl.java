@@ -1,5 +1,6 @@
 package com.bar_raw_materials.services.product;
 
+import com.bar_raw_materials.dto.product.ProductDTO;
 import com.bar_raw_materials.entities.Product;
 import com.bar_raw_materials.repositories.ProductRepository;
 
@@ -15,8 +16,9 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
 
     @Override
-    public List<Product> getAll() {
-        return productRepository.findAllOrderByProductIdAsc();
+    public List<ProductDTO> getAll() {
+//        return productRepository.findAllOrderByProductIdAsc();
+        return productRepository.findAllAlongCategoryAndBaseUnit();
     }
 
     @Override
