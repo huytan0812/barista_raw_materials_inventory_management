@@ -1,15 +1,17 @@
 import React, {useState, useEffect} from 'react'
 import {Table} from 'antd';
+import {useNavigate} from 'react-router-dom'
 import axiosHTTP from '../../services/ProductService'
 
 const ProductTable = () => {
     const [data, setData] = useState([]);
+    const navigate = useNavigate();
 
     const token = localStorage.getItem('token');
     const columns = [
         {
             title: "ID",
-            dataIndex: "id",
+            dataIndex: "productId",
             key: "id"
         },
         {
@@ -24,8 +26,8 @@ const ProductTable = () => {
         },
         {
             title: "Danh mục",
-            dataIndex: "category",
-            key: "category"
+            dataIndex: "categoryName",
+            key: "categoryName"
         },
         {
             title: "Khối lượng tịnh / Thể tích thực",
@@ -60,16 +62,17 @@ const ProductTable = () => {
                 }
                 catch (error) {
                     console.log(error);
+                    navigate('/login');
                 }
             }
             fetchProducts();
-        }, [token]
+        }, [token, navigate]
     )
 
     return (
         <Table
             columns={columns}
-            dataSource={data.map(product => ({...product, key: product.id}))}
+            dataSource={data.map(product => ({...product, key: product.productId}))}
         />
     )
 }

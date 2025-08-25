@@ -1,0 +1,180 @@
+import React, {useEffect, useState} from 'react'
+import {Form, Input, Button, Checkbox, Select, InputNumber} from 'antd'
+
+const onFinish = values => {
+  console.log('Success:', values);
+};
+const onFinishFailed = errorInfo => {
+  console.log('Failed:', errorInfo);
+};
+
+const {Option} = Select;
+
+const AddProductForm = (props) => {
+  const [baseUnit, setBaseUnit] = useState([]);
+  const [category, setCategory] = useState([]);
+  const [form] = Form.useForm();
+  
+  const token = localStorage.getItem('token');
+  const { isSubmit } = props;
+
+  // side effect for handling submit form
+  useEffect(() => {
+    if (isSubmit) {
+      form.submit();
+    }
+  }, [form, isSubmit]);
+
+  // side effect for fetching base units
+  useEffect(() => {
+    const fetchUnits = async() => {
+      try {
+        const response = await fetch(
+          'http://localhost:8080/api/staff/baseUnit/list',
+          {
+            method: 'GET',
+            'headers': {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            }
+          }
+        );
+        const data = await response.json();
+        setBaseUnit(data);
+      }
+      catch (error) {
+        console.log(error);
+      }
+    }
+    fetchUnits();
+  }, [token]);
+
+  // side effects for fetching categories
+  useEffect(() => {
+    const fetchCategories = async() => {
+      try {
+        const response = await fetch("http://localhost:8080/api/staff/category/list", {
+          method: 'GET',
+          'headers': {
+            'Content-Type': "application/json",
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        const data = await response.json();
+        setCategory(data);
+      }
+      catch (error) {
+        console.log(error);
+      }
+    }
+    fetchCategories();
+  }, [token]);
+
+  return (
+    <Form
+      form={form}
+      name="basic"
+      labelCol={{ span: 6 }}
+      wrapperCol={{ span: 24 }}
+      style={{ maxWidth: 600 }}
+      initialValues={{ remember: true }}
+      onFinish={onFinish}
+      onFinishFailed={onFinishFailed}
+      autoComplete="off"
+    >
+        <Form.Item
+          label="SKU"
+          labelAlign='left'
+          name="sku"
+          rules={[{ required: true, message: "Nhập SKU" }]}
+        >
+          <Input />
+        </Form.Item>
+
+        <Form.Item
+          label="Sản phẩm"
+          labelAlign='left'
+          name="name"
+          rules={[{ required: true, message: 'Nhập tên sản phẩm' }]}
+        >
+          <Input />
+        </Form.Item>
+
+        <Form.Item
+          label="Đơn vị tính"
+          labelAlign='left'
+          name="baseUnit"
+          rules={[{ required: true, message: 'Đơn vị tính không được để trống' }]}
+        >
+          <Select name="unit" placeholder="Chọn đơn vị tính">
+            {baseUnit.map((unit) => (
+              <Option key={unit.id} value={unit.id}>{unit.name}-{unit.notation}</Option>
+            ))}
+          </Select>
+        </Form.Item>
+
+        <Form.Item
+          label="Khối lượng tịnh / thể tích thực"
+          labelCol={16}
+          wrapperCol={24}
+          labelAlign='left'
+          name="packSize"
+          rules={[{ required: true, message: 'Khối lượng tịnh / thể tích thực không được để trống' }]}
+        >
+          <InputNumber
+            min={0.0}
+            step={0.1}
+            style={{
+              float: 'right', 
+              width: '100%',
+              fontSize: '2.4rem'
+            }}
+            size="middle"
+          />
+        </Form.Item>
+
+        <Form.Item
+          label="Mô tả"
+          labelAlign="left"
+          name="description"
+          rules={[{ required: false}]}
+        >
+          <Input />
+        </Form.Item>
+
+        <Form.Item
+          label="Danh mục"
+          labelAlign="left"
+          name="categoryId"
+          rules={[{required: true, message: 'Chọn danh mục'}]}
+        >
+          <Select placeholder="Chọn danh mục">
+            {category.map(ctg => (
+              <Option key={ctg.id} value={ctg.id}>{ctg.name}</Option>
+            ))}
+          </Select>
+        </Form.Item>
+
+        <Form.Item
+          label="Giá bán niêm yết"
+          labelCol={12}
+          wrapperCol={24}
+          labelAlign="left"
+          name="listPrice"
+          rules={[{ required: true, message: 'Nhập giá bán niêm yết' }]}
+        >
+          <InputNumber
+            min={0}
+            style={{
+              float: 'right',
+              fontSize: '2.4rem',
+              width: '100%'
+            }}
+            size="middle"
+          />
+        </Form.Item>
+    </Form>
+  )
+}
+
+export default AddProductForm

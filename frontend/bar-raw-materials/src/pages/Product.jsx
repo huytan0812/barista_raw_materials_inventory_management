@@ -1,6 +1,8 @@
 import React, {useState} from 'react'
-import { Card, Table, Input, Select, Pagination, Space, Button } from "antd";
+import { Card, Input, Select, Pagination, Space, Button, Modal } from "antd";
 import ProductTable from '../components/product/ProductTable';
+import AddProductForm from '../components/product/AddProductForm.jsx';
+import { SoundTwoTone } from '@ant-design/icons';
 
 const { Search } = Input;
 const { Option } = Select;
@@ -8,6 +10,31 @@ const { Option } = Select;
 const Product = () => {
   const [searchText, setSearchText] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [count, setCount] = useState(0);
+  const [submitForm, setSubmitForm] = useState(false);
+
+  const showModal = () => {
+    setOpen(true);
+    setCount(count + 1);
+  };
+  const handleOk = () => {
+    setSubmitForm(true);
+
+    setLoading(true);
+
+    // throw three setLoading, setOpen, setSubmitForm to Web worker
+    setTimeout(() => {
+      setLoading(false);
+      setOpen(false);
+      setSubmitForm(false);
+    }, 0);
+  };
+  const handleCancel = () => {
+    setOpen(false);
+  };
+
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 5;
 
@@ -36,9 +63,27 @@ const Product = () => {
             </Select>
             <Button 
               type="primary"
+              onClick={showModal}
             >
               Thêm sản phẩm
             </Button>
+            <Modal
+              open={open}
+              destroyOnHidden={false}
+              title="Thêm sản phẩm"
+              onOk={handleOk}
+              onCancel={handleCancel}
+              footer={[
+                <Button key="back" onClick={handleCancel}>
+                  Hủy
+                </Button>,
+                <Button loading={loading} key="submit" type="primary" onClick={handleOk}>
+                  Xác nhận
+                </Button>
+              ]}
+            >
+              <AddProductForm isSubmit={submitForm} />
+            </Modal>
           </Space>
         </Space>
       }

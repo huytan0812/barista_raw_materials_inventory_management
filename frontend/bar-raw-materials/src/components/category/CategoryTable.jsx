@@ -1,14 +1,17 @@
 import React, {useState, useEffect} from 'react'
-import {Table} from 'antd'
+import {Table, Button, Flex} from 'antd'
+import {useNavigate} from 'react-router-dom'
 import axiosHTTP from '../../services/CategoryService'
 
 const CategoryTable = () => {
     const [categories, setCategories] = useState([]);
     const token = localStorage.getItem('token');
+    const navigate = useNavigate();
 
     useEffect(() => {
       const fetchCategories = async () => {
-        const response = await axiosHTTP.get('/list',
+        try {
+          const response = await axiosHTTP.get('/list',
           {
             headers: {
               'Authorization': `Bearer ${token}`
@@ -16,9 +19,15 @@ const CategoryTable = () => {
           }
         )
         setCategories(response.data);
+        }
+        catch(error) {
+          console.log(error);
+          navigate('/login')
+        }
+  
       }
       fetchCategories();
-    }, [token]);
+    }, [token, navigate]);
 
     console.log(categories);
 
@@ -36,14 +45,35 @@ const CategoryTable = () => {
               'key': 'id'
             },
             {
-              'title': 'Name',
+              'title': 'Tên danh mục',
               'dataIndex': 'name',
               'key': 'name'
             },
             {
-              'title': 'Description',
+              'title': 'Mô tả',
               'dataIndex': 'description',
               'key': 'description'
+            },
+            {
+              'title': "Danh mục cha",
+              'dataIndex': 'parentName',
+              'key': 'parentName'
+            },
+            {
+              'title': "Hành động",
+              'key': 'action',
+              'render': () => {
+                return (
+                  <Flex gap="1rem">
+                    <Button color="primary" variant="solid">
+                      <span style={{fontSize: '1.4rem'}}>Sửa</span>
+                    </Button>
+                    <Button color="red" variant="solid">
+                      <span style={{fontSize: '1.4rem'}}>Xóa</span>
+                    </Button>
+                  </Flex>
+                )
+              }
             }
           ]
         }
