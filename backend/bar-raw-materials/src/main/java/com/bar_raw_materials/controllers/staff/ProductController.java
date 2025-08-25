@@ -1,17 +1,13 @@
 package com.bar_raw_materials.controllers.staff;
 
+import com.bar_raw_materials.dto.product.CreateProductDTO;
 import com.bar_raw_materials.services.product.ProductServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.bar_raw_materials.entities.Product;
 import com.bar_raw_materials.services.product.ProductService;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 @RequestMapping("${apiStaff}/product")
@@ -23,5 +19,12 @@ public class ProductController extends BaseStaffController {
     public ProductController(ProductService productService) {
         super(productService);
         this.productService = productService;
+    }
+
+    @PostMapping("add")
+    public void add(@RequestBody CreateProductDTO createProductDTO) {
+        System.out.println("SKU: " + createProductDTO.getSku());
+        System.out.println("Name: " + createProductDTO.getName());
+        System.out.println("Description: " + createProductDTO.getDescription());
     }
 }

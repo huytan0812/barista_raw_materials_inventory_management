@@ -25,7 +25,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                     "new com.bar_raw_materials.dto.product.ProductDTO(" +
                     "p.id as productId, p.sku, p.name, p.baseUnit.notation as unit," +
                     "p.packSize, p.description, p.imageName, p.category.name as categoryName, " +
-                    "p.minQuantity, p.maxQuantity, p.listPrice )" +
+                    "p.minQuantity, p.maxQuantity, p.listPrice)" +
                     " FROM Product p JOIN p.baseUnit JOIN p.category"
     )
     List<ProductDTO> findAllAlongCategoryAndBaseUnit();
