@@ -1,8 +1,59 @@
 import React, {useEffect, useState} from 'react'
-import {Form, Input, Button, Checkbox, Select, InputNumber} from 'antd'
+import {Form, Input, Select, InputNumber, Upload} from 'antd'
+import { UploadOutlined } from '@ant-design/icons';
+
+const token = localStorage.getItem('token');
+const normFile = e => {
+  if (Array.isArray(e)) {
+    return e;
+  }
+  return e?.fileList;
+};
 
 const onFinish = values => {
-  console.log('Success:', values);
+  // handle submission
+  const submitData = async() => {
+    try {
+      console.log("token: ", token);
+      const formData = new FormData();
+      const imageFile = values.image?.[0]?.originFileObj;
+      let data = {...values};
+
+      if (imageFile) {
+        formData.append('image', imageFile);
+        // remove image in field values
+        const {image, ...rest} = data;
+        data = rest;
+      }
+
+      formData.append('data', new Blob([JSON.stringify(data)], { type: 'application/json' }));
+
+      const addProduct = await fetch("http://localhost:8080/api/staff/product/add",
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
+          body: formData
+        }
+      );
+
+      console.log(addProduct);
+
+      if (addProduct.ok) {
+        const data = await addProduct.json();
+        console.log(data);
+        console.log("Product added successfully");
+      }
+      else {
+        console.log("Error in adding new product");
+      }
+    }
+    catch (error) {
+      console.log(error);
+    }
+  }
+  submitData();
 };
 const onFinishFailed = errorInfo => {
   console.log('Failed:', errorInfo);
@@ -15,7 +66,6 @@ const AddProductForm = (props) => {
   const [category, setCategory] = useState([]);
   const [form] = Form.useForm();
   
-  const token = localStorage.getItem('token');
   const { isSubmit } = props;
 
   // side effect for handling submit form
@@ -47,7 +97,7 @@ const AddProductForm = (props) => {
       }
     }
     fetchUnits();
-  }, [token]);
+  }, []);
 
   // side effects for fetching categories
   useEffect(() => {
@@ -68,7 +118,7 @@ const AddProductForm = (props) => {
       }
     }
     fetchCategories();
-  }, [token]);
+  }, []);
 
   return (
     <Form
@@ -81,6 +131,7 @@ const AddProductForm = (props) => {
       onFinish={onFinish}
       onFinishFailed={onFinishFailed}
       autoComplete="off"
+      encType='multipart/form-data'
     >
         <Form.Item
           label="SKU"
@@ -153,6 +204,30 @@ const AddProductForm = (props) => {
               <Option key={ctg.id} value={ctg.id}>{ctg.name}</Option>
             ))}
           </Select>
+        </Form.Item>
+
+        <Form.Item 
+          label="Hình ảnh"
+          labelAlign="left"
+          name="image"
+          valuePropName="fileList" 
+          getValueFromEvent={normFile}
+        >
+          <Upload 
+            beforeUpload={() => false} 
+            listType="picture-card"
+            maxCount={1}
+            accept="image/*"
+            name="image"
+          >
+            <button
+              style={{ color: 'inherit', cursor: 'inherit', border: 0, background: 'none' }}
+              type="button"
+            >
+              <UploadOutlined />
+              <div style={{ marginTop: 8 }}>Upload</div>
+            </button>
+          </Upload>
         </Form.Item>
 
         <Form.Item
