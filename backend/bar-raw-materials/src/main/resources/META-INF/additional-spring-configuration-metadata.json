@@ -4,5 +4,10 @@
       "name": "apiStaff",
       "type": "java.lang.String",
       "description": "Description for apiStaff."
-  }
-] }
+    },
+    {
+      "name": "image.path",
+      "type": "java.lang.String",
+      "description": "Description for image.path."
+    }
+  ] }

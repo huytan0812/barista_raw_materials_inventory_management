@@ -1,6 +1,7 @@
 package com.bar_raw_materials.dto.product;
 
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 
@@ -13,5 +14,5 @@ public class CreateProductDTO {
     String description;
     String imageName;
     Integer categoryId;
-    BigDecimal unitPrice;
+    BigDecimal listPrice;
 }
