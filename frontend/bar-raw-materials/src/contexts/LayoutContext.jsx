@@ -15,6 +15,7 @@ export const LayoutProvider = ({ children }) => {
     )
 }
 
+// custom hook
 // eslint-disable-next-line react-refresh/only-export-components
 export const useLayoutContext = () => {
     return useContext(LayoutContext);
