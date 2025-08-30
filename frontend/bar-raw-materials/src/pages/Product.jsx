@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import { Card, Input, Select, Pagination, Space, Button, Modal } from "antd";
+import { Card, Input, Select, Pagination, Space, Button, Modal, message } from "antd";
 import ProductTable from '../components/product/ProductTable';
 import AddProductForm from '../components/product/AddProductForm.jsx';
 import { SoundTwoTone } from '@ant-design/icons';
@@ -10,24 +10,36 @@ const { Option } = Select;
 const Product = () => {
   const [searchText, setSearchText] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
+
+  const [refresh, setRefresh] = useState(false);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [pageMetadata, setPageMetadata] = useState({});
+  const pageSize = 5;
+
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
-  const [count, setCount] = useState(0);
   const [submitForm, setSubmitForm] = useState(false);
+  const [messageApi, contextHolder] = message.useMessage();
+
+  const success = (msg) => {
+    messageApi.open({
+      type: 'success',
+      content: msg,
+    });
+  };
 
   const showModal = () => {
     setOpen(true);
-    setCount(count + 1);
+    setRefresh(false);
   };
   const handleOk = () => {
     setSubmitForm(true);
 
     setLoading(true);
 
-    // throw three setLoading, setOpen, setSubmitForm to Web worker
+    // throw three setLoading, setSubmitForm to Web worker
     setTimeout(() => {
       setLoading(false);
-      setOpen(false);
       setSubmitForm(false);
     }, 0);
   };
@@ -35,8 +47,11 @@ const Product = () => {
     setOpen(false);
   };
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 5;
+  const handleSuccess = (msg) => {
+    success(msg);
+    setOpen(false);
+    setRefresh(true);
+  };
 
   return (
     <Card
@@ -82,20 +97,25 @@ const Product = () => {
                 </Button>
               ]}
             >
-              <AddProductForm isSubmit={submitForm} />
+              <AddProductForm isSubmit={submitForm} onSubmitSuccess={handleSuccess} />
             </Modal>
           </Space>
         </Space>
       }
       variant='bordered'
     >
-      <ProductTable />
+      {contextHolder}
+      <ProductTable 
+        currentPage={currentPage} pageSize={pageSize} 
+        refresh={refresh} setPageMetadata={setPageMetadata}
+      />
       <div style={{ textAlign: "right", marginTop: 16 }}>
         <Pagination
           current={currentPage}
           pageSize={pageSize}
-          total={10}
+          total={pageMetadata.page?.totalElements || 0}
           onChange={(page) => setCurrentPage(page)}
+          showTotal={(total) => `Hiện đang có ${total} sản phẩm`}
         />
       </div>
     </Card>

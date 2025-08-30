@@ -3,7 +3,7 @@ import {Table} from 'antd';
 import {useNavigate} from 'react-router-dom'
 import axiosHTTP from '../../services/ProductService'
 
-const ProductTable = () => {
+const ProductTable = ({currentPage, pageSize, refresh, setPageMetadata}) => {
     const [data, setData] = useState([]);
     const navigate = useNavigate();
 
@@ -43,7 +43,7 @@ const ProductTable = () => {
             title: "Giá niêm yết",
             dataIndex: "listPrice",
             key: "listPrice",
-            render: (price) => `${price} VND`
+            render: (price) =>  new Intl.NumberFormat('vn-VN', { style: 'currency', currency: 'VND' }).format(price)
         }
     ]
 
@@ -56,9 +56,16 @@ const ProductTable = () => {
                             headers: {
                                 'Authorization': `Bearer ${token}`
                             }
+                            ,
+                            params: {
+                                'page': currentPage,
+                                'size': pageSize
+                            }
                         }
                     )
-                    setData(response.data);
+                    setData(response.data.content);
+                    const {content, ...rest} = response.data;
+                    setPageMetadata(rest);
                 }
                 catch (error) {
                     console.log(error);
@@ -66,7 +73,7 @@ const ProductTable = () => {
                 }
             }
             fetchProducts();
-        }, [token, navigate]
+        }, [token, currentPage, pageSize, refresh]
     )
 
     return (

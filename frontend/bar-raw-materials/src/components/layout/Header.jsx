@@ -1,12 +1,32 @@
 import React from 'react'
 import { Header } from 'antd/es/layout/layout'
 import { useLayoutContext } from '../../contexts/LayoutContext'
-import { BellOutlined, UserOutlined, SettingFilled } from '@ant-design/icons'
-import { Avatar, Divider, Flex } from 'antd'
+import { BellOutlined, UserOutlined, SettingFilled, LogoutOutlined } from '@ant-design/icons'
+import { Avatar, Divider, Flex, Dropdown } from 'antd'
+
+const items = [
+  {
+    key: '1',
+    label: (
+      <a href="#">
+        Hồ sơ cá nhân
+      </a>
+    ),
+  },
+  {
+    key: '2',
+    label: (
+      <a href="#">
+        <LogoutOutlined />
+        <span>Đăng xuất</span>
+      </a>
+    ),
+  }
+];
 
 const ImsHeader = () => {
     const { colorBgContainer } = useLayoutContext();
-
+    
     return (
         <Header style={{
             display: 'flex',
@@ -27,10 +47,14 @@ const ImsHeader = () => {
                     alignItems: 'center'
                 }}
             >
-                <div>
+                <div style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                }}>
                     <BellOutlined 
                         style={{ 
-                            fontSize: '18px',
+                            fontSize: '3.2rem',
                             cursor: 'pointer' 
                         }}/>
                 </div>
@@ -91,13 +115,20 @@ const ImsHeader = () => {
                         alignItems: 'center'
                     }}
                 >
-                    <SettingFilled 
-                        style={{ 
-                            fontSize: '24px', 
-                            color: '#002140',
-                            cursor: 'pointer'
+                    <Dropdown
+                        menu={{ items }}
+                        placement="bottomRight"
+                        trigger={["click"]} // ensures it only opens when clicked
+                        arrow
+                    >
+                    <SettingFilled
+                        style={{
+                        fontSize: "3.2rem",
+                        color: "#002140",
+                        cursor: "pointer",
                         }}
                     />
+                    </Dropdown>
                 </div>
             </Flex>
         </Header>

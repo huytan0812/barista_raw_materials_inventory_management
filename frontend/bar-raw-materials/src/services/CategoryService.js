@@ -10,7 +10,6 @@ const axiosHTTP = axios.create(
 )
 
 axiosHTTP.interceptors.request.use((config) => {
-    console.log("Authorization: ", config.headers.Authorization);
     return config;
 })
 

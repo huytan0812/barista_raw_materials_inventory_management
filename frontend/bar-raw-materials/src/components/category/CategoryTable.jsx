@@ -18,7 +18,7 @@ const CategoryTable = () => {
             }
           }
         )
-        setCategories(response.data);
+        setCategories(response.data.content);
         }
         catch(error) {
           console.log(error);
@@ -28,9 +28,7 @@ const CategoryTable = () => {
       }
       fetchCategories();
     }, [token, navigate]);
-
-    console.log(categories);
-
+    
     return (
       <Table
         // loop through categories array by map() method

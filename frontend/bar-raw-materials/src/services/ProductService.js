@@ -10,6 +10,7 @@ const axiosHTTP = axios.create(
 )
 
 axiosHTTP.interceptors.request.use((config) => {
+    config.params = {...config.params}
     return config;
 })
 

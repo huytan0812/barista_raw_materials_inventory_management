@@ -10,11 +10,10 @@ const normFile = e => {
   return e?.fileList;
 };
 
-const onFinish = values => {
+const onFinish = (values) => {
   // handle submission
   const submitData = async() => {
     try {
-      console.log("token: ", token);
       const formData = new FormData();
       const imageFile = values.image?.[0]?.originFileObj;
       let data = {...values};
@@ -38,12 +37,9 @@ const onFinish = values => {
         }
       );
 
-      console.log(addProduct);
-
       if (addProduct.ok) {
         const data = await addProduct.json();
         console.log(data);
-        console.log("Product added successfully");
       }
       else {
         console.log("Error in adding new product");
@@ -66,14 +62,22 @@ const AddProductForm = (props) => {
   const [category, setCategory] = useState([]);
   const [form] = Form.useForm();
   
-  const { isSubmit } = props;
+  const { isSubmit, onSubmitSuccess } = props;
 
   // side effect for handling submit form
   useEffect(() => {
     if (isSubmit) {
-      form.submit();
+      form.validateFields()
+      .then((values) => {
+        onFinish(values);
+        onSubmitSuccess(`Sản phẩm ${values.name} đã được thêm thành công`);
+        form.resetFields(); 
+      })
+     .catch(err => {
+        console.log(err);
+      })
     }
-  }, [form, isSubmit]);
+  }, [form, isSubmit, onSubmitSuccess]);
 
   // side effect for fetching base units
   useEffect(() => {
@@ -128,7 +132,7 @@ const AddProductForm = (props) => {
       wrapperCol={{ span: 24 }}
       style={{ maxWidth: 600 }}
       initialValues={{ remember: true }}
-      onFinish={onFinish}
+      // onFinish={onFinish}
       onFinishFailed={onFinishFailed}
       autoComplete="off"
       encType='multipart/form-data'
@@ -154,7 +158,7 @@ const AddProductForm = (props) => {
         <Form.Item
           label="Đơn vị tính"
           labelAlign='left'
-          name="baseUnit"
+          name="baseUnitId"
           rules={[{ required: true, message: 'Đơn vị tính không được để trống' }]}
         >
           <Select name="unit" placeholder="Chọn đơn vị tính">
