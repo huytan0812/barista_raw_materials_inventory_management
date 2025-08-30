@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("${apiStaff}/baseUnit")
 public class BaseUnitController extends BaseStaffController{
     BaseUnitService baseUnitService;
-    
+
     public BaseUnitController(BaseUnitService baseUnitService) {
         super(baseUnitService);
         this.baseUnitService = baseUnitService;

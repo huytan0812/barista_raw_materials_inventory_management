@@ -1,5 +1,6 @@
 package com.bar_raw_materials.dto.category;
 
+import com.bar_raw_materials.entities.Category;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

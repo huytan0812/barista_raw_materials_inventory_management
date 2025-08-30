@@ -1,10 +1,21 @@
 package com.bar_raw_materials.services.product;
 
+import com.bar_raw_materials.dto.product.CreateProductDTO;
 import com.bar_raw_materials.dto.product.ProductDTO;
+import com.bar_raw_materials.entities.BaseUnit;
+import com.bar_raw_materials.entities.Category;
 import com.bar_raw_materials.entities.Product;
+import com.bar_raw_materials.repositories.BaseUnitRepository;
+import com.bar_raw_materials.repositories.CategoryRepository;
 import com.bar_raw_materials.repositories.ProductRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,15 +25,39 @@ import java.util.ArrayList;
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository;
+    private final BaseUnitRepository baseUnitRepository;
 
     @Override
     public List<ProductDTO> getAll() {
-//        return productRepository.findAllOrderByProductIdAsc();
         return productRepository.findAllAlongCategoryAndBaseUnit();
+    }
+
+    @Override
+    public Page<ProductDTO> getPage(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
+        return productRepository.pagination(pageable);
     }
 
     @Override
     public Product getDetails(int id) {
         return productRepository.findById(id);
+    }
+
+    @Override
+    @Transactional
+    public void saveProduct(CreateProductDTO createProductDTO) {
+        Product product = new Product();
+        BeanUtils.copyProperties(createProductDTO, product);
+
+        int baseUnitId = createProductDTO.getBaseUnitId();
+        BaseUnit baseUnit = baseUnitRepository.findBaseUnitById(baseUnitId);
+        product.setBaseUnit(baseUnit);
+
+        int categoryId = createProductDTO.getCategoryId();
+        Category category = categoryRepository.findById(categoryId);
+        product.setCategory(category);
+
+        productRepository.save(product);
     }
 }

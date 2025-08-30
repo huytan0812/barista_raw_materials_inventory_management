@@ -2,6 +2,8 @@ package com.bar_raw_materials.repositories;
 
 import com.bar_raw_materials.dto.baseUnit.BaseUnitDTO;
 import com.bar_raw_materials.entities.BaseUnit;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -14,6 +16,14 @@ public interface BaseUnitRepository extends JpaRepository<BaseUnit, Integer> {
                     "BaseUnit bu"
     )
     List<BaseUnitDTO> findAllBaseUnit();
+
+    @Query(
+            value="SELECT " +
+                    "new com.bar_raw_materials.dto.baseUnit.BaseUnitDTO(bu.id, bu.name, bu.notation)" +
+                    " FROM " +
+                    "BaseUnit bu"
+    )
+    Page<BaseUnitDTO> pagination(Pageable pageable);
 
     BaseUnit findBaseUnitById(int id);
 }

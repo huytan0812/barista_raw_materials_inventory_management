@@ -1,6 +1,7 @@
 package com.bar_raw_materials.controllers.staff;
 
 import com.bar_raw_materials.dto.product.CreateProductDTO;
+import com.bar_raw_materials.dto.product.ProductDTO;
 import com.bar_raw_materials.utils.ImageUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -9,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +27,9 @@ public class ProductController extends BaseStaffController {
 
     // why put @autowired here or without @autowired, everything will run well
     @Autowired
-    public ProductController(ProductService productService, ImageUtils imageUtils) {
+    public ProductController(ProductService productService,
+                             ImageUtils imageUtils
+    ) {
         super(productService);
         this.productService = productService;
         this.imageUtils = imageUtils;
@@ -33,19 +38,17 @@ public class ProductController extends BaseStaffController {
     @PostMapping("add")
     public ResponseEntity<Map<String, String>> add(@RequestPart("data") CreateProductDTO createProductDTO,
                               @RequestPart("image") MultipartFile image) {
-        System.out.println("SKU: " + createProductDTO.getSku());
-        System.out.println("Name: " + createProductDTO.getName());
-        System.out.println("Description: " + createProductDTO.getDescription());
-        System.out.println("List price: " + createProductDTO.getListPrice());
-
         String imageName = imageUtils.upload(image, "product");
         createProductDTO.setImageName(imageName);
-        System.out.println("Image Name: " + createProductDTO.getImageName());
+
+        System.out.println("Base unit id: " + createProductDTO.getBaseUnitId());
+        System.out.println("Category id: " + createProductDTO.getCategoryId());
 
         Map<String, String> responseData = new HashMap<>();
         responseData.put("productName", createProductDTO.getName());
         responseData.put("message", "Sản phẩm " + createProductDTO.getName() + " được thêm thành công");
 
+        productService.saveProduct(createProductDTO);
         return ResponseEntity.ok(responseData);
     }
 }
