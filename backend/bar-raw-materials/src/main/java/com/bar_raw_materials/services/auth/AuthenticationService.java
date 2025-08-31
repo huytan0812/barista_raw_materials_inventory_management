@@ -6,6 +6,7 @@ import com.bar_raw_materials.entities.User;
 import com.bar_raw_materials.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ public class AuthenticationService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final UserDetailsService userDetailsService;
 
     public AuthenticationResponse login(User request) {
         // get user by username if username is valid
@@ -41,5 +43,11 @@ public class AuthenticationService {
         String refreshToken = jwtService.generateRefreshToken(userDetails);
 
         return AuthenticationResponse.builder().accessToken(jwtToken).refreshToken(refreshToken).build();
+    }
+
+    public Boolean isTokenValid(String jwt) {
+        String username = jwtService.extractUsername(jwt);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        return jwtService.isTokenValid(jwt, userDetails);
     }
 }
