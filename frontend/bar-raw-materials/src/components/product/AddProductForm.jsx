@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react'
 import {Form, Input, Select, InputNumber, Upload} from 'antd'
 import { UploadOutlined } from '@ant-design/icons';
+import {useAuthContext} from '../../contexts/AuthContext'
 
-const token = localStorage.getItem('token');
 const normFile = e => {
   if (Array.isArray(e)) {
     return e;
@@ -10,47 +10,6 @@ const normFile = e => {
   return e?.fileList;
 };
 
-const onFinish = (values) => {
-  // handle submission
-  const submitData = async() => {
-    try {
-      const formData = new FormData();
-      const imageFile = values.image?.[0]?.originFileObj;
-      let data = {...values};
-
-      if (imageFile) {
-        formData.append('image', imageFile);
-        // remove image in field values
-        const {image, ...rest} = data;
-        data = rest;
-      }
-
-      formData.append('data', new Blob([JSON.stringify(data)], { type: 'application/json' }));
-
-      const addProduct = await fetch("http://localhost:8080/api/staff/product/add",
-        {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`
-          },
-          body: formData
-        }
-      );
-
-      if (addProduct.ok) {
-        const data = await addProduct.json();
-        console.log(data);
-      }
-      else {
-        console.log("Error in adding new product");
-      }
-    }
-    catch (error) {
-      console.log(error);
-    }
-  }
-  submitData();
-};
 const onFinishFailed = errorInfo => {
   console.log('Failed:', errorInfo);
 };
@@ -61,8 +20,51 @@ const AddProductForm = (props) => {
   const [baseUnit, setBaseUnit] = useState([]);
   const [category, setCategory] = useState([]);
   const [form] = Form.useForm();
-  
+
+  const { token } = useAuthContext();
   const { isSubmit, onSubmitSuccess } = props;
+
+  const onFinish = (values) => {
+    // handle submission
+    const submitData = async() => {
+      try {
+        const formData = new FormData();
+        const imageFile = values.image?.[0]?.originFileObj;
+        let data = {...values};
+
+        if (imageFile) {
+          formData.append('image', imageFile);
+          // remove image in field values
+          const {image, ...rest} = data;
+          data = rest;
+        }
+
+        formData.append('data', new Blob([JSON.stringify(data)], { type: 'application/json' }));
+
+        const addProduct = await fetch("http://localhost:8080/api/staff/product/add",
+          {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${token}`
+            },
+            body: formData
+          }
+        );
+
+          if (addProduct.ok) {
+            const data = await addProduct.json();
+            console.log(data);
+          }
+          else {
+            console.log("Error in adding new product");
+          }
+        }
+        catch (error) {
+          console.log(error);
+        }
+      }
+    submitData();
+  };
 
   // side effect for handling submit form
   useEffect(() => {
@@ -94,7 +96,7 @@ const AddProductForm = (props) => {
           }
         );
         const data = await response.json();
-        setBaseUnit(data);
+        setBaseUnit(data.content);
       }
       catch (error) {
         console.log(error);
@@ -115,7 +117,7 @@ const AddProductForm = (props) => {
           }
         });
         const data = await response.json();
-        setCategory(data);
+        setCategory(data.content);
       }
       catch (error) {
         console.log(error);

@@ -12,7 +12,7 @@ const Product = () => {
   const [categoryFilter, setCategoryFilter] = useState("");
 
   const [refresh, setRefresh] = useState(false);
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
   const [pageMetadata, setPageMetadata] = useState({});
   const pageSize = 5;
 

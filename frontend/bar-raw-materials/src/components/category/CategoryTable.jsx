@@ -1,12 +1,13 @@
 import React, {useState, useEffect} from 'react'
 import {Table, Button, Flex} from 'antd'
 import {useNavigate} from 'react-router-dom'
+import {useAuthContext} from '../../contexts/AuthContext'
 import axiosHTTP from '../../services/CategoryService'
 
 const CategoryTable = () => {
     const [categories, setCategories] = useState([]);
-    const token = localStorage.getItem('token');
     const navigate = useNavigate();
+    const {token} = useAuthContext();
 
     useEffect(() => {
       const fetchCategories = async () => {
@@ -22,7 +23,7 @@ const CategoryTable = () => {
         }
         catch(error) {
           console.log(error);
-          navigate('/login')
+          navigate('/login');
         }
   
       }

@@ -1,13 +1,14 @@
 import React, {useState, useEffect} from 'react'
+import {useNavigate} from 'react-router-dom';
 import {Table} from 'antd';
-import {useNavigate} from 'react-router-dom'
+import { useAuthContext } from '../../contexts/AuthContext';
 import axiosHTTP from '../../services/ProductService'
 
 const ProductTable = ({currentPage, pageSize, refresh, setPageMetadata}) => {
     const [data, setData] = useState([]);
-    const navigate = useNavigate();
+    const navigate = useNavigate
 
-    const token = localStorage.getItem('token');
+    const { token } = useAuthContext();
     const columns = [
         {
             title: "ID",
@@ -58,7 +59,7 @@ const ProductTable = ({currentPage, pageSize, refresh, setPageMetadata}) => {
                             }
                             ,
                             params: {
-                                'page': currentPage,
+                                'page': currentPage - 1, // adjust for zero-based index in spring boot
                                 'size': pageSize
                             }
                         }
@@ -73,7 +74,7 @@ const ProductTable = ({currentPage, pageSize, refresh, setPageMetadata}) => {
                 }
             }
             fetchProducts();
-        }, [token, currentPage, pageSize, refresh]
+        }, [token, currentPage, pageSize, refresh, navigate]
     )
 
     return (

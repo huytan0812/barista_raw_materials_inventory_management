@@ -36,10 +36,8 @@ export const AuthProvider = ({ children }) => {
 
     const verifyJWT = async() => {
         if (token) {
-            console.log("Validating token...");
             try {
                 if (!isAuthenticated) {
-                    console.log("Sending a verify JWT request to server");
                     const response = await axiosHTTP.post('/verifyJWT', {
                         token: token
                     })
