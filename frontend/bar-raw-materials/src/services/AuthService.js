@@ -12,9 +12,6 @@ axiosHTTP.interceptors.request.use((config) => {
 })
 
 axiosHTTP.interceptors.response.use((response) => {
-    const data = response.data;
-    localStorage.setItem('token', data.accessToken);
-    localStorage.setItem('user', JSON.stringify(data));
     return response
 })
 

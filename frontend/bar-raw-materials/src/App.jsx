@@ -1,3 +1,4 @@
+import {useEffect} from 'react'
 import { Route, Routes } from 'react-router-dom'
 import './App.css'
 import ProtectedRoute from './components/ProtectedRoute'
@@ -12,8 +13,18 @@ import Vendor from './pages/Vendor'
 import Customer from './pages/Customer'
 import Permission from './pages/Permission'
 import Report from './pages/Report'
+import { useAuthContext } from './contexts/AuthContext.jsx'
 
 function App() {
+  const { token, verifyJWT } = useAuthContext();
+
+  useEffect(() => {
+    if (token) {
+      console.log("Verifying JWT...");
+      verifyJWT();
+    }
+  }, [token, verifyJWT]);
+
   return (
     <Routes>
       <Route path='/login' element={<Login />}></Route>
