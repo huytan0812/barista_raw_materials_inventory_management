@@ -14,4 +14,6 @@ public interface ProductService extends EntityService {
 
     Page<ProductDTO> getPage(int page, int size);
     void saveProduct(CreateProductDTO createProductDTO);
+
+    Boolean isDuplicateSKU(CreateProductDTO createProductDTO);
 }

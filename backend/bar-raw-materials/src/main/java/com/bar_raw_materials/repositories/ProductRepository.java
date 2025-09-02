@@ -41,4 +41,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                     " FROM Product p JOIN p.baseUnit JOIN p.category"
     )
     Page<ProductDTO> pagination(Pageable pageable);
+
+    Product findBySku(String sku);
 }

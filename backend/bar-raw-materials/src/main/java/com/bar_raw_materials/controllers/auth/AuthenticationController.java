@@ -27,17 +27,17 @@ public class AuthenticationController {
     public ResponseEntity<Map<String, Boolean>> verifyJWT(
             @RequestBody JwtDTO request
     ) {
+        System.out.println("JWT: " + request.getToken());
         Map<String, Boolean> response = new HashMap<>();
         String jwt = request.getToken();
         Boolean isTokenValid = false;
         response.put("isTokenValid", isTokenValid);
         try {
             isTokenValid = authenticationService.isTokenValid(jwt);
-            response.put("isJWTValid", isTokenValid);
+            response.put("isTokenValid", isTokenValid);
         }
         catch (ExpiredJwtException e) {
             System.out.println("Expired JWT");
-            ResponseEntity.badRequest().body(response);
         }
         return ResponseEntity.ok(response);
     }

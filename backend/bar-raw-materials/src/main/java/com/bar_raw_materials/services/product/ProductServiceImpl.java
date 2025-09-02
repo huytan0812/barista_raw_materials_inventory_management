@@ -60,4 +60,10 @@ public class ProductServiceImpl implements ProductService {
 
         productRepository.save(product);
     }
+
+    @Override
+    public Boolean isDuplicateSKU(CreateProductDTO createProductDTO) {
+        String SKU = createProductDTO.getSku();
+        return productRepository.findBySku(SKU) != null;
+    }
 }

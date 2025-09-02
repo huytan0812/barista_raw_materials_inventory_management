@@ -12,6 +12,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,11 +39,15 @@ public class ProductController extends BaseStaffController {
     @PostMapping("add")
     public ResponseEntity<Map<String, String>> add(@RequestPart("data") CreateProductDTO createProductDTO,
                               @RequestPart("image") MultipartFile image) {
+        if (productService.isDuplicateSKU(createProductDTO)) {
+            HttpStatus badRequest = HttpStatus.BAD_REQUEST;
+            Map<String, String> responseData = new HashMap<>();
+            responseData.put("errorMsg", "SKU không được phép trùng");
+            return new ResponseEntity<>(responseData, badRequest);
+        }
+
         String imageName = imageUtils.upload(image, "product");
         createProductDTO.setImageName(imageName);
-
-        System.out.println("Base unit id: " + createProductDTO.getBaseUnitId());
-        System.out.println("Category id: " + createProductDTO.getCategoryId());
 
         Map<String, String> responseData = new HashMap<>();
         responseData.put("productName", createProductDTO.getName());

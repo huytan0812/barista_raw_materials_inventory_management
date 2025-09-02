@@ -33,7 +33,7 @@ public class SecurityConfig {
                 cors(Customizer.withDefaults()). // add this line to fix preflight request
                 authorizeHttpRequests(
                 authorizeRequests ->
-                        authorizeRequests.requestMatchers("/api/auth/**").permitAll()
+                        authorizeRequests.requestMatchers("/api/auth/**", "/api/image/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sessionManagement ->
