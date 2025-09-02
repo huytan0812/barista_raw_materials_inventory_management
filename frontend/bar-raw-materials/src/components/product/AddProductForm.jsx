@@ -10,10 +10,6 @@ const normFile = e => {
   return e?.fileList;
 };
 
-const onFinishFailed = errorInfo => {
-  console.log('Failed:', errorInfo);
-};
-
 const {Option} = Select;
 
 const AddProductForm = (props) => {
@@ -22,9 +18,9 @@ const AddProductForm = (props) => {
   const [form] = Form.useForm();
 
   const { token } = useAuthContext();
-  const { isSubmit, onSubmitSuccess } = props;
+  const { isSubmit, onSubmitSuccess, resetForm } = props;
 
-  const onFinish = (values) => {
+  const onFinish = (values, form) => {
     // handle submission
     const submitData = async() => {
       try {
@@ -41,7 +37,7 @@ const AddProductForm = (props) => {
 
         formData.append('data', new Blob([JSON.stringify(data)], { type: 'application/json' }));
 
-        const addProduct = await fetch("http://localhost:8080/api/staff/product/add",
+        const response = await fetch("http://localhost:8080/api/staff/product/add",
           {
             method: 'POST',
             headers: {
@@ -50,13 +46,22 @@ const AddProductForm = (props) => {
             body: formData
           }
         );
-
-          if (addProduct.ok) {
-            const data = await addProduct.json();
-            console.log(data);
+          const responseData = await response.json();
+          if (response.ok) {
+            console.log(responseData);
+            onSubmitSuccess(`Sản phẩm ${values.name} đã được thêm thành công`);
+            form.resetFields();
           }
           else {
-            console.log("Error in adding new product");
+            const errorMsg = responseData?.errorMsg || "Có lỗi xảy ra";
+            form.setFields(
+              [
+                {
+                  name: 'sku',
+                  errors: [errorMsg],
+                },
+              ]
+            )
           }
         }
         catch (error) {
@@ -69,17 +74,25 @@ const AddProductForm = (props) => {
   // side effect for handling submit form
   useEffect(() => {
     if (isSubmit) {
+      // form.validateFields() is used for validate base on the `rules` array in Form.Item
       form.validateFields()
       .then((values) => {
-        onFinish(values);
-        onSubmitSuccess(`Sản phẩm ${values.name} đã được thêm thành công`);
-        form.resetFields(); 
+        onFinish(values, form);
       })
      .catch(err => {
         console.log(err);
       })
     }
   }, [form, isSubmit, onSubmitSuccess]);
+
+  // side effect for resetting form fields
+  useEffect(() => {
+    // reset form fields when close modal is clicked
+    if (resetForm) {
+      console.log("Reset form");
+      form.resetFields();
+    }
+  }, [resetForm, form])
 
   // side effect for fetching base units
   useEffect(() => {
@@ -134,8 +147,6 @@ const AddProductForm = (props) => {
       wrapperCol={{ span: 24 }}
       style={{ maxWidth: 600 }}
       initialValues={{ remember: true }}
-      // onFinish={onFinish}
-      onFinishFailed={onFinishFailed}
       autoComplete="off"
       encType='multipart/form-data'
     >

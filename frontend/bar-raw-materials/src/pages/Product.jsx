@@ -11,14 +11,17 @@ const Product = () => {
   const [searchText, setSearchText] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
 
+  // used for <ProductTable>
   const [refresh, setRefresh] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageMetadata, setPageMetadata] = useState({});
   const pageSize = 5;
 
+  // used for <AddProductForm>
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [submitForm, setSubmitForm] = useState(false);
+  const [resetForm, setResetForm] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
 
   const success = (msg) => {
@@ -31,6 +34,7 @@ const Product = () => {
   const showModal = () => {
     setOpen(true);
     setRefresh(false);
+    setResetForm(false);
   };
   const handleOk = () => {
     setSubmitForm(true);
@@ -44,12 +48,16 @@ const Product = () => {
     }, 0);
   };
   const handleCancel = () => {
-    setOpen(false);
+    setTimeout(() => {
+      setOpen(false);
+    });
+    setResetForm(true);
   };
 
   const handleSuccess = (msg) => {
     success(msg);
     setOpen(false);
+    // if new product is added successfully, refresh <ProductTable>
     setRefresh(true);
   };
 
@@ -97,7 +105,7 @@ const Product = () => {
                 </Button>
               ]}
             >
-              <AddProductForm isSubmit={submitForm} onSubmitSuccess={handleSuccess} />
+              <AddProductForm isSubmit={submitForm} onSubmitSuccess={handleSuccess} resetForm={resetForm} />
             </Modal>
           </Space>
         </Space>
