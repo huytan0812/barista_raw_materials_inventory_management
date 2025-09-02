@@ -21,6 +21,16 @@ p, span, a, li, h3 {
 .ant-select-item-option-content {
   font-size: 1.2rem;
 }
+
 .ant-table-cell, .ant-table-cell-row-hover {
   font-size: 1.4rem;
+}
+
+.ant-image-mask-info {
+  font-size: 1.2rem;
+}
+
+.ant-image-mask-info svg {
+  width: 1.2rem;
+  height: 1.2rem;
 }

@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import {useNavigate} from 'react-router-dom';
-import {Table} from 'antd';
+import {Table, Image, Flex, Button} from 'antd';
 import { useAuthContext } from '../../contexts/AuthContext';
 import axiosHTTP from '../../services/ProductService'
 
@@ -13,7 +13,7 @@ const ProductTable = ({currentPage, pageSize, refresh, setPageMetadata}) => {
         {
             title: "ID",
             dataIndex: "productId",
-            key: "id"
+            key: "id",
         },
         {
             title: "SKU",
@@ -23,7 +23,26 @@ const ProductTable = ({currentPage, pageSize, refresh, setPageMetadata}) => {
         {
             title: "Sản phẩm",
             dataIndex: "name",
-            key: "name"
+            key: "name",
+            width: "20rem"
+        },
+        {
+            title: "Hình ảnh",
+            dataIndex: "imageName",
+            key: "imageName",
+            render: (imageName) => {
+                return (
+                    <Image 
+                        src={`http://localhost:8080/api/image/product/${imageName}`}
+                        width={150}
+                        height={150}
+                        preview={{
+                            mask: <span>Xem ảnh</span>
+                        }}
+                        fallback="http://localhost:8080/api/image/default.png"
+                    />
+                )
+            }
         },
         {
             title: "Danh mục",
@@ -31,20 +50,50 @@ const ProductTable = ({currentPage, pageSize, refresh, setPageMetadata}) => {
             key: "categoryName"
         },
         {
-            title: "Khối lượng tịnh / Thể tích thực",
+            title: (
+                <span style={{ fontSize: '1.4rem' }}>Khối lượng tịnh / <br/> Thể tích thực</span>
+            ),
             dataIndex: "packSize",
-            key: "packSize"
+            key: "packSize",
+            render: (_, record) => {
+                let subUnit = '';
+                if (record.unit === 'kg') {
+                    subUnit = 'g';
+                }
+                if (record.unit === 'L') {
+                    subUnit = 'ml';
+                }
+                return `${record.packSize*1000}${subUnit}`
+            }
         },
         {
-            title: "Đơn vị tính",
-            dataIndex: "unit",
-            key: "unit"
-        },
-        {
-            title: "Giá niêm yết",
+            title: (<span style={{textAlign: 'center', fontSize: '1.4rem'}}>Giá niêm yết</span>),
             dataIndex: "listPrice",
             key: "listPrice",
-            render: (price) =>  new Intl.NumberFormat('vn-VN', { style: 'currency', currency: 'VND' }).format(price)
+            render: (price) =>  {
+                return (
+                    <p style={{textAlign: 'right', fontSize: '1.4rem'}}>
+                        {new Intl.NumberFormat('vn-VN', { style: 'currency', currency: 'VND' }).format(price)}
+                    </p>
+                )
+            },
+        },
+        {
+            title: "Hành động",
+            key: "action",
+            render: () => {
+                return (
+                  <Flex gap="1rem">
+                    <Button color="primary" variant="solid">
+                      <span style={{fontSize: '1.4rem'}}>Sửa</span>
+                    </Button>
+                    <Button color="red" variant="solid">
+                      <span style={{fontSize: '1.4rem'}}>Xóa</span>
+                    </Button>
+                  </Flex>
+                )
+            },
+            align: "center"
         }
     ]
 
