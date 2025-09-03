@@ -48,6 +48,8 @@ const Product = () => {
     }, 0);
   };
   const handleCancel = () => {
+    // use setTimeout here for setOpen to ensure AddProductForm is reset
+    // before being unmounted in the next render
     setTimeout(() => {
       setOpen(false);
     });
@@ -65,10 +67,10 @@ const Product = () => {
     <Card
       title={
         <Space style={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
-          <span style={{ fontWeight: "bold" }}>Products Table</span>
+          <span style={{ fontWeight: "bold" }}>Bảng sản phẩm</span>
           <Space>
             <Search
-              placeholder="Search by SKU"
+              placeholder="Tìm theo tên sản phẩm"
               onSearch={(value) => setSearchText(value)}
               onChange={(e) => setSearchText(e.target.value)}
               style={{ width: 200 }}

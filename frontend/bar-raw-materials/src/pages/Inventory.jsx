@@ -1,8 +1,12 @@
 import React from 'react'
+import InventoryTable from '../components/inventory/InventoryTable'
 
 const Inventory = () => {
   return (
-    <div>Inventory Page</div>
+    <React.Fragment>
+      <div>Inventory Page</div>
+      <InventoryTable />
+    </React.Fragment>
   )
 }
 

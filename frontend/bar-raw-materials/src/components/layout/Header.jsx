@@ -1,8 +1,8 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import { Header } from 'antd/es/layout/layout'
 import { useLayoutContext } from '../../contexts/LayoutContext'
 import { BellOutlined, UserOutlined, SettingFilled, LogoutOutlined } from '@ant-design/icons'
-import { Avatar, Divider, Flex, Dropdown } from 'antd'
+import { Avatar, Divider, Flex, Dropdown, Tag } from 'antd'
 import { useAuthContext } from '../../contexts/AuthContext.jsx'
 import { useNavigate } from 'react-router-dom'
 
@@ -28,7 +28,26 @@ const notifyItems = [
 const ImsHeader = () => {
     const navigate = useNavigate();
     const { colorBgContainer } = useLayoutContext();
-    const { logout } = useAuthContext();
+    const { logout, token } = useAuthContext();
+    const [businessPeriod, setBusinessPeriod] = useState(null);
+
+    useEffect(() => {
+        const getBusinessPeriod = async() => {
+            const response = await fetch('http://localhost:8080/api/staff/businessPeriod/current', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                console.log("Business period: ", data);
+                setBusinessPeriod(data);
+            }
+        }
+        getBusinessPeriod();
+    }, [token])
 
     const handleLogoutClick = () => {
         logout();
@@ -76,6 +95,11 @@ const ImsHeader = () => {
                     <strong style={{fontSize: '2.4rem'}}>
                         Bar Raw Materials Inventory Management
                     </strong>
+                </p>
+            </div>
+            <div>
+                <p>
+                    {businessPeriod ? <Tag color="geekblue">{businessPeriod.label}</Tag> : 'Đang tải kỳ kinh doanh...'}
                 </p>
             </div>
             <Flex

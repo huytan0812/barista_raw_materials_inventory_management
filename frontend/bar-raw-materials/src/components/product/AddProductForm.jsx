@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useState, useCallback, useRef} from 'react'
 import {Form, Input, Select, InputNumber, Upload} from 'antd'
 import { UploadOutlined } from '@ant-design/icons';
 import {useAuthContext} from '../../contexts/AuthContext'
@@ -19,8 +19,9 @@ const AddProductForm = (props) => {
 
   const { token } = useAuthContext();
   const { isSubmit, onSubmitSuccess, resetForm } = props;
+  const persistToken = useRef(token);
 
-  const onFinish = (values, form) => {
+  const onFinish = useCallback((values, form) => {
     // handle submission
     const submitData = async() => {
       try {
@@ -31,7 +32,7 @@ const AddProductForm = (props) => {
         if (imageFile) {
           formData.append('image', imageFile);
           // remove image in field values
-          const {image, ...rest} = data;
+          const {image:_, ...rest} = data;
           data = rest;
         }
 
@@ -69,7 +70,7 @@ const AddProductForm = (props) => {
         }
       }
     submitData();
-  };
+  }, [onSubmitSuccess, token]);
 
   // side effect for handling submit form
   useEffect(() => {
@@ -83,7 +84,7 @@ const AddProductForm = (props) => {
         console.log(err);
       })
     }
-  }, [form, isSubmit, onSubmitSuccess]);
+  }, [form, isSubmit, onSubmitSuccess, onFinish]);
 
   // side effect for resetting form fields
   useEffect(() => {
@@ -104,7 +105,7 @@ const AddProductForm = (props) => {
             method: 'GET',
             'headers': {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`
+              'Authorization': `Bearer ${persistToken.current}`
             }
           }
         );
@@ -126,7 +127,7 @@ const AddProductForm = (props) => {
           method: 'GET',
           'headers': {
             'Content-Type': "application/json",
-            'Authorization': `Bearer ${token}`
+            'Authorization': `Bearer ${persistToken.current}`
           }
         });
         const data = await response.json();

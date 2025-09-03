@@ -114,7 +114,7 @@ const ProductTable = ({currentPage, pageSize, refresh, setPageMetadata}) => {
                         }
                     )
                     setData(response.data.content);
-                    const {content, ...rest} = response.data;
+                    const {content:_, ...rest} = response.data;
                     setPageMetadata(rest);
                 }
                 catch (error) {
@@ -123,6 +123,7 @@ const ProductTable = ({currentPage, pageSize, refresh, setPageMetadata}) => {
                 }
             }
             fetchProducts();
+            // eslint-disable-next-line react-hooks/exhaustive-deps
         }, [token, currentPage, pageSize, refresh, navigate]
     )
 
@@ -130,6 +131,7 @@ const ProductTable = ({currentPage, pageSize, refresh, setPageMetadata}) => {
         <Table
             columns={columns}
             dataSource={data.map(product => ({...product, key: product.productId}))}
+            pagination={false}
         />
     )
 }
