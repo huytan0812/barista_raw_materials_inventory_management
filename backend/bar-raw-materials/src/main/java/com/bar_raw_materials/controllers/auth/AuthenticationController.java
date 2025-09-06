@@ -27,7 +27,6 @@ public class AuthenticationController {
     public ResponseEntity<Map<String, Boolean>> verifyJWT(
             @RequestBody JwtDTO request
     ) {
-        System.out.println("JWT: " + request.getToken());
         Map<String, Boolean> response = new HashMap<>();
         String jwt = request.getToken();
         Boolean isTokenValid = false;

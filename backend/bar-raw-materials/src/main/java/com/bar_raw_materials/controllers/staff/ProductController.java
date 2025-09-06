@@ -5,6 +5,7 @@ import com.bar_raw_materials.dto.product.ProductDTO;
 import com.bar_raw_materials.utils.ImageUtils;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
@@ -55,5 +56,39 @@ public class ProductController extends BaseStaffController {
 
         productService.saveProduct(createProductDTO);
         return ResponseEntity.ok(responseData);
+    }
+
+    @GetMapping("update/{id}")
+    public ResponseEntity<CreateProductDTO> update(
+            @PathVariable("id") Integer id
+    ) {
+        Product product = productService.getDetails(id);
+        if (product == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        CreateProductDTO createProductDTO = new CreateProductDTO();
+        BeanUtils.copyProperties(product, createProductDTO);
+
+        return ResponseEntity.ok(createProductDTO);
+    }
+
+    @PostMapping("update/{id}")
+    public ResponseEntity<String> update(
+            @PathVariable("id") Integer id,
+            @RequestPart("data") CreateProductDTO createProductDTO,
+            @RequestPart("image") MultipartFile image
+    ) {
+        // check for product
+        if (productService.getDetails(id) == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        // check for duplicate sku
+        if (productService.isDuplicateSKU(createProductDTO)) {
+            return new ResponseEntity<>("SKU không được phép trùng", HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>("Everything ok",HttpStatus.OK);
     }
 }

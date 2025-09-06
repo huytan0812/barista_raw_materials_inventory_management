@@ -1,6 +1,7 @@
 package com.bar_raw_materials.controllers.staff;
 
 import com.bar_raw_materials.services.EntityService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.data.domain.Page;
@@ -26,7 +27,11 @@ public class BaseStaffController {
     }
 
     @GetMapping("details/{id}")
-    public <T> T getById(@PathVariable("id") Integer id) {
-        return entityService.getDetails(id);
+    public <T> ResponseEntity<T> getById(@PathVariable("id") Integer id) {
+        T entity = entityService.getDetails(id);
+        if (entity == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return ResponseEntity.ok(entity);
     }
 }
