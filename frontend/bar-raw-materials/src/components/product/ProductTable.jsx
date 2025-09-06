@@ -2,13 +2,23 @@ import React, {useState, useEffect} from 'react'
 import {useNavigate} from 'react-router-dom';
 import {Table, Image, Flex, Button} from 'antd';
 import { useAuthContext } from '../../contexts/AuthContext';
+import EditProductModal from './EditProductModal';
 import axiosHTTP from '../../services/ProductService'
 
 const ProductTable = ({currentPage, pageSize, refresh, setPageMetadata}) => {
     const [data, setData] = useState([]);
     const navigate = useNavigate
-
     const { token } = useAuthContext();
+    const [activeModal, setActiveModal] = useState(0);
+
+    const handleUpdateClick = (productId) => {
+        setActiveModal(parseInt(productId));
+    }
+
+    const resetActiveModal = () => {
+        setActiveModal(0);
+    }
+
     const columns = [
         {
             title: "ID",
@@ -81,14 +91,24 @@ const ProductTable = ({currentPage, pageSize, refresh, setPageMetadata}) => {
         {
             title: "Hành động",
             key: "action",
-            render: () => {
+            render: (record) => {
                 return (
                   <Flex gap="1rem">
-                    <Button color="primary" variant="solid">
-                      <span style={{fontSize: '1.4rem'}}>Sửa</span>
+                    <Button 
+                        color="blue" 
+                        variant="solid" 
+                        onClick={() => handleUpdateClick(record.productId)}
+                        value={record.productId}
+                    >
+                        <span style={{fontSize: '1.4rem'}}>Sửa</span>
                     </Button>
+                    <EditProductModal 
+                        isActive={activeModal === record.productId}
+                        productId={record.productId}
+                        resetActiveModal={resetActiveModal}
+                    />
                     <Button color="red" variant="solid">
-                      <span style={{fontSize: '1.4rem'}}>Xóa</span>
+                      <span value={record.productId} style={{fontSize: '1.4rem'}}>Xóa</span>
                     </Button>
                   </Flex>
                 )

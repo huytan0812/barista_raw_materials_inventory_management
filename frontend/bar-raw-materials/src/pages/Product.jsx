@@ -41,7 +41,9 @@ const Product = () => {
 
     setLoading(true);
 
-    // throw three setLoading, setSubmitForm to Web worker
+    // throw setLoading, setSubmitForm to Web worker
+    // callback in setTimeout will be executed after the sync operations
+    // are all executed in call stack
     setTimeout(() => {
       setLoading(false);
       setSubmitForm(false);

@@ -12,7 +12,7 @@ const normFile = e => {
 
 const {Option} = Select;
 
-const AddProductForm = (props) => {
+const EditProductForm = (props) => {
   const [baseUnit, setBaseUnit] = useState([]);
   const [category, setCategory] = useState([]);
   const [form] = Form.useForm();
@@ -49,6 +49,7 @@ const AddProductForm = (props) => {
         );
           const responseData = await response.json();
           if (response.ok) {
+            console.log(responseData);
             onSubmitSuccess(`Sản phẩm ${values.name} đã được thêm thành công`);
             form.resetFields();
           }
@@ -89,6 +90,7 @@ const AddProductForm = (props) => {
   useEffect(() => {
     // reset form fields when close modal is clicked
     if (resetForm) {
+      console.log("Reset form");
       form.resetFields();
     }
   }, [resetForm, form])
@@ -268,4 +270,4 @@ const AddProductForm = (props) => {
   )
 }
 
-export default AddProductForm
+export default EditProductForm
