@@ -32,6 +32,9 @@ const EditProductModal = ({isActive, productId, resetActiveModal}) => {
             style={{
                 fontSize: '1.4rem',
             }}
+            onOk={handleOk}
+            onCancel={handleCancel}
+            destroyOnHidden={true}
             footer={
             <>
                 <Button onClick={handleCancel}>Hủy</Button>
@@ -41,7 +44,9 @@ const EditProductModal = ({isActive, productId, resetActiveModal}) => {
             </>
             }
         >
-            <EditProductForm />
+            <EditProductForm
+                productId={productId}
+            />
         </Modal>
     )
 }

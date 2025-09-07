@@ -2,6 +2,7 @@ import React, {useEffect, useState, useCallback, useRef} from 'react'
 import {Form, Input, Select, InputNumber, Upload} from 'antd'
 import { UploadOutlined } from '@ant-design/icons';
 import {useAuthContext} from '../../contexts/AuthContext'
+import axiosHTTP from '../../services/ProductService'
 
 const normFile = e => {
   if (Array.isArray(e)) {
@@ -18,8 +19,16 @@ const EditProductForm = (props) => {
   const [form] = Form.useForm();
 
   const { token } = useAuthContext();
-  const { isSubmit, onSubmitSuccess, resetForm } = props;
+  const { isSubmit, onSubmitSuccess, resetForm, productId } = props;
   const persistToken = useRef(token);
+
+  const uploadConfig = {
+    beforeUpload: () => false, 
+    listType: "picture-card",
+    maxCount: 1,
+    accept: "image/*",
+    name: "image",
+  }
 
   const onFinish = useCallback((values, form) => {
     // handle submission
@@ -71,6 +80,38 @@ const EditProductForm = (props) => {
       }
     submitData();
   }, [onSubmitSuccess, token]);
+
+  // side effect for fetching product form fields
+  const populatingFormData = async() => {
+    const response = await axiosHTTP.get(`/details/${productId}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    const product = response.data;
+    console.log(product);
+    form.setFieldsValue({
+      'sku': product.sku,
+      'name': product.name,
+      'baseUnitId': product.baseUnit.id,
+      'packSize': product.packSize,
+      'description': product.description,
+      'categoryId': product.category.id,
+      'image': [
+        {
+          uid: String(product.id),
+          name: product.imageName,
+          status: "done",
+          url: `http://localhost:8080/api/image/product/${product.imageName}`,
+        },
+      ],
+      'listPrice': product.listPrice
+    });
+  }
+  useEffect(() => {
+    populatingFormData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   // side effect for handling submit form
   useEffect(() => {
@@ -143,7 +184,7 @@ const EditProductForm = (props) => {
   return (
     <Form
       form={form}
-      name="basic"
+      name={`update_product_${productId}`}
       labelCol={{ span: 6 }}
       wrapperCol={{ span: 24 }}
       style={{ maxWidth: 600 }}
@@ -232,11 +273,7 @@ const EditProductForm = (props) => {
           getValueFromEvent={normFile}
         >
           <Upload 
-            beforeUpload={() => false} 
-            listType="picture-card"
-            maxCount={1}
-            accept="image/*"
-            name="image"
+            {...uploadConfig}
           >
             <button
               style={{ color: 'inherit', cursor: 'inherit', border: 0, background: 'none' }}
