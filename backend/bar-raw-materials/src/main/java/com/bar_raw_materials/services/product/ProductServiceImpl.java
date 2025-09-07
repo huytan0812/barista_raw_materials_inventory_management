@@ -62,6 +62,34 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public void updateProduct(Product product, CreateProductDTO createProductDTO) {
+        BeanUtils.copyProperties(createProductDTO, product);
+
+        int initBaseUnitId = product.getBaseUnit().getId();
+        int updateBaseUnitId = createProductDTO.getBaseUnitId();
+        int initCategoryId = product.getCategory().getId();
+        int updateCategoryId = createProductDTO.getCategoryId();
+
+        System.out.println("Init product's base unit id: " + initBaseUnitId);
+        System.out.println("Create product DTO's base unit id: " + updateBaseUnitId);
+
+        System.out.println("Init product's category id: " + initCategoryId);
+        System.out.println("Create product DTO's category id: " + updateCategoryId);
+
+        if (initBaseUnitId != updateBaseUnitId) {
+            BaseUnit baseUnit = baseUnitRepository.findBaseUnitById(updateBaseUnitId);
+            product.setBaseUnit(baseUnit);
+        }
+
+        if (initCategoryId != updateCategoryId) {
+            Category category = categoryRepository.findById(updateCategoryId);
+            product.setCategory(category);
+        }
+
+        productRepository.save(product);
+    }
+
+    @Override
     public Boolean isDuplicateSKU(CreateProductDTO createProductDTO) {
         String SKU = createProductDTO.getSku();
         return productRepository.findBySku(SKU) != null;

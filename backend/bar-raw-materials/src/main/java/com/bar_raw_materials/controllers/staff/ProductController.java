@@ -4,15 +4,13 @@ import com.bar_raw_materials.dto.product.CreateProductDTO;
 import com.bar_raw_materials.dto.product.ProductDTO;
 import com.bar_raw_materials.utils.ImageUtils;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.lang.Nullable;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -74,21 +72,37 @@ public class ProductController extends BaseStaffController {
     }
 
     @PostMapping("update/{id}")
-    public ResponseEntity<String> update(
+    public ResponseEntity<Map<String, String>> update(
             @PathVariable("id") Integer id,
             @RequestPart("data") CreateProductDTO createProductDTO,
-            @RequestPart("image") MultipartFile image
+            @Nullable @RequestPart("image") MultipartFile image
     ) {
+        Product product = productService.getDetails(id);
+        Map<String, String> responseData = new HashMap<>();
+
         // check for product
-        if (productService.getDetails(id) == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        if (product == null) {
+            responseData.put("errorMsg", "Không tìm thấy sản phẩm");
+            return new ResponseEntity<>(responseData, HttpStatus.NOT_FOUND);
+        }
+
+        if (image != null) {
+            System.out.println("Image has been updated");
+            // processing image
+            String imageName = imageUtils.upload(image, "product");
+            createProductDTO.setImageName(imageName);
         }
 
         // check for duplicate sku
-        if (productService.isDuplicateSKU(createProductDTO)) {
-            return new ResponseEntity<>("SKU không được phép trùng", HttpStatus.BAD_REQUEST);
+        if (!product.getSku().equals(createProductDTO.getSku())) {
+            if (productService.isDuplicateSKU(createProductDTO)) {
+                responseData.put("errorMsg", "SKU không được phép trùng");
+                return new ResponseEntity<>(responseData, HttpStatus.BAD_REQUEST);
+            }
         }
 
-        return new ResponseEntity<>("Everything ok",HttpStatus.OK);
+        productService.updateProduct(product, createProductDTO);
+        responseData.put("successfulMsg", "Sản phẩm được cập nhật thành công");
+        return new ResponseEntity<>(responseData, HttpStatus.OK);
     }
 }
