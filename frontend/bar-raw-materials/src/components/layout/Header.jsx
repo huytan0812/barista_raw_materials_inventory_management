@@ -42,7 +42,6 @@ const ImsHeader = () => {
             });
             if (response.ok) {
                 const data = await response.json();
-                console.log("Business period: ", data);
                 setBusinessPeriod(data);
             }
         }

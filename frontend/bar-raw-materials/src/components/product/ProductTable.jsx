@@ -1,15 +1,33 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useCallback} from 'react'
 import {useNavigate} from 'react-router-dom';
-import {Table, Image, Flex, Button} from 'antd';
+import {Table, Image, Flex, Button, message} from 'antd';
 import { useAuthContext } from '../../contexts/AuthContext';
 import EditProductModal from './EditProductModal';
 import axiosHTTP from '../../services/ProductService'
 
 const ProductTable = ({currentPage, pageSize, refresh, setPageMetadata}) => {
+    // fetching data from server
     const [data, setData] = useState([]);
+    const [refreshAfterAction, setRefreshAfterAction] = useState(false);
     const navigate = useNavigate
     const { token } = useAuthContext();
+
+    // handling active modal corresponding to the onClick event trigger
+    // from a edit button on a product record
     const [activeModal, setActiveModal] = useState(0);
+    const [messageApi, contextHolder] = message.useMessage();
+
+    const success = (msg) => {
+        messageApi.open({
+        type: 'success',
+        content: msg,
+        });
+    };
+
+    const handleUpdateSuccess = (msg) => {
+        success(msg);
+        setRefreshAfterAction(true);
+    }
 
     const handleUpdateClick = (productId) => {
         setActiveModal(parseInt(productId));
@@ -106,6 +124,7 @@ const ProductTable = ({currentPage, pageSize, refresh, setPageMetadata}) => {
                         isActive={activeModal === record.productId}
                         productId={record.productId}
                         resetActiveModal={resetActiveModal}
+                        onUpdateSuccess={handleUpdateSuccess}
                     />
                     <Button color="red" variant="solid">
                       <span value={record.productId} style={{fontSize: '1.4rem'}}>Xóa</span>
@@ -117,42 +136,49 @@ const ProductTable = ({currentPage, pageSize, refresh, setPageMetadata}) => {
         }
     ]
 
-    useEffect(
-        () => {
-            const fetchProducts = async () => {
-                try {
-                    const response = await axiosHTTP.get('/list',
-                        {
-                            headers: {
-                                'Authorization': `Bearer ${token}`
-                            }
-                            ,
-                            params: {
-                                'page': currentPage - 1, // adjust for zero-based index in spring boot
-                                'size': pageSize
-                            }
-                        }
-                    )
-                    setData(response.data.content);
-                    const {content:_, ...rest} = response.data;
-                    setPageMetadata(rest);
-                }
-                catch (error) {
-                    console.log(error);
-                    navigate('/login');
-                }
-            }
+    const fetchProducts = useCallback(async () => {
+        try {
+            console.log("Fetching products");
+            const response = await axiosHTTP.get("/list", {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+            params: {
+                page: currentPage - 1, // adjust for zero-based index in spring boot
+                size: pageSize,
+            },
+            });
+
+            setData(response.data.content);
+            const { content: _, ...rest } = response.data;
+            setPageMetadata(rest);
+        } catch (error) {
+            console.log(error);
+            navigate("/login");
+        }
+    }, [token, currentPage, pageSize, navigate]);
+
+    // side effect for fetching products
+    useEffect(() => {
+        fetchProducts();
+    }, [fetchProducts]);
+
+    // side effect for refreshing product table
+    useEffect(() => {
+        if (refresh || refreshAfterAction) {
             fetchProducts();
-            // eslint-disable-next-line react-hooks/exhaustive-deps
-        }, [token, currentPage, pageSize, refresh, navigate]
-    )
+        }
+    }, [refresh, refreshAfterAction, fetchProducts]);
 
     return (
-        <Table
-            columns={columns}
-            dataSource={data.map(product => ({...product, key: product.productId}))}
-            pagination={false}
-        />
+        <React.Fragment>
+            {contextHolder}
+            <Table
+                columns={columns}
+                dataSource={data.map(product => ({...product, key: product.productId}))}
+                pagination={false}
+            />
+        </React.Fragment>
     )
 }
 

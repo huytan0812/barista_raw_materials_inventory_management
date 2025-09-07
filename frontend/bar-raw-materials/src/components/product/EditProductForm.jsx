@@ -4,6 +4,8 @@ import { UploadOutlined } from '@ant-design/icons';
 import {useAuthContext} from '../../contexts/AuthContext'
 import axiosHTTP from '../../services/ProductService'
 
+// Form hook use normFile for image field
+// as the resource of truth
 const normFile = e => {
   if (Array.isArray(e)) {
     return e;
@@ -19,7 +21,7 @@ const EditProductForm = (props) => {
   const [form] = Form.useForm();
 
   const { token } = useAuthContext();
-  const { isSubmit, onSubmitSuccess, resetForm, productId } = props;
+  const { isSubmit, onSubmitSuccess, productId } = props;
   const persistToken = useRef(token);
 
   const uploadConfig = {
@@ -35,19 +37,30 @@ const EditProductForm = (props) => {
     const submitData = async() => {
       try {
         const formData = new FormData();
+        // originFileObj only appears if new image is uploaded
         const imageFile = values.image?.[0]?.originFileObj;
         let data = {...values};
 
         if (imageFile) {
           formData.append('image', imageFile);
-          // remove image in field values
-          const {image:_, ...rest} = data;
-          data = rest;
+        }
+
+        // remove image in field values
+        const {image:_, ...rest} = data;
+        data = rest;
+
+        // if image already exists
+        if (values.image != null && values.image.length != 0) {
+          data.imageName = values.image[0].name;
+          console.log("Image file name:", data.imageName);
         }
 
         formData.append('data', new Blob([JSON.stringify(data)], { type: 'application/json' }));
 
-        const response = await fetch("http://localhost:8080/api/staff/product/add",
+        console.log("Form data:", values);
+        console.log("Form data after removing image:", data);
+
+        const response = await fetch(`http://localhost:8080/api/staff/product/update/${productId}`,
           {
             method: 'POST',
             headers: {
@@ -59,10 +72,10 @@ const EditProductForm = (props) => {
           const responseData = await response.json();
           if (response.ok) {
             console.log(responseData);
-            onSubmitSuccess(`Sản phẩm ${values.name} đã được thêm thành công`);
-            form.resetFields();
+            onSubmitSuccess(`Sản phẩm ${values.name} đã được cập nhật thành công`);
           }
           else {
+            console.log("Response data:", responseData);
             const errorMsg = responseData?.errorMsg || "Có lỗi xảy ra";
             form.setFields(
               [
@@ -79,7 +92,7 @@ const EditProductForm = (props) => {
         }
       }
     submitData();
-  }, [onSubmitSuccess, token]);
+  }, [onSubmitSuccess, token, productId]);
 
   // side effect for fetching product form fields
   const populatingFormData = async() => {
@@ -97,14 +110,14 @@ const EditProductForm = (props) => {
       'packSize': product.packSize,
       'description': product.description,
       'categoryId': product.category.id,
-      'image': [
+      'image': product.imageName != null ? [
         {
           uid: String(product.id),
           name: product.imageName,
           status: "done",
           url: `http://localhost:8080/api/image/product/${product.imageName}`,
         },
-      ],
+      ] : null,
       'listPrice': product.listPrice
     });
   }
@@ -126,15 +139,6 @@ const EditProductForm = (props) => {
       })
     }
   }, [form, isSubmit, onSubmitSuccess, onFinish]);
-
-  // side effect for resetting form fields
-  useEffect(() => {
-    // reset form fields when close modal is clicked
-    if (resetForm) {
-      console.log("Reset form");
-      form.resetFields();
-    }
-  }, [resetForm, form])
 
   // side effect for fetching base units
   useEffect(() => {
@@ -269,6 +273,7 @@ const EditProductForm = (props) => {
           label="Hình ảnh"
           labelAlign="left"
           name="image"
+          // value from normFile will be injected to the fileList property of Upload component
           valuePropName="fileList" 
           getValueFromEvent={normFile}
         >

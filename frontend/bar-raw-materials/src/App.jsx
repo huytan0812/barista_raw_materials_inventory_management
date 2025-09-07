@@ -20,7 +20,6 @@ function App() {
 
   useEffect(() => {
     if (token) {
-      console.log("Verifying JWT...");
       verifyJWT();
     }
   }, [token, verifyJWT]);

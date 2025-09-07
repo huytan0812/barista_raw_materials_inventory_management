@@ -2,18 +2,28 @@ import React, {useState, useEffect} from 'react'
 import { Modal, Button } from 'antd'
 import EditProductForm from './EditProductForm'
 
-const EditProductModal = ({isActive, productId, resetActiveModal}) => {
+const EditProductModal = ({isActive, productId, resetActiveModal, onUpdateSuccess}) => {
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const [submitForm, setSubmitForm] = useState(false);
-    const [resetForm, setResetForm] = useState(false);
 
     const handleOk = () => {
+        setSubmitForm(true);
+        setLoading(true);
+
+        setTimeout(() => {
+            setLoading(false);
+            setSubmitForm(false);
+        })
+    }
+
+    const handleCancel = () => {
         setOpen(false);
         resetActiveModal();
     }
 
-    const handleCancel = () => {
+    const handleSubmitSuccess = (msg) => {
+        onUpdateSuccess(msg);
         setOpen(false);
         resetActiveModal();
     }
@@ -38,7 +48,7 @@ const EditProductModal = ({isActive, productId, resetActiveModal}) => {
             footer={
             <>
                 <Button onClick={handleCancel}>Hủy</Button>
-                <Button type="primary" onClick={handleOk}>
+                <Button loading={loading} type="primary" onClick={handleOk}>
                     Xác nhận
                 </Button>
             </>
@@ -46,6 +56,8 @@ const EditProductModal = ({isActive, productId, resetActiveModal}) => {
         >
             <EditProductForm
                 productId={productId}
+                isSubmit={submitForm}
+                onSubmitSuccess={handleSubmitSuccess}
             />
         </Modal>
     )
