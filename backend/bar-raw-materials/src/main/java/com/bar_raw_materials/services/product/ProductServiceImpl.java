@@ -90,6 +90,11 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public void deleteProduct(int id) {
+        productRepository.deleteById((long) id);
+    }
+
+    @Override
     public Boolean isDuplicateSKU(CreateProductDTO createProductDTO) {
         String SKU = createProductDTO.getSku();
         return productRepository.findBySku(SKU) != null;

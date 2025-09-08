@@ -105,4 +105,21 @@ public class ProductController extends BaseStaffController {
         responseData.put("successfulMsg", "Sản phẩm được cập nhật thành công");
         return new ResponseEntity<>(responseData, HttpStatus.OK);
     }
+
+    @GetMapping("delete/{id}")
+    public ResponseEntity<Map<String, String>> delete(
+            @PathVariable("id") Integer id
+    )
+    {
+        Map<String, String> responseData = new HashMap<>();
+        Product product = productService.getDetails(id);
+        if (product == null) {
+            responseData.put("errorMsg", "Sản phẩm không tồn tại");
+            return new ResponseEntity<>(responseData, HttpStatus.NOT_FOUND);
+        }
+
+        productService.deleteProduct(id);
+        responseData.put("successfulMsg", "Sản phẩm " + product.getName() + " đã được xóa thành công");
+        return ResponseEntity.ok(responseData);
+    }
 }
