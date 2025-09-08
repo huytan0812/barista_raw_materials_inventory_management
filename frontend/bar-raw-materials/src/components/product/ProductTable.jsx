@@ -38,9 +38,18 @@ const ProductTable = ({currentPage, pageSize, refresh, setPageMetadata}) => {
         setRefreshAfterAction(false);
     }
 
+    const handleDeleteSuccess = (msg) => {
+        success(msg);
+        setRefreshAfterAction(true);
+        // setTimeout(
+        //     () => setRefreshAfterAction(false)
+        // );
+    };
+
     const handleDeleteClick = (productId) => {
         console.log("Open delete modal for product:", productId);
         setActiveDeleteModal(parseInt(productId));
+        setRefreshAfterAction(false);
     }
 
     // reset edit product active modal
@@ -154,6 +163,7 @@ const ProductTable = ({currentPage, pageSize, refresh, setPageMetadata}) => {
                         resetActiveModal={resetDeleteActiveModal}
                         productId={record.productId}
                         productName={record.name}
+                        onDeleteSuccess={handleDeleteSuccess}
                     />
                   </Flex>
                 )
@@ -190,7 +200,9 @@ const ProductTable = ({currentPage, pageSize, refresh, setPageMetadata}) => {
 
     // side effect for refreshing product table
     useEffect(() => {
+        console.log("Refresh after action:", refreshAfterAction);
         if (refresh || refreshAfterAction) {
+            console.log("On refreshing...");
             fetchProducts();
         }
     }, [refresh, refreshAfterAction, fetchProducts]);

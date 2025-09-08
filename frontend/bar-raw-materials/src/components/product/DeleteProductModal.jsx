@@ -1,13 +1,37 @@
 import React, {useState, useEffect} from 'react'
 import {Modal, Button} from 'antd'
 import { WarningFilled } from '@ant-design/icons';
+import { useAuthContext } from '../../contexts/AuthContext';
+import axiosHTTP from '../../services/ProductService';
 
-const DeleteProductModal = ({isActive, resetActiveModal, productId, productName}) => {
+
+const DeleteProductModal = ({isActive, 
+        resetActiveModal, 
+        productId, 
+        productName,
+        onDeleteSuccess
+    }) => {
     const [open, setOpen] = useState(false);
+    const { token } = useAuthContext();
 
     const handleOk = () => {
-        setOpen(false);
-        resetActiveModal();
+        const deleteProduct = async() => {
+            const response = await axiosHTTP.get(`/delete/${productId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            console.log(response);
+            if (response.status === 200) {
+                setOpen(false);
+                resetActiveModal();
+                onDeleteSuccess(response.data.successfulMsg);
+            }
+            else {
+                console.log(response.body);
+            }
+        }
+        deleteProduct();   
     };
     const handleCancel = () => {
         setOpen(false);
