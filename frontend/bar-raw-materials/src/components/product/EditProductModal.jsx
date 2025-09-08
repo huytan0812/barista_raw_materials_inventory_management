@@ -31,7 +31,6 @@ const EditProductModal = ({isActive, productId, resetActiveModal, onUpdateSucces
     useEffect(() => {
         if (isActive) {
             setOpen(true);
-            console.log("Product id:", productId);
         }   
     }, [isActive, productId]);
 

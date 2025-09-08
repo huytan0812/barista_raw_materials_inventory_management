@@ -52,13 +52,9 @@ const EditProductForm = (props) => {
         // if image already exists
         if (values.image != null && values.image.length != 0) {
           data.imageName = values.image[0].name;
-          console.log("Image file name:", data.imageName);
         }
 
         formData.append('data', new Blob([JSON.stringify(data)], { type: 'application/json' }));
-
-        console.log("Form data:", values);
-        console.log("Form data after removing image:", data);
 
         const response = await fetch(`http://localhost:8080/api/staff/product/update/${productId}`,
           {
@@ -75,7 +71,6 @@ const EditProductForm = (props) => {
             onSubmitSuccess(`Sản phẩm ${values.name} đã được cập nhật thành công`);
           }
           else {
-            console.log("Response data:", responseData);
             const errorMsg = responseData?.errorMsg || "Có lỗi xảy ra";
             form.setFields(
               [
@@ -102,7 +97,6 @@ const EditProductForm = (props) => {
       }
     });
     const product = response.data;
-    console.log(product);
     form.setFieldsValue({
       'sku': product.sku,
       'name': product.name,

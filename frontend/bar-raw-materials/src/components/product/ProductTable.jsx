@@ -3,6 +3,7 @@ import {useNavigate} from 'react-router-dom';
 import {Table, Image, Flex, Button, message} from 'antd';
 import { useAuthContext } from '../../contexts/AuthContext';
 import EditProductModal from './EditProductModal';
+import DeleteProductModal from './DeleteProductModal'
 import axiosHTTP from '../../services/ProductService'
 
 const ProductTable = ({currentPage, pageSize, refresh, setPageMetadata}) => {
@@ -16,6 +17,9 @@ const ProductTable = ({currentPage, pageSize, refresh, setPageMetadata}) => {
     // from a edit button on a product record
     const [activeModal, setActiveModal] = useState(0);
     const [messageApi, contextHolder] = message.useMessage();
+
+    // handling active delete modal
+    const [activeDeleteModal, setActiveDeleteModal] = useState(0);
 
     const success = (msg) => {
         messageApi.open({
@@ -31,10 +35,22 @@ const ProductTable = ({currentPage, pageSize, refresh, setPageMetadata}) => {
 
     const handleUpdateClick = (productId) => {
         setActiveModal(parseInt(productId));
+        setRefreshAfterAction(false);
     }
 
+    const handleDeleteClick = (productId) => {
+        console.log("Open delete modal for product:", productId);
+        setActiveDeleteModal(parseInt(productId));
+    }
+
+    // reset edit product active modal
     const resetActiveModal = () => {
         setActiveModal(0);
+    }
+
+    // reset delete product active modal
+    const resetDeleteActiveModal = () => {
+        setActiveDeleteModal(0);
     }
 
     const columns = [
@@ -126,9 +142,19 @@ const ProductTable = ({currentPage, pageSize, refresh, setPageMetadata}) => {
                         resetActiveModal={resetActiveModal}
                         onUpdateSuccess={handleUpdateSuccess}
                     />
-                    <Button color="red" variant="solid">
+                    <Button 
+                        color="red" 
+                        variant="solid"
+                        onClick={() => {handleDeleteClick(record.productId)}}
+                    >
                       <span value={record.productId} style={{fontSize: '1.4rem'}}>Xóa</span>
                     </Button>
+                    <DeleteProductModal
+                        isActive={activeDeleteModal === record.productId}
+                        resetActiveModal={resetDeleteActiveModal}
+                        productId={record.productId}
+                        productName={record.name}
+                    />
                   </Flex>
                 )
             },
@@ -138,7 +164,6 @@ const ProductTable = ({currentPage, pageSize, refresh, setPageMetadata}) => {
 
     const fetchProducts = useCallback(async () => {
         try {
-            console.log("Fetching products");
             const response = await axiosHTTP.get("/list", {
             headers: {
                 Authorization: `Bearer ${token}`,
