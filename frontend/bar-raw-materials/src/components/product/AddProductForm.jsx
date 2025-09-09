@@ -15,10 +15,9 @@ const {Option} = Select;
 const AddProductForm = (props) => {
   const [baseUnit, setBaseUnit] = useState([]);
   const [category, setCategory] = useState([]);
-  const [form] = Form.useForm();
 
   const { token } = useAuthContext();
-  const { isSubmit, onSubmitSuccess, resetForm } = props;
+  const { isSubmit, onSubmitSuccess, form } = props;
   const persistToken = useRef(token);
 
   const onFinish = useCallback((values, form) => {
@@ -84,14 +83,6 @@ const AddProductForm = (props) => {
       })
     }
   }, [form, isSubmit, onSubmitSuccess, onFinish]);
-
-  // side effect for resetting form fields
-  useEffect(() => {
-    // reset form fields when close modal is clicked
-    if (resetForm) {
-      form.resetFields();
-    }
-  }, [resetForm, form])
 
   // side effect for fetching base units
   useEffect(() => {

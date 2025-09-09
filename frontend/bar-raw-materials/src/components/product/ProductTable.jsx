@@ -41,13 +41,9 @@ const ProductTable = ({currentPage, pageSize, refresh, setPageMetadata}) => {
     const handleDeleteSuccess = (msg) => {
         success(msg);
         setRefreshAfterAction(true);
-        // setTimeout(
-        //     () => setRefreshAfterAction(false)
-        // );
     };
 
     const handleDeleteClick = (productId) => {
-        console.log("Open delete modal for product:", productId);
         setActiveDeleteModal(parseInt(productId));
         setRefreshAfterAction(false);
     }

@@ -4,7 +4,6 @@ import { WarningFilled } from '@ant-design/icons';
 import { useAuthContext } from '../../contexts/AuthContext';
 import axiosHTTP from '../../services/ProductService';
 
-
 const DeleteProductModal = ({isActive, 
         resetActiveModal, 
         productId, 
@@ -21,7 +20,6 @@ const DeleteProductModal = ({isActive,
                     'Authorization': `Bearer ${token}`
                 }
             })
-            console.log(response);
             if (response.status === 200) {
                 setOpen(false);
                 resetActiveModal();

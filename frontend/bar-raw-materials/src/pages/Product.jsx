@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import { Card, Input, Select, Pagination, Space, Button, Modal, message } from "antd";
+import { Card, Input, Select, Pagination, Space, Button, Modal, message, Form } from "antd";
 import ProductTable from '../components/product/ProductTable';
 import AddProductForm from '../components/product/AddProductForm.jsx';
 import { SoundTwoTone } from '@ant-design/icons';
@@ -11,6 +11,8 @@ const Product = () => {
   const [searchText, setSearchText] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
 
+  const [form] = Form.useForm();
+
   // used for <ProductTable>
   const [refresh, setRefresh] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -21,7 +23,6 @@ const Product = () => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [submitForm, setSubmitForm] = useState(false);
-  const [resetForm, setResetForm] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
 
   const success = (msg) => {
@@ -34,7 +35,6 @@ const Product = () => {
   const showModal = () => {
     setOpen(true);
     setRefresh(false);
-    setResetForm(false);
   };
   const handleOk = () => {
     setSubmitForm(true);
@@ -50,12 +50,8 @@ const Product = () => {
     }, 0);
   };
   const handleCancel = () => {
-    // use setTimeout here for setOpen to ensure AddProductForm is reset
-    // before being unmounted in the next render
-    setTimeout(() => {
-      setOpen(false);
-    });
-    setResetForm(true);
+    form.resetFields();
+    setOpen(false);
   };
 
   const handleSuccess = (msg) => {
@@ -109,7 +105,11 @@ const Product = () => {
                 </Button>
               ]}
             >
-              <AddProductForm isSubmit={submitForm} onSubmitSuccess={handleSuccess} resetForm={resetForm} />
+              <AddProductForm 
+                isSubmit={submitForm} 
+                onSubmitSuccess={handleSuccess}
+                form={form} 
+              />
             </Modal>
           </Space>
         </Space>
