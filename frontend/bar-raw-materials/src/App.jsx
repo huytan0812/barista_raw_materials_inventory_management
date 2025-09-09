@@ -10,6 +10,9 @@ import Inventory from './pages/Inventory'
 import Login from './pages/Login'
 import Product from './pages/Product'
 import Vendor from './pages/Vendor'
+import MainImportPage from './pages/MainImportPage.jsx'
+import Import from './pages/import/Import.jsx'
+import AddImportPaper from './pages/import/AddImportPaper.jsx'
 import Customer from './pages/Customer'
 import Permission from './pages/Permission'
 import Report from './pages/Report'
@@ -33,6 +36,10 @@ function App() {
         <Route path='/categories' element={<Category /> } />
         <Route path='/products' element={<Product /> } />
         <Route path='/vendor' element={<Vendor /> } />
+        <Route path='/import' element={<MainImportPage /> }>
+          <Route index element={<Import />} />
+          <Route path='/import/add_import_paper' element={<AddImportPaper />} />
+        </Route>
         <Route path='/customer' element={<Customer /> } />
         <Route path='/permissions' element={<Permission /> } />
         <Route path='/reports' element={<Report /> } />
