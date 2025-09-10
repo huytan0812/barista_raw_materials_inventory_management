@@ -16,9 +16,17 @@ public class BaseStaffController {
     public BaseStaffController(EntityService entityService) {
         this.entityService = entityService;
     }
+    
+    public BaseStaffController() {}
+
+    @GetMapping("all")
+    public ResponseEntity<List<?>> getAll() {
+        List<?> entity = entityService.getAll();
+        return ResponseEntity.ok(entity);
+    }
 
     @GetMapping("list")
-    public ResponseEntity<Page<?>> getAll(
+    public ResponseEntity<Page<?>> getPage(
             @Nullable @RequestParam(defaultValue="0", name="page") int page,
             @Nullable @RequestParam(defaultValue="10", name="size") int size
     ) {

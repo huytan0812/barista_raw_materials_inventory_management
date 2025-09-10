@@ -44,7 +44,7 @@ public class GoodsReceiptNote {
 
     @Size(max = 30)
     @NotNull
-    @Column(name = "invoiceNumber", nullable = false, length = 30)
+    @Column(name = "invoiceNumber", nullable = false, length = 30, unique = true)
     private String invoiceNumber;
 
     @ColumnDefault("(0)")

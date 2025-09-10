@@ -34,12 +34,12 @@ public class Vendor {
     @Column(name = "phoneNumber", length = 15)
     private String phoneNumber;
 
-    @Size(max = 15)
+    @Size(max = 50)
     @ColumnDefault("''")
     @Column(name = "email", length = 15)
     private String email;
 
-    @Size(max = 15)
+    @Size(max = 100)
     @ColumnDefault("''")
     @Column(name = "address", length = 15)
     private String address;
