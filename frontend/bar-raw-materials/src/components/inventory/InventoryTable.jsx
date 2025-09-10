@@ -3,7 +3,11 @@ import { Table } from "antd";
 import { useAuthContext } from '../../contexts/AuthContext'
 import axiosHTTP from '../../services/ProductInventory'
 
-const InventoryTable = () => {
+const InventoryTable = ({
+    currentPage,
+    pageSize,
+    setPageMetadata
+  }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const { token } = useAuthContext();
@@ -19,12 +23,14 @@ const InventoryTable = () => {
                     Authorization: `Bearer ${token}`
                 },
                 params: {
-                    page: 0,
-                    size: 10
+                    page: currentPage - 1,
+                    size: pageSize
                 }
             }
         )
         setData(response.data.content);
+        const { content: _, ...rest } = response.data;
+        setPageMetadata(rest);
       } catch (error) {
         console.error("Failed to fetch inventory:", error);
       } finally {
@@ -33,7 +39,7 @@ const InventoryTable = () => {
     };
 
     fetchInventory();
-  }, [token]);
+  }, [token, currentPage, pageSize]);
 
   const columns = [
     {
@@ -92,7 +98,7 @@ const InventoryTable = () => {
       dataSource={data}
       loading={loading}
       bordered
-      pagination={{ pageSize: 10 }}
+      pagination={false}
     />
   );
 };

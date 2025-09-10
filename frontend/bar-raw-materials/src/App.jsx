@@ -14,6 +14,7 @@ import MainImportPage from './pages/MainImportPage.jsx'
 import Import from './pages/import/Import.jsx'
 import AddGrn from './pages/import/AddGrn.jsx'
 import AddGrnItems from './pages/import/AddGrnItems.jsx'
+import VerifiedGrn from './pages/import/VerifiedGrn.jsx'
 import Customer from './pages/Customer'
 import Permission from './pages/Permission'
 import Report from './pages/Report'
@@ -41,6 +42,7 @@ function App() {
           <Route index element={<Import />} />
           <Route path='/import/add_grn' element={<AddGrn />} />
           <Route path='/import/add_grn/:grnId/add_grn_item' element={<AddGrnItems />} />
+          <Route path='/import/grn/:grnId' element={<VerifiedGrn />} />
         </Route>
         <Route path='/customer' element={<Customer /> } />
         <Route path='/permissions' element={<Permission /> } />

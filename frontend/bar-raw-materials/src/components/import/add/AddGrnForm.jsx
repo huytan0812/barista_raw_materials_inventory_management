@@ -31,7 +31,7 @@ const AddImportPaperForm = () => {
     messageAPI.open({
       type: 'success',
       content: msg,
-      duration: 1,
+      duration: 0.5,
       onClose: () => {
         navigate(`/import/add_grn/${grnId}/add_grn_item`);
       }
@@ -137,6 +137,15 @@ const AddImportPaperForm = () => {
                   <Option key={vendor.id} value={vendor.id}>{vendor.name}</Option>
                 ))}
               </Select>
+            </Form.Item>
+
+            <Form.Item
+              label="Người nhận"
+              labelAlign='left'
+              name="receivedBy"
+              rules={[{ required: false }]}
+            >
+              <Input />
             </Form.Item>
 
             <Form.Item
