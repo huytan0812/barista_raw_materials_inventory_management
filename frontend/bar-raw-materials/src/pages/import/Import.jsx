@@ -9,7 +9,7 @@ const Import = () => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate('/import/add_import_paper');
+    navigate('/import/add_grn');
   }
 
   return (

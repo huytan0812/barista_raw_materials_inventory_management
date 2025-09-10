@@ -42,3 +42,25 @@ p, span, a, li, h3 {
 .ant-tag-geekblue {
   font-size: 1.6rem;
 }
+
+.ant-picker-content th {
+  font-size: 1.8rem;
+  color: black;
+}
+
+.ant-picker-cell {
+  font-size: 1.6rem;
+  color: black;
+}
+
+.ant-picker-header {
+  font-size: 1.8rem;
+}
+
+.ant-picker-month-btn {
+  font-size: 1.8rem;
+}
+
+.ant-picker-year-btn {
+  font-size: 1.8rem;
+}
