@@ -1,38 +1,65 @@
 import React, {useState, useEffect, useRef} from 'react'
-import {Row, Col, Descriptions, Card, Image, Button} from 'antd'
+import {Row, Col, Descriptions, Card, Image, Button, Modal, Form} from 'antd'
 import { useAuthContext } from '../../../contexts/AuthContext'
+import BaseGrnForm from './BaseGrnForm'
+import vendorHTTP from '../../../services/VendorService'
 import grnHTTP from '../../../services/GoodsReceiptNoteService'
 
 const dateOptions = {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric"
-                };
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric"
+};
 
-const GrnDetails = ({params}) => {
-    const [grn, setGrn] = useState({});
-    const grnId = params.grnId;
+const normFile = e => {
+    if (Array.isArray(e)) {
+    return e;
+    }
+    return e?.fileList;
+};
+
+const onChange = (date, dateString) => {
+  console.log(date, dateString);
+};
+
+const GrnDetails = (props) => {
+    const {grnId, grn} = props;
+    const [open, setOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [vendor, setVendor] = useState({});
+    const [form] = Form.useForm();
     const {token} = useAuthContext();
     const persistToken = useRef(token);
 
+    const handleOk = () => {
+        setOpen(false);
+    };
+
+    const handleCancel = () => {
+        setOpen(false);
+    }
+
+    const handleEditGrnModal = () => {
+        setOpen(true);
+    }
+
+    // side effect for fetching vendor
     useEffect(() => {
-        const fetchGrn = async () => {
+        const fetchVendor = async() => {
             try {
-                const response = await grnHTTP.get(`/details/${grnId}`, {
+                const response = await vendorHTTP.get('/all', {
                     headers: {
                         Authorization: `Bearer ${persistToken.current}`
                     }
                 });
-                console.log(response);
-                console.log(response.data.vendor.name);
-                setGrn(response.data);
+                setVendor(response.data);
             }
-            catch (e) {
-                console.log(e);
+            catch (error) {
+                console.log(error);
             }
         }
-        fetchGrn();
-    }, [grnId]);
+        fetchVendor();
+    }, []);
 
     return (
         <Card
@@ -41,11 +68,43 @@ const GrnDetails = ({params}) => {
                 <span style={{ fontWeight: "bold" }}>Thông tin phiếu</span>
             }
             extra={
-            <Button type="primary">
-                Sửa phiếu
-            </Button>
+                <React.Fragment>
+                    <Button 
+                        type="primary"
+                        onClick={handleEditGrnModal}
+                    >
+                        Sửa phiếu
+                    </Button>
+                    <Modal
+                        title="Sửa phiếu"
+                        open={open}
+                        style={{
+                            fontSize: '1.4rem',
+                        }}
+                        width="800px"
+                        onOk={handleOk}
+                        onCancel={handleCancel}
+                        destroyOnHidden={true}
+                        footer={
+                        <>
+                            <Button onClick={handleCancel}>Hủy</Button>
+                            <Button loading={loading} type="primary" onClick={handleOk}>
+                                Xác nhận
+                            </Button>
+                        </>
+                        }
+                    >
+                        <BaseGrnForm 
+                            form={form}
+                            handleSubmit={handleOk}
+                            vendor={vendor}
+                            onChange={onChange}
+                            normFile={normFile}
+                        />
+                    </Modal>
+                </React.Fragment>
             }
-      >
+        >
         <Row gutter={24} align="middle">
             <Col span={18}>
                 <Descriptions column={2} bordered size="small">

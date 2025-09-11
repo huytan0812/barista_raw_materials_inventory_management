@@ -1,11 +1,34 @@
 import React from 'react'
-import {Flex} from 'antd'
+import {Flex, Breadcrumb} from 'antd'
+import {NavLink} from 'react-router-dom'
 import AddGrnForm from '../../components/import/add/AddGrnForm'
 
 const AddGrn = () => {
   return (
     <React.Fragment>
-      <Flex justify='center' align='center' style={{width: '100%'}}>
+      <div>
+        <Breadcrumb 
+          items={
+            [ {
+                title:  (<NavLink to="/import">
+                          <span>Nhập kho</span>
+                        </NavLink>)
+              },
+              {
+                title: "Tạo phiếu nhập"
+              }
+            ]
+          }
+        />
+      </div>
+      <Flex 
+        justify='center' 
+        align='center' 
+        style={{
+          width: '100%',
+          marginTop: '0.8rem'
+        }}
+      >
         <AddGrnForm />
       </Flex>
     </React.Fragment>

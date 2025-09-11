@@ -3,6 +3,7 @@ import {useNavigate} from 'react-router-dom'
 import {Form, DatePicker, Select, Input, Upload, Card, Button, message} from 'antd'
 import { UploadOutlined } from '@ant-design/icons';
 import { useAuthContext } from '../../../contexts/AuthContext'
+import BaseGrnForm from './BaseGrnForm';
 import vendorHTTP from '../../../services/VendorService'
 import grnHTTP from '../../../services/GoodsReceiptNoteService'
 
@@ -113,7 +114,7 @@ const AddImportPaperForm = () => {
         title="Tạo phiếu nhập"
         style={{flex: 0.6}}
       >
-        <Form
+        {/* <Form
           size="middle"
           form={form}
           name="basic"
@@ -216,7 +217,14 @@ const AddImportPaperForm = () => {
                 Xác nhận
               </Button>
             </Form.Item>
-        </Form>
+        </Form> */}
+        <BaseGrnForm
+          form={form}
+          handleSubmit={handleSubmit}
+          vendor={vendor}
+          onChange={onChange}
+          normFile={normFile}
+        />
       </Card>
     </React.Fragment>
   )
