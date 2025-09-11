@@ -47,8 +47,6 @@ const AddImportPaperForm = () => {
   };
 
   const handleSubmit = (values) => {
-    console.log("submit form");
-    console.log(values);
     const addGrn = async() => {
       const formData = new FormData();
       // new uploaded image will contain `originFileObj` property
@@ -146,6 +144,20 @@ const AddImportPaperForm = () => {
               rules={[{ required: false }]}
             >
               <Input />
+            </Form.Item>
+
+            <Form.Item
+              label="Ngày nhận"
+              labelAlign='left'
+              name="dateReceived"
+              rules={[{ required: false }]}
+            >
+              <DatePicker
+                format="DD/MM/YYYY"
+                size="middle" 
+                onChange={onChange} 
+                needConfirm 
+              />
             </Form.Item>
 
             <Form.Item

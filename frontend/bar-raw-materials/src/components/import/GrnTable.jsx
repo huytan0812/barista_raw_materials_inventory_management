@@ -35,7 +35,6 @@ const GrnTable = ({
                         size: pageSize
                     }
                 });
-                console.log(response);
                 if (response.status === 200) {
                     setGrn(response.data.content);
                     const { content: _, ...rest } = response.data;

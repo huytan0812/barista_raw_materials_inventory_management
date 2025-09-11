@@ -1,7 +1,13 @@
 import React, {useState, useEffect, useRef} from 'react'
-import {Flex, Space, Row, Col, Image, Button} from 'antd'
+import {Row, Col, Descriptions, Card, Image, Button} from 'antd'
 import { useAuthContext } from '../../../contexts/AuthContext'
 import grnHTTP from '../../../services/GoodsReceiptNoteService'
+
+const dateOptions = {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric"
+                };
 
 const GrnDetails = ({params}) => {
     const [grn, setGrn] = useState({});
@@ -29,84 +35,59 @@ const GrnDetails = ({params}) => {
     }, [grnId]);
 
     return (
-        <Row
-            align="middle"
-            gutter="16"
-            style={{
-                justifyContent: 'center'
-            }}
-        >
-            <Col
-                span={16}
-            >
-                <p>
-                    <Space
-                        wrap="wrap"
-                        gap="16"
-                    >
-                        <p>
-                            <strong style={{fontSize: '1.4rem'}}>Mã số phiếu: </strong>
-                            <span style={{fontSize: '1.4rem'}}>{params.grnId}</span>
-                        </p>
-                        <p>
-                            <strong style={{fontSize: '1.4rem'}}>Nhà cung cấp: </strong>
-                            <span style={{fontSize: '1.4rem'}}>{grn?.vendor?.name}</span>
-                        </p>
-                    </Space>
-                </p>
-                <p>
-                    <Space
-                        wrap="wrap"
-                        gap="16"
-                    >
-                        <p>
-                            <strong style={{fontSize: '1.4rem'}}>Người nhận: </strong>
-                            <span style={{fontSize: '1.4rem'}}>{grn?.receivedBy}</span>
-                        </p>
-                        <p>
-                            <strong style={{fontSize: '1.4rem'}}>Người tạo phiếu: </strong>
-                            <span style={{fontSize: '1.4rem'}}>{grn?.createdBy?.username}</span>
-                        </p>
-                    </Space>
-                </p>
-                <p>
-                    <Space
-                        wrap="wrap"
-                        gap="16"
-                    >
-                        <p>
-                            <strong style={{fontSize: '1.4rem'}}>Số hóa đơn: </strong>
-                            <span style={{fontSize: '1.4rem'}}>{grn.invoiceNumber}</span>
-                        </p>
-                        <p>
-                            <strong style={{fontSize: '1.4rem'}}>Ngày tạo hóa đơn: </strong>
-                            <span style={{fontSize: '1.4rem'}}>{grn.invoiceDate}</span>
-                        </p>
-                    </Space>
-                </p>
+        <Card
+            className="mb-6 shadow-md rounded-2xl"
+            title={
+                <span style={{ fontWeight: "bold" }}>Thông tin phiếu</span>
+            }
+            extra={
+            <Button type="primary">
+                Sửa phiếu
+            </Button>
+            }
+      >
+        <Row gutter={24} align="middle">
+            <Col span={18}>
+                <Descriptions column={2} bordered size="small">
+                    <Descriptions.Item label="Mã phiếu nhập">{grn?.id}</Descriptions.Item>
+                    <Descriptions.Item label="Người tạo">{grn?.createdBy?.username}</Descriptions.Item>
+                    <Descriptions.Item label="Nhà cung cấp">{grn?.vendor?.name}</Descriptions.Item>
+                    <Descriptions.Item label="Số hóa đơn">{grn?.invoiceNumber}</Descriptions.Item>
+                    <Descriptions.Item label="Ngày tạo hóa đơn">
+                        {grn.invoiceDate && new Intl.DateTimeFormat("vi-VN", dateOptions)
+                        .format(new Date(grn.invoiceDate))}
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Người nhận">{grn?.receivedBy}</Descriptions.Item>
+                    <Descriptions.Item label="Ngày nhận">
+                        {
+                            grn.dateReceived && new Intl.DateTimeFormat("vi-VN", dateOptions)
+                            .formatRange(new Date(grn.dateReceived))
+                        }
+                    </Descriptions.Item>
+                </Descriptions>
             </Col>
-            <Col>
-                <Image
-                    width="15rem"
-                    src={`http://localhost:8080/api/image/vendor/${grn?.invoiceImage}`}
-                />
-                <p
+            <Col span={6}>
+                <h3 
                     style={{
                         textAlign: 'center',
-                        fontSize: '1.2rem'
+                        fontSize: '1.4rem'
                     }}
                 >
-                    Hình ảnh hóa đơn
-                </p>
-            </Col>
-            <Col>
-                <Button
-                    type="primary"
-                >
-                    Sửa
-                </Button>
+                    Ảnh hóa đơn
+                </h3>
+                <Image
+                    style={{ 
+                            width: "75%",
+                            height: "auto",
+                            borderRadius: "8px",
+                        }}
+                    align="center"
+                    src={`http://localhost:8080/api/image/vendor/${grn?.invoiceImage}`}
+                    alt="Invoice"
+                />
             </Col>
         </Row>
+      </Card>
   )
 }
 
