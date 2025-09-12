@@ -1,6 +1,7 @@
 import React from 'react'
 import {Form, Input, Select, DatePicker, Upload, Button} from 'antd'
 import { UploadOutlined } from '@ant-design/icons';
+import dayjs from "dayjs"
 
 const {Option} = Select;
 
@@ -10,8 +11,30 @@ const BaseGrnForm = (props) => {
         handleSubmit,
         vendor,
         onDateChange,
-        normFile 
+        normFile,
+        mode,
+        grn 
     } = props;
+
+    console.log("Mode:", mode);
+    if (mode === "update") {
+        form.setFieldsValue({
+            'id': grn?.id,
+            'vendorId': grn?.vendor?.id,
+            'receivedBy': grn?.receivedBy,
+            'dateReceived': grn?.dateReceived ? dayjs(grn.dateReceived) : null,
+            'invoiceNumber': grn?.invoiceNumber,
+            'invoiceDate': grn?.invoiceDate ? dayjs(grn.invoiceDate) : null,
+            'image': grn?.invoiceImage ? [
+                {
+                    uid: String(grn?.id),
+                    name: grn?.invoiceImage,
+                    status: "done",
+                    url: `http://localhost:8080/api/image/vendor/${grn?.invoiceImage}`,
+                },
+            ] : null
+        })
+    }
 
     return (
         <Form
@@ -25,6 +48,11 @@ const BaseGrnForm = (props) => {
             encType='multipart/form-data'
             onFinish={handleSubmit}
         >
+            {mode==="update" && 
+            <Form.Item label="Hidden Field" name="id" hidden={true}>
+                <Input />
+            </Form.Item>
+            }
             <Form.Item
                 label="Nhà cung cấp"
                 labelAlign='left'
@@ -77,10 +105,10 @@ const BaseGrnForm = (props) => {
                 rules={[{ required: true, message: 'Ngày tạo hóa đơn không được để trống' }]}
             >
                 <DatePicker
-                format="DD/MM/YYYY"
-                size="middle" 
-                onChange={onDateChange} 
-                needConfirm 
+                    format="DD/MM/YYYY"
+                    size="middle" 
+                    onChange={onDateChange} 
+                    needConfirm 
                 />
             </Form.Item>
 
@@ -112,11 +140,14 @@ const BaseGrnForm = (props) => {
                 </Upload>
             </Form.Item>
 
-            <Form.Item label={null}>
-                <Button type="primary" htmlType="submit">
-                Xác nhận
-                </Button>
-            </Form.Item>
+            {
+                mode!=="update" &&
+                <Form.Item label={null}>
+                    <Button type="primary" htmlType="submit">
+                        Xác nhận
+                    </Button>
+                </Form.Item> 
+            }
         </Form>
     )
 }

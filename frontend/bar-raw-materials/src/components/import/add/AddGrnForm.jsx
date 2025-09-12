@@ -54,6 +54,7 @@ const AddImportPaperForm = () => {
       const imageFile = values.image?.[0]?.originFileObj;
       // format date to ISO format
       values.invoiceDate?.format("YYYY-MM-DD");
+      values.dateReceived?.format("YYYY-MM-DD");
       let data = {...values};
 
       if (imageFile) {
@@ -224,6 +225,7 @@ const AddImportPaperForm = () => {
           vendor={vendor}
           onChange={onChange}
           normFile={normFile}
+          mode="create"
         />
       </Card>
     </React.Fragment>

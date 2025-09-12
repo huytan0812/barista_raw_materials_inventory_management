@@ -100,6 +100,8 @@ const GrnDetails = (props) => {
                             vendor={vendor}
                             onChange={onChange}
                             normFile={normFile}
+                            mode="update"
+                            grn={grn}
                         />
                     </Modal>
                 </React.Fragment>
@@ -120,7 +122,7 @@ const GrnDetails = (props) => {
                     <Descriptions.Item label="Ngày nhận">
                         {
                             grn.dateReceived && new Intl.DateTimeFormat("vi-VN", dateOptions)
-                            .formatRange(new Date(grn.dateReceived))
+                            .format(new Date(grn.dateReceived))
                         }
                     </Descriptions.Item>
                 </Descriptions>
@@ -141,7 +143,7 @@ const GrnDetails = (props) => {
                             borderRadius: "8px",
                         }}
                     align="center"
-                    src={`http://localhost:8080/api/image/vendor/${grn?.invoiceImage}`}
+                    src={grn?.invoiceImage && `http://localhost:8080/api/image/vendor/${grn?.invoiceImage}`}
                     alt="Invoice"
                 />
             </Col>
