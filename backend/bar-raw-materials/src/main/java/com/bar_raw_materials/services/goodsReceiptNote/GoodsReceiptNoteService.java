@@ -8,5 +8,5 @@ public interface GoodsReceiptNoteService extends EntityService {
     GoodsReceiptNote createGrn(CreateGrnDTO createGrnDTO);
     Boolean isDuplicateInvoiceNumber(String invoiceNumber);
     GoodsReceiptNote getDetails(int id);
-    void update (CreateGrnDTO createGrnDTO);
+    void update (GoodsReceiptNote grn, CreateGrnDTO createGrnDTO);
 }

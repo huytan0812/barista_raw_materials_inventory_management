@@ -7,6 +7,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 
 import com.bar_raw_materials.services.goodsReceiptNote.GoodsReceiptNoteService;
@@ -39,7 +40,7 @@ public class GoodsReceiptNoteController extends BaseStaffController{
     @PostMapping("add")
     public ResponseEntity<Map<String, String>> add(
             @RequestPart("data") CreateGrnDTO createGrnDTO,
-            @RequestPart("image") MultipartFile image
+            @Nullable @RequestPart("image") MultipartFile image
     ) {
         Map<String, String> responseData = new HashMap<>();
         User currentAuthorizedUser = authUtils.getCurrentAuthorizedUser();
@@ -50,8 +51,10 @@ public class GoodsReceiptNoteController extends BaseStaffController{
 
         createGrnDTO.setCreatedBy(currentAuthorizedUser);
 
-        String imageName = imageUtils.upload(image, "vendor");
-        createGrnDTO.setInvoiceImage(imageName);
+        if (image != null) {
+            String imageName = imageUtils.upload(image, "vendor");
+            createGrnDTO.setInvoiceImage(imageName);
+        }
 
         if (goodsReceiptNoteService.isDuplicateInvoiceNumber(createGrnDTO.getInvoiceNumber())) {
             responseData.put("duplicateInvoiceNumber", "Số hóa đơn đã tồn tại");
@@ -86,5 +89,42 @@ public class GoodsReceiptNoteController extends BaseStaffController{
         BeanUtils.copyProperties(goodsReceiptNote, createGrnDTO);
 
         return ResponseEntity.ok(createGrnDTO);
+    }
+
+    @PostMapping("update/{id}")
+    public ResponseEntity<Map<String, String>> update(
+            @PathVariable("id") Integer id,
+            @RequestPart("data") CreateGrnDTO createGrnDTO,
+            @Nullable @RequestPart("image") MultipartFile image
+    ) {
+        GoodsReceiptNote grn = goodsReceiptNoteService.getDetails(id);
+        if (grn == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        createGrnDTO.setId(id);
+        createGrnDTO.setCreatedBy(grn.getCreatedBy());
+
+        if (!createGrnDTO.getInvoiceNumber().equals(grn.getInvoiceNumber())
+            && goodsReceiptNoteService.isDuplicateInvoiceNumber(createGrnDTO.getInvoiceNumber())
+        ) {
+            Map<String, String> responseData = new HashMap<>();
+            responseData.put("duplicateInvoiceNumber", "Số hóa đơn không được trùng");
+            return new ResponseEntity<>(responseData, HttpStatus.BAD_REQUEST);
+        }
+
+        // if new image was uploaded
+        if (image != null) {
+            String imageName = imageUtils.upload(image, "vendor");
+            createGrnDTO.setInvoiceImage(imageName);
+        }
+
+        try {
+            goodsReceiptNoteService.update(grn, createGrnDTO);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

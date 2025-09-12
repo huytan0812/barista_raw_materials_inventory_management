@@ -67,7 +67,15 @@ public class GoodsReceiptNoteServiceImpl implements GoodsReceiptNoteService {
     }
 
     @Override
-    public void update(CreateGrnDTO createGrnDTO) {
-
+    public void update(GoodsReceiptNote grn, CreateGrnDTO createGrnDTO) {
+        BeanUtils.copyProperties(createGrnDTO, grn);
+        System.out.println("Created by: " + grn.getCreatedBy().getUsername());
+        int vendorId = createGrnDTO.getVendorId();
+        if (vendorId != grn.getVendor().getId()) {
+            System.out.println("Old vendor id: " + grn.getVendor().getId());
+            System.out.println("New vendor id: " + vendorId);
+            grn.setVendor(vendorRepository.findById(vendorId).orElse(null));
+        }
+        goodsReceiptNoteRepository.save(grn);
     }
 }
