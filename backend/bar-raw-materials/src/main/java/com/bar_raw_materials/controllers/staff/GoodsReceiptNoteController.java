@@ -3,13 +3,11 @@ package com.bar_raw_materials.controllers.staff;
 import com.bar_raw_materials.dto.goodsReceiptNote.CreateGrnDTO;
 import com.bar_raw_materials.entities.GoodsReceiptNote;
 import com.bar_raw_materials.entities.User;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.bar_raw_materials.services.goodsReceiptNote.GoodsReceiptNoteService;
 import com.bar_raw_materials.utils.ImageUtils;
@@ -73,5 +71,20 @@ public class GoodsReceiptNoteController extends BaseStaffController{
         responseData.put("successfulMsg", "Phiếu nhập kho đã được tạo thành công");
         responseData.put("grnId", savedGrn.getId().toString());
         return ResponseEntity.ok(responseData);
+    }
+
+    @GetMapping("update/{id}")
+    public ResponseEntity<CreateGrnDTO> update(
+            @PathVariable("id") Integer id
+    ) {
+        GoodsReceiptNote goodsReceiptNote = goodsReceiptNoteService.getDetails(id);
+        if (goodsReceiptNote == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        CreateGrnDTO createGrnDTO = new CreateGrnDTO();
+        BeanUtils.copyProperties(goodsReceiptNote, createGrnDTO);
+
+        return ResponseEntity.ok(createGrnDTO);
     }
 }

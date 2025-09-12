@@ -59,4 +59,11 @@ public class GoodsReceiptNote {
     @Column(name = "isConfirmed", nullable = false)
     private Boolean isConfirmed = false;
 
+    @Size(max = 50)
+    @Column(name = "receivedBy", length = 50)
+    private String receivedBy;
+
+    @Column(name = "dateReceived")
+    private LocalDate dateReceived;
+
 }

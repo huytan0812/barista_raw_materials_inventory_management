@@ -1,18 +1,19 @@
 package com.bar_raw_materials.services.goodsReceiptNote;
 
 import com.bar_raw_materials.dto.goodsReceiptNote.CreateGrnDTO;
+import com.bar_raw_materials.dto.goodsReceiptNote.GrnDTO;
 import com.bar_raw_materials.entities.GoodsReceiptNote;
 import com.bar_raw_materials.entities.Vendor;
 import com.bar_raw_materials.repositories.GoodsReceiptNoteRepository;
 import com.bar_raw_materials.repositories.VendorRepository;
-import com.bar_raw_materials.entities.User;
-import com.bar_raw_materials.repositories.UserRepository;
 import com.bar_raw_materials.entities.BusinessPeriod;
 import com.bar_raw_materials.repositories.BusinessPeriodRepository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -24,7 +25,6 @@ import java.time.Instant;
 public class GoodsReceiptNoteServiceImpl implements GoodsReceiptNoteService {
     private final GoodsReceiptNoteRepository goodsReceiptNoteRepository;
     private final VendorRepository vendorRepository;
-    private final UserRepository userRepository;
     private final BusinessPeriodRepository businessPeriodRepository;
 
     @Override
@@ -33,13 +33,14 @@ public class GoodsReceiptNoteServiceImpl implements GoodsReceiptNoteService {
     }
 
     @Override
-    public Page<?> getPage(int page, int size) {
-        return null;
+    public Page<GrnDTO> getPage(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return goodsReceiptNoteRepository.pagination(pageable);
     }
 
     @Override
-    public <T> T getDetails(int id) {
-        return null;
+    public GoodsReceiptNote getDetails(int id) {
+        return goodsReceiptNoteRepository.findById(id);
     }
 
     @Override
@@ -63,5 +64,10 @@ public class GoodsReceiptNoteServiceImpl implements GoodsReceiptNoteService {
     @Override
     public Boolean isDuplicateInvoiceNumber(String invoiceNumber) {
         return goodsReceiptNoteRepository.findByInvoiceNumber(invoiceNumber) != null;
+    }
+
+    @Override
+    public void update(CreateGrnDTO createGrnDTO) {
+
     }
 }

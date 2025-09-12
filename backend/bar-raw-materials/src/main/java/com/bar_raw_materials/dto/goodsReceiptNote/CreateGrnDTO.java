@@ -14,6 +14,8 @@ public class CreateGrnDTO {
     private Integer id;
     private Integer vendorId;
     private User createdBy;
+    private String receivedBy;
+    private LocalDate dateReceived;
     private String invoiceNumber;
     private LocalDate invoiceDate;
     private String invoiceImage;

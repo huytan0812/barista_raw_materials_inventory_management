@@ -7,4 +7,6 @@ import com.bar_raw_materials.services.EntityService;
 public interface GoodsReceiptNoteService extends EntityService {
     GoodsReceiptNote createGrn(CreateGrnDTO createGrnDTO);
     Boolean isDuplicateInvoiceNumber(String invoiceNumber);
+    GoodsReceiptNote getDetails(int id);
+    void update (CreateGrnDTO createGrnDTO);
 }
