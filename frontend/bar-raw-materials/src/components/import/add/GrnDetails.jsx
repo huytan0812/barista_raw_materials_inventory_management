@@ -23,17 +23,63 @@ const onChange = (date, dateString) => {
 };
 
 const GrnDetails = (props) => {
-    const {grnId, grn} = props;
-    const [open, setOpen] = useState(false);
-    const [loading, setLoading] = useState(false);
+    const {grnId, grn, onEditSuccess} = props;
+    // states for rendering vendors in form
     const [vendor, setVendor] = useState({});
+    // states for handling modal
+    const [open, setOpen] = useState(false);
+
     const [form] = Form.useForm();
     const {token} = useAuthContext();
     const persistToken = useRef(token);
 
     const handleOk = () => {
-        setOpen(false);
+        // use form.submit() from AntD Form to trigger onFinish event handler
+        form.submit();
     };
+
+    const handleSubmit = (values) => {
+        console.log(values);
+        const submit = async() => {
+            const formData = new FormData();
+            const {image, ...rest} = values;
+            const imageFile = image;
+            const data = rest;
+            // format date
+            if (data.dateReceived) data.dateReceived = data.dateReceived.format("YYYY-MM-DD");
+            if (data.invoiceDate) data.invoiceDate = data.invoiceDate.format("YYYY-MM-DD");
+
+            if (imageFile?.[0]?.originFileObj) {
+                formData.append('image', imageFile[0].originFileObj);
+            }
+            if (imageFile != null && imageFile.length != 0) {
+                data.invoiceImage = imageFile[0].name;
+            }
+            formData.append('data', new Blob([JSON.stringify(data)], {type: 'application/json'}));
+            try {
+                const response = await grnHTTP.post(`update/${grnId}`, formData, {
+                    headers: {
+                        Authorization: `Bearer ${persistToken.current}`,
+                        'Content-Type': "multipart/form-data"
+                    }
+                });
+                if (response.status === 200) {
+                    setOpen(false);
+                    onEditSuccess(`Phiếu nhập kho ${grnId} cập nhật thành công`);
+                }
+            }
+            catch (error) {
+                const responseData = error.response?.data?.duplicateInvoiceNumber;
+                form.setFields([
+                    {
+                        name: 'invoiceNumber',
+                        errors: [responseData]
+                    }
+                ]);
+            }
+        }
+        submit();
+    }
 
     const handleCancel = () => {
         setOpen(false);
@@ -88,7 +134,7 @@ const GrnDetails = (props) => {
                         footer={
                         <>
                             <Button onClick={handleCancel}>Hủy</Button>
-                            <Button loading={loading} type="primary" onClick={handleOk}>
+                            <Button type="primary" onClick={handleOk}>
                                 Xác nhận
                             </Button>
                         </>
@@ -96,9 +142,9 @@ const GrnDetails = (props) => {
                     >
                         <BaseGrnForm 
                             form={form}
-                            handleSubmit={handleOk}
+                            handleSubmit={handleSubmit}
                             vendor={vendor}
-                            onChange={onChange}
+                            onDateChange={onChange}
                             normFile={normFile}
                             mode="update"
                             grn={grn}
@@ -128,24 +174,40 @@ const GrnDetails = (props) => {
                 </Descriptions>
             </Col>
             <Col span={6}>
-                <h3 
-                    style={{
-                        textAlign: 'center',
-                        fontSize: '1.4rem'
-                    }}
-                >
-                    Ảnh hóa đơn
-                </h3>
-                <Image
-                    style={{ 
-                            width: "75%",
-                            height: "auto",
-                            borderRadius: "8px",
+                {
+                    grn?.invoiceImage ?
+                    (
+                        <React.Fragment>
+                            <h3 
+                                style={{
+                                    textAlign: 'center',
+                                    fontSize: '1.4rem'
+                                }}
+                            >
+                            Ảnh hóa đơn
+                            </h3>
+                            <Image
+                                style={{ 
+                                        width: "75%",
+                                        height: "auto",
+                                        borderRadius: "8px",
+                                    }}
+                                align="center"
+                                src={`http://localhost:8080/api/image/vendor/${grn?.invoiceImage}`}
+                                alt="Invoice"
+                            />
+                        </React.Fragment>
+                    )
+                    :
+                    <h3 
+                        style={{
+                            textAlign: 'center',
+                            fontSize: '1.4rem'
                         }}
-                    align="center"
-                    src={grn?.invoiceImage && `http://localhost:8080/api/image/vendor/${grn?.invoiceImage}`}
-                    alt="Invoice"
-                />
+                    >
+                        Chưa có ảnh
+                    </h3>
+                }
             </Col>
         </Row>
       </Card>

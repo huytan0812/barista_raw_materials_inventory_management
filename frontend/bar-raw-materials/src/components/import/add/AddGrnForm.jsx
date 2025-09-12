@@ -53,8 +53,9 @@ const AddImportPaperForm = () => {
       // new uploaded image will contain `originFileObj` property
       const imageFile = values.image?.[0]?.originFileObj;
       // format date to ISO format
-      values.invoiceDate?.format("YYYY-MM-DD");
-      values.dateReceived?.format("YYYY-MM-DD");
+      if (values.invoiceDate) values.invoiceDate = values.invoiceDate.format("YYYY-MM-DD");
+      if (values.dateReceived) values.dateReceived = values.dateReceived.format("YYYY-MM-DD");
+      
       let data = {...values};
 
       if (imageFile) {
@@ -223,7 +224,7 @@ const AddImportPaperForm = () => {
           form={form}
           handleSubmit={handleSubmit}
           vendor={vendor}
-          onChange={onChange}
+          onDateChange={onChange}
           normFile={normFile}
           mode="create"
         />

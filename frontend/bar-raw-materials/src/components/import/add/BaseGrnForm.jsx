@@ -143,6 +143,9 @@ const BaseGrnForm = (props) => {
             {
                 mode!=="update" &&
                 <Form.Item label={null}>
+                    {/* submit button in AntD Form component will automatically
+                        trigger onFinish event and pass the form values to the onFinish event handler
+                    */}
                     <Button type="primary" htmlType="submit">
                         Xác nhận
                     </Button>

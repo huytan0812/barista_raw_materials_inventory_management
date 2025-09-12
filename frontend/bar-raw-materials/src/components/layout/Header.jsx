@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import { Header } from 'antd/es/layout/layout'
 import { useLayoutContext } from '../../contexts/LayoutContext'
 import { BellOutlined, UserOutlined, SettingFilled, LogoutOutlined } from '@ant-design/icons'
@@ -29,6 +29,7 @@ const ImsHeader = () => {
     const navigate = useNavigate();
     const { colorBgContainer } = useLayoutContext();
     const { logout, token } = useAuthContext();
+    const persistToken = useRef(token);
     const [businessPeriod, setBusinessPeriod] = useState(null);
 
     useEffect(() => {
@@ -37,7 +38,7 @@ const ImsHeader = () => {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${persistToken.current}`
                 }
             });
             if (response.ok) {
@@ -46,7 +47,7 @@ const ImsHeader = () => {
             }
         }
         getBusinessPeriod();
-    }, [token])
+    }, []);
 
     const handleLogoutClick = () => {
         logout();
