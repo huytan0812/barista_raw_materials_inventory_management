@@ -40,7 +40,7 @@ const BaseGrnForm = (props) => {
         <Form
             size="middle"
             form={form}
-            name="basic"
+            name="grnForm"
             labelCol={{ span: 6 }}
             wrapperCol={{ span: 24 }}
             initialValues={{ remember: true }}
