@@ -37,9 +37,8 @@ public class GoodsReceiptItem {
     @Column(name = "quantityImport", nullable = false)
     private Integer quantityImport;
 
-    @NotNull
     @ColumnDefault("0")
-    @Column(name = "quantityRemain", nullable = false)
+    @Column(name = "quantityRemain")
     private Integer quantityRemain;
 
     @NotNull

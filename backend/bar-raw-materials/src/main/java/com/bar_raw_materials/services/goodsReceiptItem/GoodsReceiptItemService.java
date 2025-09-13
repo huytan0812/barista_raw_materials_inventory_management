@@ -1,4 +1,16 @@
 package com.bar_raw_materials.services.goodsReceiptItem;
 
-public interface GoodsReceiptItemService {
+import com.bar_raw_materials.dto.goodsReceiptItem.CreateGrnItemDTO;
+import com.bar_raw_materials.entities.GoodsReceiptItem;
+import com.bar_raw_materials.services.EntityService;
+import org.springframework.data.domain.Page;
+
+public interface GoodsReceiptItemService extends EntityService {
+    Page<GoodsReceiptItem> getPageByGrnId(
+            Integer grnId,
+            int page,
+            int size
+    );
+
+    void createGrnItem(GoodsReceiptItem grnItem);
 }
