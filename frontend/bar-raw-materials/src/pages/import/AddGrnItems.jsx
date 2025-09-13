@@ -6,6 +6,7 @@ import GrnItems from '../../components/import/add/GrnItems'
 import AddGrnItemForm from '../../components/import/add_grn_items/AddGrnItemForm'
 import { useAuthContext } from '../../contexts/AuthContext'
 import grnHTTP from '../../services/GoodsReceiptNoteService'
+import grnItemHTTP from '../../services/GoodsReceiptItemService'
 
 const AddGrnItems = () => {
     const { token } = useAuthContext();
@@ -14,8 +15,12 @@ const AddGrnItems = () => {
     const grnId = params.grnId;
     const [addGrnItemForm] = Form.useForm();
 
-    const [grn, setGrn] = useState([]);
+    // states for handling fetching GRN
+    const [grn, setGrn] = useState({});
     const [refreshGrn, setRefreshGrn] = useState(false);
+
+    // states for fetching GRN items
+    const [grnItem, setGrnItem] = useState([]);
     const [refreshGrnItems, setRefreshGrnItems] = useState(false);
 
     // states for handling add new GRN item
@@ -23,12 +28,22 @@ const AddGrnItems = () => {
     
     const [messageAPI, contextHolder] = message.useMessage();
 
+    console.log("Re-rendering");
+
     const successMsg = (msg) => {
         messageAPI.open({
             type: 'success',
             content: msg
         });
     };
+
+    const failMsg = (msg) => {
+    messageAPI.open({
+      type: 'error',
+      content: msg,
+      duration: 1.5
+    })
+  };
 
     // handling edit GRN info success
     const handleEditSuccess = (msg) => {
@@ -49,8 +64,51 @@ const AddGrnItems = () => {
 
     // pass this event handler to AddGrnItemForm
     // AddGrnItemForm pass this event handler to BaseGrnItemForm as Form onFinish event handler
-    const handleSubmitAddGrnItem = () => {
+    const handleSubmitAddGrnItem = (values) => {
+        const submit = async() => {
+            try {
+                const formData = new FormData();
+                const {...rest} = values;
+                console.log(values);
+                const data = rest;
+                // format date to ISO
+                if (data.mfgDate) data.mfgDate = data.mfgDate.format("YYYY-MM-DD");
+                if (data.expDate) data.expDate = data.expDate.format("YYYY-MM-DD");
+                
+                // convert vat rate to percentage
+                if (data.vatRate) data.vatRate /= 100;
+                formData.append('data', new Blob([JSON.stringify(data)], {type: 'application/json'}));
 
+                const response = await grnItemHTTP.post('/add', formData, {
+                    headers: {
+                        Authorization: `Bearer ${persistToken.current}`,
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+                if (response.status === 200) {
+                    addGrnItemForm.resetFields();
+                    handleAddGrnItemSuccess(`Lô hàng nhập kho ${data.lotNumber} đã được tạo thành công`);
+                }
+                else {
+                    console.log(response);
+                }
+            }
+            catch (error) {
+                const responseErr = error.response;
+                if (responseErr.data?.failToCreate) {
+                    failMsg(responseErr.failToCreate);
+                }
+                if (responseErr.data?.expDateErr) {
+                    addGrnItemForm.setFields([
+                        {
+                            name: 'expDate',
+                            errors: [responseErr.data.expDateErr]
+                        }
+                    ]);
+                }
+            }
+        }
+        submit();
     }
 
     const handleAddGrnItemSuccess = (msg) => {
@@ -59,6 +117,7 @@ const AddGrnItems = () => {
         setRefreshGrnItems(prev => !prev);
     };
 
+    // side effect for fetching GoodsReceiptNote
     useEffect(() => {
         const fetchGrn = async() => {
             try {
@@ -75,6 +134,27 @@ const AddGrnItems = () => {
         };
         fetchGrn();
     }, [grnId, refreshGrn]);
+
+    // side effect for fetching GRN items
+    useEffect(() => {
+        const fetchGrnItems = async() => {
+            try {
+                const response = await grnItemHTTP.get(`grn/${grnId}`, {
+                    headers: {
+                        Authorization: `Bearer ${persistToken.current}`
+                    }
+                });
+                if (response.status === 200) {
+                    console.log(response);
+                    setGrnItem(response.data.content);
+                }
+            }
+            catch (error) {
+                console.log(error);
+            }
+        }
+        fetchGrnItems();
+    }, [refreshGrnItems, grnId]);
 
     return (
         <React.Fragment>
@@ -164,7 +244,9 @@ const AddGrnItems = () => {
                 }
                 variant='bordered'
                 >
-                    <GrnItems />
+                    <GrnItems
+                        grnItems={grnItem}
+                    />
                 </Card>
             </Card>
         </React.Fragment>

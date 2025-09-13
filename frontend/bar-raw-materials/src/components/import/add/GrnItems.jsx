@@ -1,7 +1,9 @@
 import React from 'react'
-import {Table, Button} from 'antd'
+import {Table, Flex, Button} from 'antd'
 
-const GrnItems = () => {
+const GrnItems = (props) => {
+    const { grnItems } = props;
+
     const columns = [
         {
             title: "STT",
@@ -10,8 +12,10 @@ const GrnItems = () => {
         },
         {
             title: "Sản phẩm",
-            dataIndex: "productName",
-            key: "productName"
+            key: "productName",
+            render: (_, record) => {
+                return record?.product?.name
+            }
         },
         {
             title: "SL nhập",
@@ -20,8 +24,9 @@ const GrnItems = () => {
         },
         {
             title: "Giá nhập",
-            dataIndex: "importCost",
-            key: "importCost"
+            dataIndex: "unitCost",
+            key: "unitCost",
+            render: (value) => new Intl.NumberFormat('vn-VN', { style: 'currency', currency: 'VND' }).format(value)
         },
         {
             title: "Mã số lô",
@@ -33,12 +38,10 @@ const GrnItems = () => {
             dataIndex: "mfgDate",
             key: "mfgDate",
             render: (value) => {
-                return new Intl.DateTimeFormat("vn-VN", {
+                return new Intl.DateTimeFormat("vi-VN", {
                     day: "2-digit",
                     month: "2-digit",
-                    year: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
+                    year: "numeric"
                 }).format(new Date(value));
             }
         },
@@ -47,19 +50,20 @@ const GrnItems = () => {
             dataIndex: "expDate",
             key: "expDate",
             render: (value) => {
-                return new Intl.DateTimeFormat("vn-VN", {
+                return new Intl.DateTimeFormat("vi-VN", {
                     day: "2-digit",
                     month: "2-digit",
-                    year: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
+                    year: "numeric"
                 }).format(new Date(value));
             }
         }
         ,{
             title: "VAT",
             dataIndex: "vatRate",
-            key: "vatRate"
+            key: "vatRate",
+            render: (value) => {
+                return `${value*100}%`
+            }
         },
         {
             title: "Hành động",
@@ -71,7 +75,13 @@ const GrnItems = () => {
                         color="blue" 
                         variant="solid" 
                     >
-                        <span style={{fontSize: '1.4rem'}}>Chi tiết</span>
+                        <span style={{fontSize: '1.4rem'}}>Sửa</span>
+                    </Button>
+                    <Button 
+                        color="red" 
+                        variant="solid" 
+                    >
+                        <span style={{fontSize: '1.4rem'}}>Xóa</span>
                     </Button>
                   </Flex>
                 )
@@ -82,7 +92,7 @@ const GrnItems = () => {
     return (
         <Table
             columns={columns}
-            // dataSource={grn.map(record => ({...record, key: record.id}))}
+            dataSource={grnItems.map(record => ({...record, key: record.id}))}
             pagination={false}
         />
     )

@@ -16,7 +16,6 @@ const BaseGrnForm = (props) => {
         grn 
     } = props;
 
-    console.log("Mode:", mode);
     if (mode === "update") {
         form.setFieldsValue({
             'id': grn?.id,

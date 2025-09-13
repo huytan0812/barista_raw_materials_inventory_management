@@ -64,3 +64,7 @@ p, span, a, li, h3 {
 .ant-picker-year-btn {
   font-size: 1.8rem;
 }
+
+.ant-table-thead th {
+  text-align: center !important;
+}

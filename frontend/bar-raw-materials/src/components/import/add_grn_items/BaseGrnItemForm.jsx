@@ -15,6 +15,8 @@ const BaseGrnItemForm = (props) => {
         grnId 
     } = props;
 
+    console.log(grnId);
+
     return (
         <Form
             size="middle"
@@ -32,7 +34,12 @@ const BaseGrnItemForm = (props) => {
                 <Input />
             </Form.Item>
             }
-            <Form.Item label="Hidden Field" name="grnId" hidden={true} value={grnId}>
+            <Form.Item 
+                label="Hidden Field" 
+                name="grnId" 
+                hidden={true}
+                initialValue={grnId}
+            >
                 <Input />
             </Form.Item>
 
@@ -58,8 +65,6 @@ const BaseGrnItemForm = (props) => {
 
             <Form.Item
                 label="Số lượng nhập"
-                labelCol={12}
-                wrapperCol={24}
                 labelAlign="left"
                 name="quantityImport"
                 rules={[{ required: true, message: 'Số lượng nhập không được bỏ trống' }]}
@@ -77,8 +82,6 @@ const BaseGrnItemForm = (props) => {
 
             <Form.Item
                 label="Đơn giá nhập"
-                labelCol={12}
-                wrapperCol={24}
                 labelAlign="left"
                 name="unitCost"
                 rules={[{ required: true, message: 'Đơn giá nhập không được bỏ trống' }]}
