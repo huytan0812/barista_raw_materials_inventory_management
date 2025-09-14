@@ -1,8 +1,43 @@
-import React from 'react'
-import {Table, Flex, Button} from 'antd'
+import React, {useState} from 'react'
+import {Table, Flex, Button, message} from 'antd'
+import EditGrnItemModal from '../add_grn_items/EditGrnItemModal';
 
 const GrnItems = (props) => {
     const { grnItems } = props;
+    // states for handling trigger corresponding edit or delete GRN item
+    const [activeEditModal, setActiveEditModal] = useState(0);
+    const [activeDeleteModal, setActiveDeleteModal] = useState(0);
+    // states for handling message
+    const [messageAPI, contextHolder] = message.useMessage();
+
+    const successMsg = (msg) => {
+        messageAPI.open({
+            type: 'success',
+            content: msg
+        })
+    };
+
+    const handleClickEdit = (grnItemId, grnItem) => {
+        console.log("edit grnItemId:", grnItemId);
+        console.log(grnItem);
+        setActiveEditModal(parseInt(grnItemId));
+    }
+    const handleClickDelete = (grnItemId, grnItem) => {
+        console.log("delete grnItemId:", grnItemId);
+        console.log(grnItem);
+        setActiveDeleteModal(parseInt(grnItemId));
+    }
+
+    const resetActiveEditModal = () => {
+        setActiveEditModal(0);
+    }
+    const resetActiveDeleteModal = () => {
+        setActiveDeleteModal(0);
+    }
+
+    const handleEditSuccess = (msg) => {
+        successMsg();
+    }
 
     const columns = [
         {
@@ -73,13 +108,21 @@ const GrnItems = (props) => {
                   <Flex gap="1rem" align="center" justify="center">
                     <Button 
                         color="blue" 
-                        variant="solid" 
+                        variant="solid"
+                        onClick={() => handleClickEdit(record.id, record)} 
                     >
                         <span style={{fontSize: '1.4rem'}}>Sửa</span>
                     </Button>
+                    <EditGrnItemModal 
+                        isActive={activeEditModal === record.id}
+                        resetActiveEditModal={resetActiveEditModal}
+                        onEditSuccess={handleEditSuccess}
+                        grnItem={record}
+                    />
                     <Button 
                         color="red" 
-                        variant="solid" 
+                        variant="solid"
+                        onClick={() => handleClickDelete(record.id, record)}  
                     >
                         <span style={{fontSize: '1.4rem'}}>Xóa</span>
                     </Button>

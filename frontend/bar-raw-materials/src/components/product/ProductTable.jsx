@@ -30,26 +30,24 @@ const ProductTable = ({currentPage, pageSize, refresh, setPageMetadata}) => {
 
     const handleUpdateSuccess = (msg) => {
         success(msg);
-        setRefreshAfterAction(true);
+        setRefreshAfterAction(prev => !prev);
     }
 
     const handleUpdateClick = (productId) => {
         setActiveModal(parseInt(productId));
-        setRefreshAfterAction(false);
     }
 
     const handleDeleteSuccess = (msg) => {
         success(msg);
-        setRefreshAfterAction(true);
+        setRefreshAfterAction(prev => !prev);
     };
 
     const handleDeleteClick = (productId) => {
         setActiveDeleteModal(parseInt(productId));
-        setRefreshAfterAction(false);
     }
 
     // reset edit product active modal
-    const resetActiveModal = () => {
+    const resetEditActiveModal = () => {
         setActiveModal(0);
     }
 
@@ -144,7 +142,7 @@ const ProductTable = ({currentPage, pageSize, refresh, setPageMetadata}) => {
                     <EditProductModal 
                         isActive={activeModal === record.productId}
                         productId={record.productId}
-                        resetActiveModal={resetActiveModal}
+                        resetActiveModal={resetEditActiveModal}
                         onUpdateSuccess={handleUpdateSuccess}
                     />
                     <Button 
@@ -189,18 +187,10 @@ const ProductTable = ({currentPage, pageSize, refresh, setPageMetadata}) => {
         }
     }, [token, currentPage, pageSize, navigate]);
 
-    // side effect for fetching products
-    useEffect(() => {
-        fetchProducts();
-    }, [fetchProducts]);
-
     // side effect for refreshing product table
     useEffect(() => {
-        console.log("Refresh after action:", refreshAfterAction);
-        if (refresh || refreshAfterAction) {
-            console.log("On refreshing...");
-            fetchProducts();
-        }
+        console.log("On refreshing...");
+        fetchProducts();
     }, [refresh, refreshAfterAction, fetchProducts]);
 
     return (

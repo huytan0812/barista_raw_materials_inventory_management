@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useCallback, useRef} from 'react'
+import React, {useEffect, useState, useRef} from 'react'
 import {Form, Input, Select, InputNumber, Upload} from 'antd'
 import { UploadOutlined } from '@ant-design/icons';
 import {useAuthContext} from '../../contexts/AuthContext'
@@ -17,10 +17,11 @@ const AddProductForm = (props) => {
   const [category, setCategory] = useState([]);
 
   const { token } = useAuthContext();
-  const { isSubmit, onSubmitSuccess, form } = props;
+  const { onSubmitSuccess, form } = props;
   const persistToken = useRef(token);
 
-  const onFinish = useCallback((values, form) => {
+  const handleSubmit = (values) => {
+    console.log("Submitting new product:", values);
     // handle submission
     const submitData = async() => {
       try {
@@ -68,21 +69,7 @@ const AddProductForm = (props) => {
         }
       }
     submitData();
-  }, [onSubmitSuccess, token]);
-
-  // side effect for handling submit form
-  useEffect(() => {
-    if (isSubmit) {
-      // form.validateFields() is used for validate base on the `rules` array in Form.Item
-      form.validateFields()
-      .then((values) => {
-        onFinish(values, form);
-      })
-     .catch(err => {
-        console.log(err);
-      })
-    }
-  }, [form, isSubmit, onSubmitSuccess, onFinish]);
+  }
 
   // side effect for fetching base units
   useEffect(() => {
@@ -132,11 +119,12 @@ const AddProductForm = (props) => {
   return (
     <Form
       form={form}
-      name="basic"
+      name="add_product_form"
       labelCol={{ span: 6 }}
       wrapperCol={{ span: 24 }}
       style={{ maxWidth: 600 }}
       initialValues={{ remember: true }}
+      onFinish={handleSubmit}
       autoComplete="off"
       encType='multipart/form-data'
     >

@@ -11,7 +11,7 @@ const Product = () => {
   const [searchText, setSearchText] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
 
-  const [form] = Form.useForm();
+  const [addProductForm] = Form.useForm();
 
   // used for <ProductTable>
   const [refresh, setRefresh] = useState(false);
@@ -22,7 +22,6 @@ const Product = () => {
   // used for <AddProductForm>
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
-  const [submitForm, setSubmitForm] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
 
   const success = (msg) => {
@@ -34,23 +33,19 @@ const Product = () => {
 
   const showModal = () => {
     setOpen(true);
-    setRefresh(false);
   };
   const handleOk = () => {
-    setSubmitForm(true);
-
+    // calling form.submit() will automatically trigger form.validateFields() first
+    // for surface validation
+    addProductForm.submit();
     setLoading(true);
 
-    // throw setLoading, setSubmitForm to Web worker
-    // callback in setTimeout will be executed after the sync operations
-    // are all executed in call stack
     setTimeout(() => {
       setLoading(false);
-      setSubmitForm(false);
     }, 0);
   };
   const handleCancel = () => {
-    form.resetFields();
+    addProductForm.resetFields();
     setOpen(false);
   };
 
@@ -58,7 +53,7 @@ const Product = () => {
     success(msg);
     setOpen(false);
     // if new product is added successfully, refresh <ProductTable>
-    setRefresh(true);
+    setRefresh(prev => !prev);
   };
 
   return (
@@ -106,9 +101,8 @@ const Product = () => {
               ]}
             >
               <AddProductForm 
-                isSubmit={submitForm} 
                 onSubmitSuccess={handleSuccess}
-                form={form} 
+                form={addProductForm} 
               />
             </Modal>
           </Space>

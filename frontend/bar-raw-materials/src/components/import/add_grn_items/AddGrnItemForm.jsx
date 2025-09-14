@@ -38,6 +38,7 @@ const AddGrnItemForm = (props) => {
     <React.Fragment>
       <BaseGrnItemForm 
         form={form}
+        formName="addGrnItem"
         handleSubmit={handleSubmit}
         product={product}
         onDateChange={onDateChange}

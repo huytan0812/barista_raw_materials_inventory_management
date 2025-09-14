@@ -1,6 +1,5 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import {Form, Input, Select, DatePicker, InputNumber} from 'antd'
-import { UploadOutlined } from '@ant-design/icons';
 import dayjs from "dayjs"
 
 const {Option} = Select;
@@ -8,20 +7,36 @@ const {Option} = Select;
 const BaseGrnItemForm = (props) => {
     const {
         form,
+        formName,
         handleSubmit,
         product,
         onDateChange,
         mode,
-        grnId 
+        grnId,
+        grnItem 
     } = props;
+    console.log(grnItem);
 
-    console.log(grnId);
+    useEffect(() => {
+        if (mode === "update" && grnItem) {
+            form.setFieldsValue({
+                'id': grnItem?.id,
+                'productId': grnItem?.product?.id,
+                'quantityImport': grnItem?.quantityImport,
+                'unitCost': grnItem?.unitCost,
+                'lotNumber': grnItem?.lotNumber,
+                'mfgDate': grnItem?.mfgDate ? dayjs(grnItem.mfgDate) : null,
+                'expDate': grnItem?.expDate ? dayjs(grnItem.expDate) : null,
+                'vatRate': grnItem?.vatRate ? grnItem.vatRate * 100 : null,
+            });
+        }
+    }, [form, grnItem, mode]);
 
     return (
         <Form
             size="middle"
             form={form}
-            name="grnItem"
+            name={formName}
             labelCol={{ span: 6 }}
             wrapperCol={{ span: 24 }}
             initialValues={{ remember: true }}

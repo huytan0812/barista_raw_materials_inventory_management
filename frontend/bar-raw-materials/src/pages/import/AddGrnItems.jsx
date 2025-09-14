@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useRef} from 'react'
 import { useParams, NavLink } from 'react-router-dom'
-import {Card, Flex, Button, Space, Breadcrumb, message, Modal, Form} from 'antd'
+import {Card, Flex, Button, Space, Breadcrumb, message, Modal, Form, Pagination} from 'antd'
 import GrnDetails from '../../components/import/add/GrnDetails'
 import GrnItems from '../../components/import/add/GrnItems'
 import AddGrnItemForm from '../../components/import/add_grn_items/AddGrnItemForm'
@@ -22,13 +22,15 @@ const AddGrnItems = () => {
     // states for fetching GRN items
     const [grnItem, setGrnItem] = useState([]);
     const [refreshGrnItems, setRefreshGrnItems] = useState(false);
+    // GRN items pagination
+    const [currentPage, setCurrentPage] = useState(0);
+    const [pageMetadata, setPageMetadata] = useState({});
+    const PAGE_SIZE = 5;
 
     // states for handling add new GRN item
     const [open, setOpen] = useState(false);
     
     const [messageAPI, contextHolder] = message.useMessage();
-
-    console.log("Re-rendering");
 
     const successMsg = (msg) => {
         messageAPI.open({
@@ -142,11 +144,16 @@ const AddGrnItems = () => {
                 const response = await grnItemHTTP.get(`grn/${grnId}`, {
                     headers: {
                         Authorization: `Bearer ${persistToken.current}`
+                    },
+                    params: {
+                        page: currentPage,
+                        size: PAGE_SIZE
                     }
                 });
                 if (response.status === 200) {
-                    console.log(response);
                     setGrnItem(response.data.content);
+                    const {content:_, ...rest} = response.data;
+                    setPageMetadata(rest);
                 }
             }
             catch (error) {
@@ -154,7 +161,7 @@ const AddGrnItems = () => {
             }
         }
         fetchGrnItems();
-    }, [refreshGrnItems, grnId]);
+    }, [refreshGrnItems, grnId, currentPage]);
 
     return (
         <React.Fragment>
@@ -227,7 +234,8 @@ const AddGrnItems = () => {
                                 footer={[
                                     <Button key="back" onClick={handleCancel}>
                                         Hủy
-                                    </Button>,
+                                    </Button>
+                                    ,
                                     <Button key="submit" type="primary" onClick={handleOk}>
                                         Xác nhận
                                     </Button>
@@ -247,6 +255,15 @@ const AddGrnItems = () => {
                     <GrnItems
                         grnItems={grnItem}
                     />
+                    <div style={{ textAlign: "right", marginTop: 16 }}>
+                    <Pagination
+                        current={currentPage}
+                        pageSize={PAGE_SIZE}
+                        total={pageMetadata.page?.totalElements || 0}
+                        onChange={(page) => setCurrentPage(page)}
+                        showTotal={(total) => `Hiện đang có ${total} lô hàng`}
+                    />
+                    </div>
                 </Card>
             </Card>
         </React.Fragment>
