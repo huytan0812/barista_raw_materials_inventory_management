@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 import java.util.HashMap;
-import java.time.LocalDate;
+import java.util.Objects;
 
 import com.bar_raw_materials.entities.GoodsReceiptItem;
 import com.bar_raw_materials.services.goodsReceiptItem.GoodsReceiptItemService;
@@ -39,7 +39,7 @@ public class GoodsReceiptItemController extends BaseStaffController {
         this.productService = productService;
     }
 
-    @GetMapping("grn/{grnId}")
+    @GetMapping("grn/{grnId}/grnItems")
     public ResponseEntity<Page<GoodsReceiptItem>> getPageByGrnId(
             @PathVariable("grnId") Integer grnId,
             @Nullable @RequestParam(defaultValue="0", name="page") Integer page,
@@ -71,15 +71,14 @@ public class GoodsReceiptItemController extends BaseStaffController {
             return new ResponseEntity<>(responseData, HttpStatus.NOT_FOUND);
         }
 
-        LocalDate mfgDate = createGrnItemDTO.getMfgDate();
-        LocalDate expDate = createGrnItemDTO.getExpDate();
-
-        if (expDate.isBefore(mfgDate) || expDate.isEqual(mfgDate)) {
+        if (!grnItemService.isValidExpDate(createGrnItemDTO)) {
             responseData.put("expDateErr", "Hạn sử dụng không được nhỏ hơn hoặc bằng ngày sản xuất");
             return new ResponseEntity<>(responseData, HttpStatus.BAD_REQUEST);
         }
+
         GoodsReceiptItem grnItem = new GoodsReceiptItem();
         BeanUtils.copyProperties(createGrnItemDTO, grnItem);
+        // GrnId of a GrnItem is fixed once creation
         grnItem.setGrn(grn);
         grnItem.setProduct(product);
 
@@ -93,6 +92,68 @@ public class GoodsReceiptItemController extends BaseStaffController {
         }
 
         responseData.put("successfulMsg", "Thêm lô hàng vào phiếu nhập kho "+grnId+" thành công");
+        return ResponseEntity.ok(responseData);
+    }
+
+    @PostMapping("update/{grnItemId}")
+    public ResponseEntity<Map<String, String>> update(
+            @PathVariable("grnItemId") Integer grnItemId,
+            @RequestPart("data") CreateGrnItemDTO updateGrnItemDTO
+    ) {
+        GoodsReceiptItem grnItem = grnItemService.getDetails(grnItemId);
+        if (grnItem == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        Map<String, String> responseData = new HashMap<>();
+        if (!grnItemService.isValidExpDate(updateGrnItemDTO)) {
+            responseData.put("expDateErr", "Hạn sử dụng không được nhỏ hơn hoặc bằng ngày sản xuất");
+            return new ResponseEntity<>(responseData, HttpStatus.BAD_REQUEST);
+        }
+        BeanUtils.copyProperties(updateGrnItemDTO, grnItem);
+
+        int preProductId = grnItem.getProduct().getId();
+        int updateProductId = updateGrnItemDTO.getProductId();
+        if (preProductId != updateProductId) {
+            // get the updated product
+            Product product = productService.getDetails(updateProductId);
+            if (product == null) {
+                responseData.put("invalidProduct", "Sản phẩm không tồn tại");
+                return new ResponseEntity<>(responseData, HttpStatus.NOT_FOUND);
+            }
+            grnItem.setProduct(product);
+        }
+
+        try {
+            grnItemService.updateGrnItem(grnItem);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            responseData.put("failToCreate", "Có lỗi xảy ra");
+            return new ResponseEntity<>(responseData, HttpStatus.BAD_REQUEST);
+        }
+        responseData.put("successfulMsg", "Lô hàng nhập kho được cập nhật thành công");
+        return ResponseEntity.ok(responseData);
+    }
+
+    @GetMapping("delete/{grnItemId}")
+    public ResponseEntity<Map<String, String>> delete(
+            @PathVariable("grnItemId") Integer grnItemId
+    ) {
+        GoodsReceiptItem grnItem = grnItemService.getDetails(grnItemId);
+        if (grnItem == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        Map<String, String> responseData = new HashMap<>();
+        try {
+            grnItemService.deleteGrnItem(grnItem);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            responseData.put("failToDelete", "Có lỗi xảy ra");
+            return new ResponseEntity<>(responseData, HttpStatus.BAD_REQUEST);
+        }
+        responseData.put("successfulMsg", "Delete successfully");
         return ResponseEntity.ok(responseData);
     }
 }

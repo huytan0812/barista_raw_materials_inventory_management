@@ -13,4 +13,6 @@ public interface GoodsReceiptItemRepository extends JpaRepository<GoodsReceiptIt
                     " WHERE grnItem.grn.id=:grnId"
     )
     public Page<GoodsReceiptItem> getPageByGrnId(Integer grnId, Pageable pageable);
+
+    public GoodsReceiptItem findById(int id);
 }

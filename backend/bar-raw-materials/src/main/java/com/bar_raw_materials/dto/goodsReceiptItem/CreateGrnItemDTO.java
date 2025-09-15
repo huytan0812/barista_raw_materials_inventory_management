@@ -18,7 +18,6 @@ public class CreateGrnItemDTO {
     private Integer productId;
     private Integer grnId;
     private Integer quantityImport;
-    private Integer quantityRemain;
     private BigDecimal unitCost;
     private String lotNumber;
     private LocalDate mfgDate;

@@ -70,12 +70,6 @@ public class ProductServiceImpl implements ProductService {
         int initCategoryId = product.getCategory().getId();
         int updateCategoryId = createProductDTO.getCategoryId();
 
-        System.out.println("Init product's base unit id: " + initBaseUnitId);
-        System.out.println("Create product DTO's base unit id: " + updateBaseUnitId);
-
-        System.out.println("Init product's category id: " + initCategoryId);
-        System.out.println("Create product DTO's category id: " + updateCategoryId);
-
         if (initBaseUnitId != updateBaseUnitId) {
             BaseUnit baseUnit = baseUnitRepository.findBaseUnitById(updateBaseUnitId);
             product.setBaseUnit(baseUnit);

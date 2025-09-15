@@ -2,6 +2,7 @@ package com.bar_raw_materials.services.goodsReceiptItem;
 
 import com.bar_raw_materials.dto.goodsReceiptItem.CreateGrnItemDTO;
 import com.bar_raw_materials.entities.GoodsReceiptItem;
+import com.bar_raw_materials.entities.GoodsReceiptNote;
 import com.bar_raw_materials.repositories.GoodsReceiptItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
@@ -9,9 +10,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.time.LocalDate;
 
 @Service
 @RequiredArgsConstructor
@@ -29,8 +33,8 @@ public class GoodsReceiptItemServiceImpl implements GoodsReceiptItemService {
     }
 
     @Override
-    public <T> T getDetails(int id) {
-        return null;
+    public GoodsReceiptItem getDetails(int id) {
+        return goodsReceiptItemRepository.findById(id);
     }
 
     @Override
@@ -46,5 +50,23 @@ public class GoodsReceiptItemServiceImpl implements GoodsReceiptItemService {
     @Override
     public void createGrnItem(GoodsReceiptItem grnItem) {
         goodsReceiptItemRepository.save(grnItem);
+    }
+
+    @Override
+    public void updateGrnItem(GoodsReceiptItem grnItem) {
+        goodsReceiptItemRepository.save(grnItem);
+    }
+
+    @Override
+    public void deleteGrnItem(GoodsReceiptItem grnItem) {
+        goodsReceiptItemRepository.delete(grnItem);
+    }
+
+    @Override
+    public Boolean isValidExpDate(CreateGrnItemDTO createGrnItemDTO) {
+        LocalDate mfgDate = createGrnItemDTO.getMfgDate();
+        LocalDate expDate = createGrnItemDTO.getExpDate();
+
+        return !expDate.isBefore(mfgDate) && !expDate.isEqual(mfgDate);
     }
 }
