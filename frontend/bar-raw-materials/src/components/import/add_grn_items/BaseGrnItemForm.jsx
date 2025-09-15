@@ -15,7 +15,6 @@ const BaseGrnItemForm = (props) => {
         grnId,
         grnItem 
     } = props;
-    console.log(grnItem);
 
     useEffect(() => {
         if (mode === "update" && grnItem) {

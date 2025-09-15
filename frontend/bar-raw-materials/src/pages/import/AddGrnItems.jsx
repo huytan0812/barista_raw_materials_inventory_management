@@ -23,7 +23,7 @@ const AddGrnItems = () => {
     const [grnItem, setGrnItem] = useState([]);
     const [refreshGrnItems, setRefreshGrnItems] = useState(false);
     // GRN items pagination
-    const [currentPage, setCurrentPage] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
     const [pageMetadata, setPageMetadata] = useState({});
     const PAGE_SIZE = 5;
 
@@ -141,12 +141,12 @@ const AddGrnItems = () => {
     useEffect(() => {
         const fetchGrnItems = async() => {
             try {
-                const response = await grnItemHTTP.get(`grn/${grnId}`, {
+                const response = await grnItemHTTP.get(`grn/${grnId}/grnItems`, {
                     headers: {
                         Authorization: `Bearer ${persistToken.current}`
                     },
                     params: {
-                        page: currentPage,
+                        page: currentPage - 1,
                         size: PAGE_SIZE
                     }
                 });
@@ -254,6 +254,9 @@ const AddGrnItems = () => {
                 >
                     <GrnItems
                         grnItems={grnItem}
+                        setRefreshGrnItems={setRefreshGrnItems}
+                        successMsg={successMsg}
+                        failMsg={failMsg}
                     />
                     <div style={{ textAlign: "right", marginTop: 16 }}>
                     <Pagination

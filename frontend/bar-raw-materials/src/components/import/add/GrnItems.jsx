@@ -1,30 +1,18 @@
 import React, {useState} from 'react'
-import {Table, Flex, Button, message} from 'antd'
+import {Table, Flex, Button} from 'antd'
 import EditGrnItemModal from '../add_grn_items/EditGrnItemModal';
+import DeleteGrnItemModal from '../add_grn_items/DeleteGrnItemModal';
 
 const GrnItems = (props) => {
-    const { grnItems } = props;
+    const { grnItems, setRefreshGrnItems, successMsg, failMsg } = props;
     // states for handling trigger corresponding edit or delete GRN item
     const [activeEditModal, setActiveEditModal] = useState(0);
     const [activeDeleteModal, setActiveDeleteModal] = useState(0);
-    // states for handling message
-    const [messageAPI, contextHolder] = message.useMessage();
 
-    const successMsg = (msg) => {
-        messageAPI.open({
-            type: 'success',
-            content: msg
-        })
-    };
-
-    const handleClickEdit = (grnItemId, grnItem) => {
-        console.log("edit grnItemId:", grnItemId);
-        console.log(grnItem);
+    const handleClickEdit = (grnItemId) => {
         setActiveEditModal(parseInt(grnItemId));
     }
-    const handleClickDelete = (grnItemId, grnItem) => {
-        console.log("delete grnItemId:", grnItemId);
-        console.log(grnItem);
+    const handleClickDelete = (grnItemId) => {
         setActiveDeleteModal(parseInt(grnItemId));
     }
 
@@ -36,7 +24,15 @@ const GrnItems = (props) => {
     }
 
     const handleEditSuccess = (msg) => {
-        successMsg();
+        successMsg(msg);
+        resetActiveEditModal();
+        setRefreshGrnItems(prev=>!prev);
+    }
+
+    const handleDeleteSuccess = (msg) => {
+        successMsg(msg);
+        resetActiveDeleteModal();
+        setRefreshGrnItems(prev=>!prev);
     }
 
     const columns = [
@@ -109,7 +105,7 @@ const GrnItems = (props) => {
                     <Button 
                         color="blue" 
                         variant="solid"
-                        onClick={() => handleClickEdit(record.id, record)} 
+                        onClick={() => handleClickEdit(record.id)} 
                     >
                         <span style={{fontSize: '1.4rem'}}>Sửa</span>
                     </Button>
@@ -118,14 +114,23 @@ const GrnItems = (props) => {
                         resetActiveEditModal={resetActiveEditModal}
                         onEditSuccess={handleEditSuccess}
                         grnItem={record}
+                        failMsg={failMsg}
                     />
                     <Button 
                         color="red" 
                         variant="solid"
-                        onClick={() => handleClickDelete(record.id, record)}  
+                        onClick={() => handleClickDelete(record.id)}  
                     >
                         <span style={{fontSize: '1.4rem'}}>Xóa</span>
                     </Button>
+                    <DeleteGrnItemModal
+                        isActive={activeDeleteModal === record.id}
+                        resetActiveDeleteModal={resetActiveDeleteModal}
+                        failMsg={failMsg}
+                        onDeleteSuccess={handleDeleteSuccess}
+                        grnItemId={record.id}
+                        lotNumber={record.lotNumber}
+                    />
                   </Flex>
                 )
             }

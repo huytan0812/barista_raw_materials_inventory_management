@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import {Form, Input, Select, DatePicker, Upload, Button} from 'antd'
 import { UploadOutlined } from '@ant-design/icons';
 import dayjs from "dayjs"
@@ -16,24 +16,26 @@ const BaseGrnForm = (props) => {
         grn 
     } = props;
 
-    if (mode === "update") {
-        form.setFieldsValue({
-            'id': grn?.id,
-            'vendorId': grn?.vendor?.id,
-            'receivedBy': grn?.receivedBy,
-            'dateReceived': grn?.dateReceived ? dayjs(grn.dateReceived) : null,
-            'invoiceNumber': grn?.invoiceNumber,
-            'invoiceDate': grn?.invoiceDate ? dayjs(grn.invoiceDate) : null,
-            'image': grn?.invoiceImage ? [
-                {
-                    uid: String(grn?.id),
-                    name: grn?.invoiceImage,
-                    status: "done",
-                    url: `http://localhost:8080/api/image/vendor/${grn?.invoiceImage}`,
-                },
-            ] : null
-        })
-    }
+    useEffect(() => {
+        if (mode === "update" && grn) {
+            form.setFieldsValue({
+                'id': grn?.id,
+                'vendorId': grn?.vendor?.id,
+                'receivedBy': grn?.receivedBy,
+                'dateReceived': grn?.dateReceived ? dayjs(grn.dateReceived) : null,
+                'invoiceNumber': grn?.invoiceNumber,
+                'invoiceDate': grn?.invoiceDate ? dayjs(grn.invoiceDate) : null,
+                'image': grn?.invoiceImage ? [
+                    {
+                        uid: String(grn?.id),
+                        name: grn?.invoiceImage,
+                        status: "done",
+                        url: `http://localhost:8080/api/image/vendor/${grn?.invoiceImage}`,
+                    },
+                ] : null
+            })
+        }
+    }, [form, grn, mode]);
 
     return (
         <Form
