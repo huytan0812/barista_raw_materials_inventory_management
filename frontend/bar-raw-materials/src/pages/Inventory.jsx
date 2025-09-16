@@ -15,7 +15,7 @@ const Inventory = () => {
       <Card
         title={
           <Space style={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
-            <span style={{ fontWeight: "bold" }}>Bảng phiếu nhập kho</span>
+            <span style={{ fontWeight: "bold" }}>Bảng hàng tồn kho</span>
             <Space>
               <Search
                 placeholder="Tìm sản phẩm theo tên"

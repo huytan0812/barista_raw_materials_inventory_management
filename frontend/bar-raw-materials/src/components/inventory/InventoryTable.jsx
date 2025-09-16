@@ -54,13 +54,13 @@ const InventoryTable = ({
       key: "productName",
     },
     {
-      title: "SL HTK đầu kỳ",
+      title: "SL tồn đầu kỳ",
       dataIndex: "startingQuantity",
       key: "startingQuantity",
       align: "right",
     },
     {
-      title: "Giá trị HTK đầu kỳ",
+      title: "Giá trị tồn đầu kỳ",
       dataIndex: "startingInventory",
       key: "startingInventory",
       align: "right",

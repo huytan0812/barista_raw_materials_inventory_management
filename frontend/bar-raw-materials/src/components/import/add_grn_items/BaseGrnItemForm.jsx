@@ -1,6 +1,9 @@
-import React, {useEffect} from 'react'
-import {Form, Input, Select, DatePicker, InputNumber} from 'antd'
+import React, {useState, useEffect, useRef} from 'react'
+import {Form, Input, Select, DatePicker, InputNumber, AutoComplete} from 'antd'
 import dayjs from "dayjs"
+import productHTTP from '../../../services/ProductService'
+import batchHTTP from '../../../services/BatchService'
+import { useAuthContext } from '../../../contexts/AuthContext'
 
 const {Option} = Select;
 
@@ -9,13 +12,83 @@ const BaseGrnItemForm = (props) => {
         form,
         formName,
         handleSubmit,
-        product,
         onDateChange,
         mode,
         grnId,
         grnItem 
     } = props;
+    const {token} = useAuthContext();
+    const persistToken = useRef(token);
 
+    // states for fetching products and batches
+    const [selectedBatch, setSelectedBatch] = useState(null);
+    const [product, setProduct] = useState([]);
+    const [batchList, setBatchList] = useState([]);
+
+    const handleLotChange = (value) => {
+        const batch = batchList.find((b) => b.lotNumber === value);
+        console.log("Batch:", batch);
+        if (batch) {
+            // Nếu batch đã tồn tại
+            setSelectedBatch(batch);
+            form.setFieldsValue({
+                productId: batch.product.id,
+                mfgDate: dayjs(batch.mfgDate),
+                expDate: dayjs(batch.expDate),
+            });
+        } 
+        else {
+            // Nếu batch mới
+            setSelectedBatch(null);
+            form.setFieldsValue({
+                productId: undefined,
+                mfgDate: undefined,
+                expDate: undefined,
+            });
+        }
+    };
+
+    // side effect for fetching all products
+    useEffect(() => {
+        const fetchProducts = async() => {
+            try {
+                const response = await productHTTP.get('all', {
+                    headers: {
+                        Authorization: `Bearer ${persistToken.current}`
+                    }
+                });
+                if (response.status === 200) {
+                    setProduct(response.data);
+                }
+            }
+            catch(error) {
+                console.log(error);
+            }
+        }
+        fetchProducts();
+    }, [])
+
+    // side effect for fetching batch list
+    useEffect(() => {
+        const fetchBatches = async() => {
+            try {
+                const response = await batchHTTP.get('/all', {
+                    headers: {
+                        Authorization: `Bearer ${persistToken.current}`
+                    }
+                });
+                if (response.status === 200) {
+                    setBatchList(response.data);
+                }
+            }
+            catch (error) {
+                console.log(error);
+            }
+        }   
+        fetchBatches();
+    }, []);
+
+    // side effect for pre-populating data for update form
     useEffect(() => {
         if (mode === "update" && grnItem) {
             form.setFieldsValue({
@@ -58,23 +131,54 @@ const BaseGrnItemForm = (props) => {
             </Form.Item>
 
             <Form.Item
+                label="Mã số lô"
+                name="lotNumber"
+                rules={[{ required: true, message: "Mã số lô không được để trống" }]}
+            >
+                <AutoComplete
+                    options={batchList.map((b) => ({ value: b.lotNumber }))}
+                    placeholder="Chọn hoặc nhập mã lô"
+                    filterOption={(inputValue, option) =>
+                        option?.value.toUpperCase().includes(inputValue.toUpperCase())
+                    }
+                    onSelect={handleLotChange}
+                    onChange={handleLotChange} // cho phép nhập mới
+                />
+            </Form.Item>
+
+            <Form.Item
                 label="Sản phẩm"
                 labelAlign='left'
                 name="productId"
                 rules={[{ required: true, message: "Sản phẩm không được để trống" }]}
             >
-                <Select 
-                    placeholder="Chọn sản phẩm"
-                    showSearch
-                    optionFilterProp="children" // search against the option text
-                    filterOption={(input, option) =>
-                        option?.children.toLowerCase().includes(input.toLowerCase())
-                    }
-                >
-                {product.map((product) => (
-                    <Option key={product.productId} value={product.productId}>{product.name}</Option>
-                ))}
-                </Select>
+                {
+                    selectedBatch ? 
+                    (
+                    <Select disabled>
+                        {product.map((p) => (
+                            <Option key={p.productId} value={p.productId}>
+                                {p.name}
+                            </Option>
+                        ))}
+                    </Select>
+                    )
+                    :
+                    (
+                    <Select 
+                        placeholder="Chọn sản phẩm"
+                        showSearch
+                        optionFilterProp="children" // search against the option text
+                        filterOption={(input, option) =>
+                            option?.children.toLowerCase().includes(input.toLowerCase())
+                        }
+                    >
+                        {product.map((product) => (
+                            <Option key={product.productId} value={product.productId}>{product.name}</Option>
+                        ))}
+                    </Select>
+                    )
+                }
             </Form.Item>
 
             <Form.Item
@@ -112,15 +216,6 @@ const BaseGrnItemForm = (props) => {
             </Form.Item>
 
             <Form.Item
-                label="Mã số lô"
-                labelAlign='left'
-                name="lotNumber"
-                rules={[{ required: true, message: 'Mã số lô không được để trống' }]}
-            >
-                <Input />
-            </Form.Item>
-
-            <Form.Item
                 label="Ngày sản xuất"
                 labelAlign='left'
                 name="mfgDate"
@@ -130,7 +225,8 @@ const BaseGrnItemForm = (props) => {
                     format="DD/MM/YYYY"
                     size="middle" 
                     onChange={onDateChange} 
-                    needConfirm 
+                    needConfirm
+                    disabled={!!selectedBatch} 
                 />
             </Form.Item>
 
@@ -144,7 +240,8 @@ const BaseGrnItemForm = (props) => {
                     format="DD/MM/YYYY"
                     size="middle" 
                     onChange={onDateChange} 
-                    needConfirm 
+                    needConfirm
+                    disabled={!!selectedBatch} 
                 />
             </Form.Item>
 

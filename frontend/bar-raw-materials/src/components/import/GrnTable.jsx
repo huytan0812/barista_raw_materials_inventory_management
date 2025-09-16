@@ -100,10 +100,10 @@ const GrnTable = ({
             render: (_, record) => {
                 if (record.isConfirmed) {
                     return (
-                        <Tag color="green">Đã xác nhận</Tag>
+                        <Tag color="green">Đã phê duyệt</Tag>
                     )
                 }
-                return <Tag color="red">Chưa xác nhận</Tag>
+                return <Tag color="red">Chưa phê duyệt</Tag>
             }
         },
         {

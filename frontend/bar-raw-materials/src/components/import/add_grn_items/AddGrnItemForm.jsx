@@ -1,7 +1,5 @@
-import React, {useState, useEffect, useRef} from 'react'
+import React from 'react'
 import BaseGrnItemForm from './BaseGrnItemForm'
-import { useAuthContext } from '../../../contexts/AuthContext';
-import productHTTP from '../../../services/ProductService'
 
 const onDateChange = (date, dateString) => {
   console.log(date, dateString);
@@ -13,26 +11,6 @@ const AddGrnItemForm = (props) => {
     handleSubmit,
     grnId
   } = props;
-  const {token} = useAuthContext();
-  const persistToken = useRef(token);
-  const [product, setProduct] = useState([]);
-
-  useEffect(() => {
-    const fetchProduct = async() => {
-      try {
-        const response = await productHTTP.get('all', {
-          headers: {
-            Authorization: `Bearer ${persistToken.current}`
-          }
-        });
-        setProduct(response.data);
-      }
-      catch (error) {
-        console.log(error);
-      }
-    }
-    fetchProduct();
-  }, [])
 
   return (
     <React.Fragment>
@@ -40,7 +18,6 @@ const AddGrnItemForm = (props) => {
         form={form}
         formName="addGrnItem"
         handleSubmit={handleSubmit}
-        product={product}
         onDateChange={onDateChange}
         mode="add"
         grnId={grnId} 

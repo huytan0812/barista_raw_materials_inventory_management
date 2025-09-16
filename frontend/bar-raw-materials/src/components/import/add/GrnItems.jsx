@@ -43,10 +43,8 @@ const GrnItems = (props) => {
         },
         {
             title: "Sản phẩm",
+            dataIndex: "productName",
             key: "productName",
-            render: (_, record) => {
-                return record?.product?.name
-            }
         },
         {
             title: "SL nhập",

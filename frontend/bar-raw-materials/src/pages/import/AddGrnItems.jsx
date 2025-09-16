@@ -1,12 +1,13 @@
 import React, {useState, useEffect, useRef} from 'react'
 import { useParams, NavLink } from 'react-router-dom'
-import {Card, Flex, Button, Space, Breadcrumb, message, Modal, Form, Pagination} from 'antd'
+import {Card, Row, Col, Button, Space, Breadcrumb, message, Modal, Form, Pagination} from 'antd'
 import GrnDetails from '../../components/import/add/GrnDetails'
 import GrnItems from '../../components/import/add/GrnItems'
 import AddGrnItemForm from '../../components/import/add_grn_items/AddGrnItemForm'
 import { useAuthContext } from '../../contexts/AuthContext'
 import grnHTTP from '../../services/GoodsReceiptNoteService'
 import grnItemHTTP from '../../services/GoodsReceiptItemService'
+import userHTTP from '../../services/UserService'
 
 const AddGrnItems = () => {
     const { token } = useAuthContext();
@@ -30,7 +31,11 @@ const AddGrnItems = () => {
     // states for handling add new GRN item
     const [open, setOpen] = useState(false);
     
+    // state for handling message popup
     const [messageAPI, contextHolder] = message.useMessage();
+
+    // state for getting current login user role
+    const [role, setRole] = useState(null);
 
     const successMsg = (msg) => {
         messageAPI.open({
@@ -163,6 +168,27 @@ const AddGrnItems = () => {
         fetchGrnItems();
     }, [refreshGrnItems, grnId, currentPage]);
 
+    // side effect for getting role
+    useEffect(() => {
+        const fetchRole = async() => {
+            try {
+                const response = await userHTTP.get('/role', {
+                    headers: {
+                        Authorization: `Bearer ${persistToken.current}`
+                    }
+                });
+                console.log(response);
+                if (response.status === 200) {
+                    setRole(response.data.role);
+                }
+            }
+            catch (error) {
+                console.log(error);
+            }
+        };  
+        fetchRole();
+    }, [])
+
     return (
         <React.Fragment>
             {contextHolder}
@@ -268,6 +294,33 @@ const AddGrnItems = () => {
                     />
                     </div>
                 </Card>
+                {/* Footer */}
+                <Row 
+                    justify="end" 
+                    gutter={8}
+                    style={{
+                        marginTop: '0.8rem',
+                        paddingRight: '2rem'
+                    }}
+                >
+                    <Col>
+                        <Button
+                            color="red"
+                            variant="solid"
+                        >
+                            Hủy phiếu
+                        </Button>
+                    </Col>
+                    <Col>
+                        <Button type="primary">Hoàn tất</Button>
+                    </Col>
+                    {
+                        role==="admin" &&
+                        <Col>
+                            <Button color="green" variant="solid">Duyệt phiếu</Button>
+                        </Col>
+                    }
+                </Row>
             </Card>
         </React.Fragment>
     )
