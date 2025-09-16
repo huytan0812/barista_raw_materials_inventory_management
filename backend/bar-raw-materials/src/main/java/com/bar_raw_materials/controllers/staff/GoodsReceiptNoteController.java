@@ -1,8 +1,12 @@
 package com.bar_raw_materials.controllers.staff;
 
 import com.bar_raw_materials.dto.goodsReceiptNote.CreateGrnDTO;
+import com.bar_raw_materials.entities.GoodsReceiptItem;
 import com.bar_raw_materials.entities.GoodsReceiptNote;
+import com.bar_raw_materials.entities.ProductInventory;
 import com.bar_raw_materials.entities.User;
+import com.bar_raw_materials.services.goodsReceiptItem.GoodsReceiptItemService;
+import com.bar_raw_materials.services.productInventory.ProductInventoryService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,24 +19,32 @@ import com.bar_raw_materials.utils.ImageUtils;
 import com.bar_raw_materials.utils.AuthUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("${apiStaff}/grn")
 public class GoodsReceiptNoteController extends BaseStaffController{
     GoodsReceiptNoteService goodsReceiptNoteService;
+    GoodsReceiptItemService grnItemService;
+    ProductInventoryService productInventoryService;
     ImageUtils imageUtils;
     AuthUtils authUtils;
 
     @Autowired
     public GoodsReceiptNoteController(
                 GoodsReceiptNoteService goodsReceiptNoteService,
+                GoodsReceiptItemService grnItemService,
+                ProductInventoryService productInventoryService,
                 ImageUtils imageUtils,
                 AuthUtils authUtils
             ) {
         super(goodsReceiptNoteService);
         this.goodsReceiptNoteService = goodsReceiptNoteService;
+        this.grnItemService = grnItemService;
+        this.productInventoryService = productInventoryService;
         this.imageUtils = imageUtils;
         this.authUtils = authUtils;
     }
@@ -126,5 +138,28 @@ public class GoodsReceiptNoteController extends BaseStaffController{
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("confirm/{id}")
+    public ResponseEntity<Map<String, List<?>>> confirm(
+            @PathVariable("id") Integer id
+    ) {
+        Map<String, List<?>> responseData = new HashMap<>();
+        List<Integer> grnItemIds = grnItemService.getAllIdsByGrnId(id);
+        responseData.put("grnItemIds", grnItemIds);
+
+        // get all grn items
+        List<GoodsReceiptItem> grnItems = grnItemService.getAllByGrnId(id);
+        responseData.put("grnItems", grnItems);
+
+        List<Integer> productIds = new ArrayList<>();
+        for (GoodsReceiptItem grnItem : grnItems) {
+            productIds.add(grnItem.getProduct().getId());
+        }
+        // get all product inventory records by each grn items
+        List<ProductInventory> productInventories = productInventoryService.getAllByProductIds(productIds);
+        responseData.put("productInventories", productInventories);
+
+        return ResponseEntity.ok(responseData);
     }
 }

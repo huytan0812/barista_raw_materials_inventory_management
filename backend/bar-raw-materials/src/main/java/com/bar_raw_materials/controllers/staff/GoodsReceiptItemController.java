@@ -1,9 +1,15 @@
 package com.bar_raw_materials.controllers.staff;
 
+import com.bar_raw_materials.dto.goodsReceiptItem.GrnItemDTO;
+import com.bar_raw_materials.entities.Batch;
 import com.bar_raw_materials.entities.GoodsReceiptNote;
 import com.bar_raw_materials.entities.Product;
 import com.bar_raw_materials.services.goodsReceiptNote.GoodsReceiptNoteService;
 import com.bar_raw_materials.services.product.ProductService;
+import com.bar_raw_materials.entities.GoodsReceiptItem;
+import com.bar_raw_materials.services.goodsReceiptItem.GoodsReceiptItemService;
+import com.bar_raw_materials.dto.goodsReceiptItem.CreateGrnItemDTO;
+import com.bar_raw_materials.services.batch.BatchService;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +21,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 import java.util.HashMap;
-import java.util.Objects;
-
-import com.bar_raw_materials.entities.GoodsReceiptItem;
-import com.bar_raw_materials.services.goodsReceiptItem.GoodsReceiptItemService;
-import com.bar_raw_materials.dto.goodsReceiptItem.CreateGrnItemDTO;
 
 @RestController
 @RequestMapping("${apiStaff}/grnItem")
@@ -27,20 +28,24 @@ public class GoodsReceiptItemController extends BaseStaffController {
     GoodsReceiptItemService grnItemService;
     GoodsReceiptNoteService grnService;
     ProductService productService;
+    BatchService batchService;
+
     @Autowired
     public GoodsReceiptItemController(
             GoodsReceiptItemService grnItemService,
             GoodsReceiptNoteService grnService,
-            ProductService productService
+            ProductService productService,
+            BatchService batchService
     ) {
         super(grnItemService);
         this.grnItemService = grnItemService;
         this.grnService = grnService;
         this.productService = productService;
+        this.batchService = batchService;
     }
 
     @GetMapping("grn/{grnId}/grnItems")
-    public ResponseEntity<Page<GoodsReceiptItem>> getPageByGrnId(
+    public ResponseEntity<Page<GrnItemDTO>> getPageByGrnId(
             @PathVariable("grnId") Integer grnId,
             @Nullable @RequestParam(defaultValue="0", name="page") Integer page,
             @Nullable @RequestParam(defaultValue="5", name="size") Integer size
@@ -49,7 +54,7 @@ public class GoodsReceiptItemController extends BaseStaffController {
         if (grn == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        Page<GoodsReceiptItem> grnItemsPage = grnItemService.getPageByGrnId(grnId, page, size);
+        Page<GrnItemDTO> grnItemsPage = grnItemService.getPageByGrnId(grnId, page, size);
         return ResponseEntity.ok(grnItemsPage);
     }
 
@@ -83,7 +88,7 @@ public class GoodsReceiptItemController extends BaseStaffController {
         grnItem.setProduct(product);
 
         try {
-            grnItemService.createGrnItem(grnItem);
+            grnItemService.createGrnItem(grnItem, createGrnItemDTO);
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -153,7 +158,7 @@ public class GoodsReceiptItemController extends BaseStaffController {
             responseData.put("failToDelete", "Có lỗi xảy ra");
             return new ResponseEntity<>(responseData, HttpStatus.BAD_REQUEST);
         }
-        responseData.put("successfulMsg", "Delete successfully");
+        responseData.put("successfulMsg", "Lô hàng nhập kho " + grnItem.getBatch().getId() +" được xóa thành công");
         return ResponseEntity.ok(responseData);
     }
 }

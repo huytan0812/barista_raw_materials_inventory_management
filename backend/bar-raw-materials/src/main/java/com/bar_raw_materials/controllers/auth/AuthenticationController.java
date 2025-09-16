@@ -34,8 +34,7 @@ public class AuthenticationController {
         try {
             isTokenValid = authenticationService.isTokenValid(jwt);
             response.put("isTokenValid", isTokenValid);
-        }
-        catch (ExpiredJwtException e) {
+        } catch (ExpiredJwtException e) {
             System.out.println("Expired JWT");
         }
         return ResponseEntity.ok(response);

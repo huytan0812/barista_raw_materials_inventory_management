@@ -1,19 +1,27 @@
 package com.bar_raw_materials.services.goodsReceiptItem;
 
 import com.bar_raw_materials.dto.goodsReceiptItem.CreateGrnItemDTO;
+import com.bar_raw_materials.dto.goodsReceiptItem.GrnItemDTO;
 import com.bar_raw_materials.entities.GoodsReceiptItem;
 import com.bar_raw_materials.services.EntityService;
 import org.springframework.data.domain.Page;
-import java.time.LocalDate;
+import java.util.List;
 
 public interface GoodsReceiptItemService extends EntityService {
-    // get all Grn items per Grn
-    Page<GoodsReceiptItem> getPageByGrnId(
+    // get page of Grn items per Grn
+    Page<GrnItemDTO> getPageByGrnId(
             Integer grnId,
             int page,
             int size
     );
-    void createGrnItem(GoodsReceiptItem grnItem);
+
+    // get all Grn items per Grn
+    List<GoodsReceiptItem> getAllByGrnId(Integer grnId);
+
+    // get all Grn items ids per Grn
+    List<Integer> getAllIdsByGrnId(Integer grnId);
+
+    void createGrnItem(GoodsReceiptItem grnItem, CreateGrnItemDTO createGrnItemDTO);
     void updateGrnItem(GoodsReceiptItem grnItem);
     void deleteGrnItem(GoodsReceiptItem grnItem);
 

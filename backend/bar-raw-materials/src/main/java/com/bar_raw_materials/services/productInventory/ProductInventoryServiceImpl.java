@@ -31,4 +31,8 @@ public class ProductInventoryServiceImpl implements ProductInventoryService {
     public <T> T getDetails(int id) {
         return null;
     }
+    @Override
+    public List<ProductInventory> getAllByProductIds(List<Integer> productIds) {
+        return productInventoryRepository.findAllByProductIds(productIds);
+    }
 }

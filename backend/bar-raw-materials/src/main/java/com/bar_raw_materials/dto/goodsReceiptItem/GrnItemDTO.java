@@ -1,9 +1,6 @@
 package com.bar_raw_materials.dto.goodsReceiptItem;
 
-import com.bar_raw_materials.entities.GoodsReceiptNote;
-import com.bar_raw_materials.entities.Product;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,9 +10,10 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateGrnItemDTO {
+public class GrnItemDTO {
     private Integer id;
     private Integer productId;
+    private String productName;
     private Integer grnId;
     private Integer quantityImport;
     private BigDecimal unitCost;

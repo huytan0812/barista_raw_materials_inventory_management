@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import java.util.List;
 
 public interface ProductInventoryRepository extends JpaRepository<ProductInventory, Integer> {
     @Query(
@@ -17,4 +18,9 @@ public interface ProductInventoryRepository extends JpaRepository<ProductInvento
                     ") FROM ProductInventory p JOIN p.product JOIN p.businessPeriod"
     )
     Page<ProductInventoryDTO> pagination(Pageable pageable);
+
+    @Query(
+            value="SELECT p FROM ProductInventory p WHERE p.product.id IN :productIds"
+    )
+    List<ProductInventory> findAllByProductIds(List<Integer> productIds);
 }
