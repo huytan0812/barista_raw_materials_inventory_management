@@ -5,8 +5,10 @@ import com.bar_raw_materials.dto.goodsReceiptItem.GrnItemDTO;
 import com.bar_raw_materials.entities.Batch;
 import com.bar_raw_materials.entities.GoodsReceiptItem;
 import com.bar_raw_materials.entities.GoodsReceiptNote;
+import com.bar_raw_materials.entities.Product;
 import com.bar_raw_materials.repositories.GoodsReceiptItemRepository;
 import com.bar_raw_materials.services.batch.BatchService;
+import com.bar_raw_materials.services.product.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
@@ -26,6 +28,7 @@ import java.time.LocalDate;
 public class GoodsReceiptItemServiceImpl implements GoodsReceiptItemService {
     private final GoodsReceiptItemRepository goodsReceiptItemRepository;
     private final BatchService batchService;
+    private final ProductService productService;
 
     @Override
     public List<?> getAll() {
@@ -67,20 +70,25 @@ public class GoodsReceiptItemServiceImpl implements GoodsReceiptItemService {
     public void createGrnItem(GoodsReceiptItem grnItem, CreateGrnItemDTO createGrnItemDTO) {
         Batch batch = batchService.getBatchByLotNumber(createGrnItemDTO.getLotNumber());
         if (batch == null) {
-            Batch newBatch = new Batch();
-            newBatch.setLotNumber(createGrnItemDTO.getLotNumber());
-            newBatch.setProduct(grnItem.getProduct());
-            newBatch.setMfgDate(createGrnItemDTO.getMfgDate());
-            newBatch.setExpDate(createGrnItemDTO.getExpDate());
-            batchService.createBatch(newBatch);
-            batch = newBatch;
+            batch = batchService.createBatchByGrnItemDTO(createGrnItemDTO, grnItem.getProduct());
         }
         grnItem.setBatch(batch);
         goodsReceiptItemRepository.save(grnItem);
     }
 
     @Override
-    public void updateGrnItem(GoodsReceiptItem grnItem) {
+    @Transactional
+    public void updateGrnItem(GoodsReceiptItem grnItem, CreateGrnItemDTO updateGrnItemDTO) {
+        String preLotNumber = grnItem.getBatch().getLotNumber();
+        String updatedLotNumber = updateGrnItemDTO.getLotNumber();
+        // if new batch is updated
+        if (!preLotNumber.equals(updatedLotNumber)) {
+            Batch batch = batchService.getBatchByLotNumber(updatedLotNumber);
+            if (batch == null) {
+                batch = batchService.createBatchByGrnItemDTO(updateGrnItemDTO, grnItem.getProduct());
+            }
+            grnItem.setBatch(batch);
+        }
         goodsReceiptItemRepository.save(grnItem);
     }
 

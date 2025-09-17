@@ -63,6 +63,7 @@ public class GoodsReceiptItemController extends BaseStaffController {
             @RequestPart("data") CreateGrnItemDTO createGrnItemDTO
     ) {
         Map<String, String> responseData = new HashMap<>();
+        // Get GoodsReceiptNote by grnId
         Integer grnId = createGrnItemDTO.getGrnId();
         GoodsReceiptNote grn = grnService.getDetails(grnId);
         if (grn == null) {
@@ -105,32 +106,34 @@ public class GoodsReceiptItemController extends BaseStaffController {
             @PathVariable("grnItemId") Integer grnItemId,
             @RequestPart("data") CreateGrnItemDTO updateGrnItemDTO
     ) {
+        Map<String, String> responseData = new HashMap<>();
         GoodsReceiptItem grnItem = grnItemService.getDetails(grnItemId);
         if (grnItem == null) {
+            responseData.put("invalidGrnItem", "Lô hàng nhập kho không tồn tại");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        Map<String, String> responseData = new HashMap<>();
         if (!grnItemService.isValidExpDate(updateGrnItemDTO)) {
             responseData.put("expDateErr", "Hạn sử dụng không được nhỏ hơn hoặc bằng ngày sản xuất");
             return new ResponseEntity<>(responseData, HttpStatus.BAD_REQUEST);
         }
         BeanUtils.copyProperties(updateGrnItemDTO, grnItem);
 
-        int preProductId = grnItem.getProduct().getId();
+        int currentProductId = grnItem.getProduct().getId();
         int updateProductId = updateGrnItemDTO.getProductId();
-        if (preProductId != updateProductId) {
-            // get the updated product
+        // if new product is updated
+        if (currentProductId != updateProductId) {
             Product product = productService.getDetails(updateProductId);
             if (product == null) {
                 responseData.put("invalidProduct", "Sản phẩm không tồn tại");
                 return new ResponseEntity<>(responseData, HttpStatus.NOT_FOUND);
             }
+            // set new product to grnItem
             grnItem.setProduct(product);
         }
 
         try {
-            grnItemService.updateGrnItem(grnItem);
+            grnItemService.updateGrnItem(grnItem, updateGrnItemDTO);
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -158,7 +161,7 @@ public class GoodsReceiptItemController extends BaseStaffController {
             responseData.put("failToDelete", "Có lỗi xảy ra");
             return new ResponseEntity<>(responseData, HttpStatus.BAD_REQUEST);
         }
-        responseData.put("successfulMsg", "Lô hàng nhập kho " + grnItem.getBatch().getId() +" được xóa thành công");
+        responseData.put("successfulMsg", "Đơn hàng nhập kho sản phẩm "+grnItem.getProduct().getName()+" được xóa thành công");
         return ResponseEntity.ok(responseData);
     }
 }

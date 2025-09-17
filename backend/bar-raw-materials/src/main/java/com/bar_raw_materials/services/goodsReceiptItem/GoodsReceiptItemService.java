@@ -22,7 +22,7 @@ public interface GoodsReceiptItemService extends EntityService {
     List<Integer> getAllIdsByGrnId(Integer grnId);
 
     void createGrnItem(GoodsReceiptItem grnItem, CreateGrnItemDTO createGrnItemDTO);
-    void updateGrnItem(GoodsReceiptItem grnItem);
+    void updateGrnItem(GoodsReceiptItem grnItem, CreateGrnItemDTO updateGrnItemDTO);
     void deleteGrnItem(GoodsReceiptItem grnItem);
 
     // util service

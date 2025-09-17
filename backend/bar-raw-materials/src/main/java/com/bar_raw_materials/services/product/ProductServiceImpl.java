@@ -1,6 +1,7 @@
 package com.bar_raw_materials.services.product;
 
 import com.bar_raw_materials.dto.product.CreateProductDTO;
+import com.bar_raw_materials.dto.product.LightProductDTO;
 import com.bar_raw_materials.dto.product.ProductDTO;
 import com.bar_raw_materials.entities.BaseUnit;
 import com.bar_raw_materials.entities.Category;
@@ -31,6 +32,11 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<ProductDTO> getAll() {
         return productRepository.findAllAlongCategoryAndBaseUnit();
+    }
+
+    @Override
+    public List<LightProductDTO> getAllLight() {
+        return productRepository.findAllLight();
     }
 
     @Override

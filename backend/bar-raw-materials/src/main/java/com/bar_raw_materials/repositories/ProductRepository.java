@@ -2,6 +2,8 @@ package com.bar_raw_materials.repositories;
 
 import com.bar_raw_materials.entities.Product;
 import com.bar_raw_materials.dto.product.ProductDTO;
+import com.bar_raw_materials.dto.product.LightProductDTO;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,6 +17,12 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                     " ORDER BY p.id ASC"
     )
     List<Product> findAllOrderByProductIdAsc();
+
+    @Query(
+            value="SELECT new com.bar_raw_materials.dto.product.LightProductDTO(" +
+                    "p.id, p.name)" + " FROM Product p "
+    )
+    List<LightProductDTO> findAllLight();
 
     @Query(
             value="SELECT p FROM Product p JOIN FETCH p.baseUnit JOIN FETCH p.category " +

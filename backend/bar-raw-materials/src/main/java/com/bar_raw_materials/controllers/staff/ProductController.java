@@ -1,6 +1,7 @@
 package com.bar_raw_materials.controllers.staff;
 
 import com.bar_raw_materials.dto.product.CreateProductDTO;
+import com.bar_raw_materials.dto.product.LightProductDTO;
 import com.bar_raw_materials.dto.product.ProductDTO;
 import com.bar_raw_materials.utils.ImageUtils;
 
@@ -9,6 +10,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
@@ -33,6 +35,11 @@ public class ProductController extends BaseStaffController {
         super(productService);
         this.productService = productService;
         this.imageUtils = imageUtils;
+    }
+
+    @GetMapping("allLight")
+    public List<LightProductDTO> getAllLight() {
+        return productService.getAllLight();
     }
 
     @PostMapping("add")
