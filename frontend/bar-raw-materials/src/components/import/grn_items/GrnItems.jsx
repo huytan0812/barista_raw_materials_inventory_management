@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import {Table, Flex, Button} from 'antd'
-import EditGrnItemModal from '../add_grn_items/EditGrnItemModal';
-import DeleteGrnItemModal from '../add_grn_items/DeleteGrnItemModal';
+import EditGrnItemModal from './EditGrnItemModal';
+import DeleteGrnItemModal from './DeleteGrnItemModal';
 
 const GrnItems = (props) => {
     const { grnItems, setRefreshGrnItems, successMsg, failMsg } = props;

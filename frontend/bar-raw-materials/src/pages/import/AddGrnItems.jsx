@@ -1,9 +1,9 @@
 import React, {useState, useEffect, useRef} from 'react'
 import { useParams, NavLink } from 'react-router-dom'
 import {Card, Row, Col, Button, Space, Breadcrumb, message, Modal, Form, Pagination} from 'antd'
-import GrnDetails from '../../components/import/add/GrnDetails'
-import GrnItems from '../../components/import/add/GrnItems'
-import AddGrnItemForm from '../../components/import/add_grn_items/AddGrnItemForm'
+import GrnDetails from '../../components/import/grn/GrnDetails'
+import GrnItems from '../../components/import/grn_items/GrnItems'
+import AddGrnItemForm from '../../components/import/grn_items/AddGrnItemForm'
 import { useAuthContext } from '../../contexts/AuthContext'
 import grnHTTP from '../../services/GoodsReceiptNoteService'
 import grnItemHTTP from '../../services/GoodsReceiptItemService'
@@ -76,7 +76,6 @@ const AddGrnItems = () => {
             try {
                 const formData = new FormData();
                 const {...rest} = values;
-                console.log(values);
                 const data = rest;
                 // format date to ISO
                 if (data.mfgDate) data.mfgDate = data.mfgDate.format("YYYY-MM-DD");
@@ -123,6 +122,17 @@ const AddGrnItems = () => {
         setOpen(false);
         setRefreshGrnItems(prev => !prev);
     };
+
+    // event handlers for handling GRN
+    const handleCancelGrn = () => {
+        console.log("Handling cancel GRN");
+    };
+    const handleCompleteGrn = () => {
+        console.log("Handling complete GRN");
+    }
+    const handleConfirmGrn = () => {
+        console.log("Handling confirm GRN");
+    }
 
     // side effect for fetching GoodsReceiptNote
     useEffect(() => {
@@ -177,7 +187,6 @@ const AddGrnItems = () => {
                         Authorization: `Bearer ${persistToken.current}`
                     }
                 });
-                console.log(response);
                 if (response.status === 200) {
                     setRole(response.data.role);
                 }
@@ -307,17 +316,29 @@ const AddGrnItems = () => {
                         <Button
                             color="red"
                             variant="solid"
+                            onClick={handleCancelGrn}
                         >
                             Hủy phiếu
                         </Button>
                     </Col>
                     <Col>
-                        <Button type="primary">Hoàn tất</Button>
+                        <Button 
+                            type="primary"
+                            onClick={handleCompleteGrn}
+                        >
+                            Hoàn tất
+                        </Button>
                     </Col>
                     {
                         role==="admin" &&
                         <Col>
-                            <Button color="green" variant="solid">Duyệt phiếu</Button>
+                            <Button 
+                                color="green" 
+                                variant="solid"
+                                onClick={handleConfirmGrn}
+                            >
+                                Duyệt phiếu
+                            </Button>
                         </Col>
                     }
                 </Row>

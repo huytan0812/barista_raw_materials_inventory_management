@@ -27,12 +27,11 @@ const BaseGrnItemForm = (props) => {
 
     const handleLotChange = (value) => {
         const batch = batchList.find((b) => b.lotNumber === value);
-        console.log("Batch:", batch);
         if (batch) {
-            // Nếu batch đã tồn tại
+            // if batch already exists
             setSelectedBatch(batch);
             form.setFieldsValue({
-                productId: batch.product.id,
+                productId: batch.productId,
                 mfgDate: dayjs(batch.mfgDate),
                 expDate: dayjs(batch.expDate),
             });
@@ -52,13 +51,13 @@ const BaseGrnItemForm = (props) => {
     useEffect(() => {
         const fetchProducts = async() => {
             try {
-                const response = await productHTTP.get('all', {
+                const response = await productHTTP.get('/allLight', {
                     headers: {
                         Authorization: `Bearer ${persistToken.current}`
                     }
                 });
                 if (response.status === 200) {
-                    setProduct(response.data);
+                   setProduct(response.data);
                 }
             }
             catch(error) {
@@ -72,7 +71,7 @@ const BaseGrnItemForm = (props) => {
     useEffect(() => {
         const fetchBatches = async() => {
             try {
-                const response = await batchHTTP.get('/all', {
+                const response = await batchHTTP.get('/allLight', {
                     headers: {
                         Authorization: `Bearer ${persistToken.current}`
                     }
@@ -90,19 +89,18 @@ const BaseGrnItemForm = (props) => {
 
     // side effect for pre-populating data for update form
     useEffect(() => {
-        if (mode === "update" && grnItem) {
+        if (mode === "update" && grnItem && batchList.length > 0) {
             form.setFieldsValue({
                 'id': grnItem?.id,
-                'productId': grnItem?.product?.id,
+                'lotNumber': grnItem?.lotNumber,
                 'quantityImport': grnItem?.quantityImport,
                 'unitCost': grnItem?.unitCost,
-                'lotNumber': grnItem?.lotNumber,
-                'mfgDate': grnItem?.mfgDate ? dayjs(grnItem.mfgDate) : null,
-                'expDate': grnItem?.expDate ? dayjs(grnItem.expDate) : null,
                 'vatRate': grnItem?.vatRate ? grnItem.vatRate * 100 : null,
             });
+            handleLotChange(grnItem.lotNumber);
         }
-    }, [form, grnItem, mode]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [form, grnItem, mode, batchList]);
 
     return (
         <Form

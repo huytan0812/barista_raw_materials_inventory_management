@@ -1,7 +1,7 @@
 import React from 'react'
 import {Flex, Breadcrumb} from 'antd'
 import {NavLink} from 'react-router-dom'
-import AddGrnForm from '../../components/import/add/AddGrnForm'
+import AddGrnForm from '../../components/import/grn/AddGrnForm'
 
 const AddGrn = () => {
   return (

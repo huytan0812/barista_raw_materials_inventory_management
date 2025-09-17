@@ -1,7 +1,6 @@
 import React, {useState, useEffect, useRef} from 'react'
 import {useNavigate} from 'react-router-dom'
 import {Form, DatePicker, Select, Input, Upload, Card, Button, message} from 'antd'
-import { UploadOutlined } from '@ant-design/icons';
 import { useAuthContext } from '../../../contexts/AuthContext'
 import BaseGrnForm from './BaseGrnForm';
 import vendorHTTP from '../../../services/VendorService'
