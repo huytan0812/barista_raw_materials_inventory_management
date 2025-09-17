@@ -33,7 +33,7 @@ public class Product {
 
     // Consider to implement native query to optimize code as EAGER is expensive
     @NotNull
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @ColumnDefault("(0)")
     @JoinColumn(name = "baseUnitId", nullable = false)
     private BaseUnit baseUnit;
@@ -52,7 +52,7 @@ public class Product {
     @Column(name = "imageName")
     private String imageName;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "categoryId")
     private Category category;
 

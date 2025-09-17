@@ -2,6 +2,7 @@ package com.bar_raw_materials.services.goodsReceiptItem;
 
 import com.bar_raw_materials.dto.goodsReceiptItem.CreateGrnItemDTO;
 import com.bar_raw_materials.dto.goodsReceiptItem.GrnItemDTO;
+import com.bar_raw_materials.dto.goodsReceiptItem.LightGrnItemDTO;
 import com.bar_raw_materials.entities.GoodsReceiptItem;
 import com.bar_raw_materials.services.EntityService;
 import org.springframework.data.domain.Page;
@@ -18,8 +19,8 @@ public interface GoodsReceiptItemService extends EntityService {
     // get all Grn items per Grn
     List<GoodsReceiptItem> getAllByGrnId(Integer grnId);
 
-    // get all Grn items ids per Grn
-    List<Integer> getAllIdsByGrnId(Integer grnId);
+    // get all light grn items dto per GRN
+    List<LightGrnItemDTO> getAllLightGrnItems(Integer grnId);
 
     void createGrnItem(GoodsReceiptItem grnItem, CreateGrnItemDTO createGrnItemDTO);
     void updateGrnItem(GoodsReceiptItem grnItem, CreateGrnItemDTO updateGrnItemDTO);

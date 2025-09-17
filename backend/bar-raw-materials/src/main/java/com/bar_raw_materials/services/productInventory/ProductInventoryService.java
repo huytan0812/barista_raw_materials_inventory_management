@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface ProductInventoryService extends EntityService {
     List<ProductInventory> getAllByProductIds(List<Integer> productIds);
+    void updateProductInventories(List<ProductInventory> productInventories);
 }

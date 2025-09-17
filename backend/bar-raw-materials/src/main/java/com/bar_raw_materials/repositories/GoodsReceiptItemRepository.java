@@ -2,6 +2,7 @@ package com.bar_raw_materials.repositories;
 
 import com.bar_raw_materials.entities.GoodsReceiptItem;
 import com.bar_raw_materials.dto.goodsReceiptItem.GrnItemDTO;
+import com.bar_raw_materials.dto.goodsReceiptItem.LightGrnItemDTO;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,13 +31,13 @@ public interface GoodsReceiptItemRepository extends JpaRepository<GoodsReceiptIt
     public List<GoodsReceiptItem> getAllGrnItemsByGrnId(Integer grnId);
 
     @Query(
-            value="SELECT grnItem.id" +
-                    " FROM goods_receipt_item grnItem JOIN goods_receipt_note grn ON " +
-                    "grnItem.grnId = grn.id " +
-                    " WHERE grn.id=:grnId",
-            nativeQuery = true
+            value="SELECT new com.bar_raw_materials.dto.goodsReceiptItem.LightGrnItemDTO(" +
+                    "grnItem.id, grnItem.product.id AS productId, " +
+                    "grnItem.quantityImport, grnItem.unitCost" +
+                    ") FROM GoodsReceiptItem grnItem JOIN grnItem.product JOIN grnItem.grn" +
+                    " WHERE grnItem.grn.id=:grnId"
     )
-    public List<Integer> getAllGrnItemIdsByGrnId(Integer grnId);
+    public List<LightGrnItemDTO> getLightGrnItemsByGrnId(Integer grnId);
 
     public GoodsReceiptItem findById(int id);
 }

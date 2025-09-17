@@ -2,6 +2,7 @@ package com.bar_raw_materials.services.goodsReceiptItem;
 
 import com.bar_raw_materials.dto.goodsReceiptItem.CreateGrnItemDTO;
 import com.bar_raw_materials.dto.goodsReceiptItem.GrnItemDTO;
+import com.bar_raw_materials.dto.goodsReceiptItem.LightGrnItemDTO;
 import com.bar_raw_materials.entities.Batch;
 import com.bar_raw_materials.entities.GoodsReceiptItem;
 import com.bar_raw_materials.entities.GoodsReceiptNote;
@@ -61,8 +62,8 @@ public class GoodsReceiptItemServiceImpl implements GoodsReceiptItemService {
     }
 
     @Override
-    public List<Integer> getAllIdsByGrnId(Integer grnId) {
-        return goodsReceiptItemRepository.getAllGrnItemIdsByGrnId(grnId);
+    public List<LightGrnItemDTO> getAllLightGrnItems(Integer grnId) {
+        return goodsReceiptItemRepository.getLightGrnItemsByGrnId(grnId);
     }
 
     @Override

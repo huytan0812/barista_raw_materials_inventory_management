@@ -1,5 +1,6 @@
 package com.bar_raw_materials.controllers.staff;
 
+import com.bar_raw_materials.dto.goodsReceiptItem.LightGrnItemDTO;
 import com.bar_raw_materials.dto.goodsReceiptNote.CreateGrnDTO;
 import com.bar_raw_materials.entities.GoodsReceiptItem;
 import com.bar_raw_materials.entities.GoodsReceiptNote;
@@ -29,7 +30,6 @@ import java.util.Map;
 public class GoodsReceiptNoteController extends BaseStaffController{
     GoodsReceiptNoteService goodsReceiptNoteService;
     GoodsReceiptItemService grnItemService;
-    ProductInventoryService productInventoryService;
     ImageUtils imageUtils;
     AuthUtils authUtils;
 
@@ -37,14 +37,12 @@ public class GoodsReceiptNoteController extends BaseStaffController{
     public GoodsReceiptNoteController(
                 GoodsReceiptNoteService goodsReceiptNoteService,
                 GoodsReceiptItemService grnItemService,
-                ProductInventoryService productInventoryService,
                 ImageUtils imageUtils,
                 AuthUtils authUtils
             ) {
         super(goodsReceiptNoteService);
         this.goodsReceiptNoteService = goodsReceiptNoteService;
         this.grnItemService = grnItemService;
-        this.productInventoryService = productInventoryService;
         this.imageUtils = imageUtils;
         this.authUtils = authUtils;
     }
@@ -144,21 +142,23 @@ public class GoodsReceiptNoteController extends BaseStaffController{
     public ResponseEntity<Map<String, List<?>>> confirm(
             @PathVariable("id") Integer id
     ) {
-        Map<String, List<?>> responseData = new HashMap<>();
-        List<Integer> grnItemIds = grnItemService.getAllIdsByGrnId(id);
-        responseData.put("grnItemIds", grnItemIds);
+        GoodsReceiptNote grn = goodsReceiptNoteService.getDetails(id);
+        if (grn == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
 
-        // get all grn items
-        List<GoodsReceiptItem> grnItems = grnItemService.getAllByGrnId(id);
+        Map<String, List<?>> responseData = new HashMap<>();
+        // get all light grn items dto
+        List<LightGrnItemDTO> grnItems = grnItemService.getAllLightGrnItems(id);
         responseData.put("grnItems", grnItems);
 
-        List<Integer> productIds = new ArrayList<>();
-        for (GoodsReceiptItem grnItem : grnItems) {
-            productIds.add(grnItem.getProduct().getId());
+        try {
+            goodsReceiptNoteService.confirm(grn, grnItems);
         }
-        // get all product inventory records by each grn items
-        List<ProductInventory> productInventories = productInventoryService.getAllByProductIds(productIds);
-        responseData.put("productInventories", productInventories);
+        catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
 
         return ResponseEntity.ok(responseData);
     }

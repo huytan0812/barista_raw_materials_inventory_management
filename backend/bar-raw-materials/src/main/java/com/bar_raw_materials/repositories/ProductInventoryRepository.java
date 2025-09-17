@@ -20,7 +20,9 @@ public interface ProductInventoryRepository extends JpaRepository<ProductInvento
     Page<ProductInventoryDTO> pagination(Pageable pageable);
 
     @Query(
-            value="SELECT p FROM ProductInventory p WHERE p.product.id IN :productIds"
+            value="SELECT p FROM ProductInventory p" +
+                    " JOIN FETCH p.product JOIN FETCH p.businessPeriod" +
+                    " WHERE p.product.id IN :productIds"
     )
     List<ProductInventory> findAllByProductIds(List<Integer> productIds);
 }
