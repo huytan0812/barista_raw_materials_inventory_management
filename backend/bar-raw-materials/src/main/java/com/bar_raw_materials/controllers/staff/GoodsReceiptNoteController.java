@@ -139,19 +139,15 @@ public class GoodsReceiptNoteController extends BaseStaffController{
     }
 
     @GetMapping("confirm/{id}")
-    public ResponseEntity<Map<String, List<?>>> confirm(
+    public ResponseEntity<String> confirm(
             @PathVariable("id") Integer id
     ) {
         GoodsReceiptNote grn = goodsReceiptNoteService.getDetails(id);
         if (grn == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
-        Map<String, List<?>> responseData = new HashMap<>();
         // get all light grn items dto
         List<LightGrnItemDTO> grnItems = grnItemService.getAllLightGrnItems(id);
-        responseData.put("grnItems", grnItems);
-
         try {
             goodsReceiptNoteService.confirm(grn, grnItems);
         }
@@ -160,6 +156,6 @@ public class GoodsReceiptNoteController extends BaseStaffController{
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        return ResponseEntity.ok(responseData);
+        return ResponseEntity.ok("Phê duyệt thành công");
     }
 }
