@@ -102,6 +102,16 @@ const VerifiedGrnItems = (props) => {
             },
             align: "right",
             titleAlign: "center"
+        },
+        {
+            title: "Phải trả",
+            key: "payAmount",
+            render: (_, record) => {
+                const value = record.unitCost * record.quantityImport * (1 + record.vatRate);
+                return new Intl.NumberFormat('vn-VN', { style: 'currency', currency: 'VND' }).format(value);
+            },
+            align: "right",
+            titleAlign: "center"
         }
     ]
 

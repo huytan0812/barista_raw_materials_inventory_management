@@ -45,7 +45,7 @@ const VerifiedGrn = () => {
           <Tag color="green">Đã phê duyệt</Tag>
         }
         style={{
-          width: '966px',
+          maxWidth: '1080px',
           margin: '0.8rem auto'
         }}
         styles={{

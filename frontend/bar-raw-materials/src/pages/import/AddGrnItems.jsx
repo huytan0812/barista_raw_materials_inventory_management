@@ -40,8 +40,10 @@ const AddGrnItems = () => {
     // state for getting current login user role
     const [role, setRole] = useState(null);
 
-    // states for handling Confirm modal
+    // state for handling Confirm modal
     const [openConfirmModal, setOpenConfirmModal] = useState(false)
+    // state for handling Delete modal
+    const [openDeleteModal, setOpenDeleteModal] = useState(false);
 
     const successMsg = (msg) => {
         messageAPI.open({
@@ -131,11 +133,23 @@ const AddGrnItems = () => {
 
     // event handlers for handling GRN
     const handleCancelGrn = () => {
-        console.log("Handling cancel GRN");
+        setOpenDeleteModal(true);
     };
+    const handleCancelSuccess = (msg) => {
+        messageAPI.open({
+            type: 'success',
+            content: msg,
+            duration: 0.5,
+            onClose: () => {
+                navigate('/import');
+            }
+        });
+    }
+
     const handleCompleteGrn = () => {
         navigate('/import');
     }
+
     const handleConfirmGrn = () => {
         setOpenConfirmModal(true);
     }
@@ -336,6 +350,13 @@ const AddGrnItems = () => {
                         >
                             Hủy phiếu
                         </Button>
+                        <CancelGrnModal
+                            grnId={grnId}
+                            failMsg={failMsg}
+                            onCancelSuccess={handleCancelSuccess}
+                            open={openDeleteModal}
+                            setOpen={setOpenDeleteModal}
+                        />
                     </Col>
                     <Col>
                         <Button 

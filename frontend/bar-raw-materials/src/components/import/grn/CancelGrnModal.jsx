@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React from 'react'
 import {Modal, Button} from 'antd'
 import { WarningFilled } from '@ant-design/icons'
 import { useAuthContext } from '../../../contexts/AuthContext'
@@ -8,9 +8,10 @@ const CancelGrnModal = (props) => {
     const {
         grnId, 
         failMsg,
-        onCancelSuccess
+        onCancelSuccess,
+        open,
+        setOpen
     } = props;
-    const [open, setOpen] = useState(false);
     const { token } = useAuthContext();
 
     const handleOk = () => {
@@ -23,15 +24,12 @@ const CancelGrnModal = (props) => {
                 });
                 if (response.status === 200) {
                     setOpen(false);
-                    onCancelSuccess(response.data.successfulMsg);
-                }
-                else {
-                    console.log(response.body);
+                    onCancelSuccess(response.data);
                 }
             }
             catch (error) {
                 console.log(error);
-                failMsg(error.response.data.failToDelete);
+                failMsg(error.response.data);
             }
         }
         deleteGrnItem();   

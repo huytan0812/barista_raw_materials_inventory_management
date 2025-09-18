@@ -134,13 +134,19 @@ const BaseGrnItemForm = (props) => {
                 rules={[{ required: true, message: "Mã số lô không được để trống" }]}
             >
                 <AutoComplete
-                    options={batchList.map((b) => ({ value: b.lotNumber }))}
+                    options={batchList.map((b) => 
+                        ({ 
+                            value: b.lotNumber,
+                            label: `${b.lotNumber} / ${b.productName}`
+                        })
+                    )}
                     placeholder="Chọn hoặc nhập mã lô"
                     filterOption={(inputValue, option) =>
-                        option?.value.toUpperCase().includes(inputValue.toUpperCase())
+                        option?.label.toUpperCase().includes(inputValue.toUpperCase())
                     }
                     onSelect={handleLotChange}
                     onChange={handleLotChange} // cho phép nhập mới
+                    allowClear={true}
                 />
             </Form.Item>
 

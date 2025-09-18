@@ -58,6 +58,9 @@ const VerifiedGrnDetails = (props) => {
                             .format(new Date(grn.dateReceived))
                         }
                     </Descriptions.Item>
+                    <Descriptions.Item label="Tổng phải trả cho NCC">
+                        {new Intl.NumberFormat('vn-VN', {style: 'currency', currency: 'VND'}).format(grn?.totalAmount)}
+                    </Descriptions.Item>
                 </Descriptions>
             </Col>
             <Col span={6}>
