@@ -52,6 +52,13 @@ const InventoryTable = ({
       title: "Sản phẩm",
       dataIndex: "productName",
       key: "productName",
+      onCell: () => ({
+        style: {
+          maxWidth: '20rem',
+          whiteSpace: "normal",   // allow wrapping
+          wordBreak: "break-word"
+        },
+      }),
     },
     {
       title: "SL tồn đầu kỳ",
@@ -64,6 +71,7 @@ const InventoryTable = ({
       dataIndex: "startingInventory",
       key: "startingInventory",
       align: "right",
+      render: (value) => new Intl.NumberFormat('vn-VN', { style: 'currency', currency: 'VND' }).format(value)
     },
     {
       title: "SL nhập trong kỳ",
@@ -76,6 +84,7 @@ const InventoryTable = ({
       dataIndex: "importAmount",
       key: "importAmount",
       align: "right",
+      render: (value) => new Intl.NumberFormat('vn-VN', { style: 'currency', currency: 'VND' }).format(value)
     },
     {
       title: "SL xuất kho trong kỳ",

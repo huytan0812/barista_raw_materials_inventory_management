@@ -39,7 +39,8 @@ const GrnItems = (props) => {
         {
             title: "STT",
             key: "index",
-            render: (text, record, index) => index + 1
+            render: (text, record, index) => index + 1,
+            align: "center"
         },
         {
             title: "Sản phẩm",
@@ -50,17 +51,21 @@ const GrnItems = (props) => {
             title: "SL nhập",
             dataIndex: "quantityImport",
             key: "quantityImport",
+            align: "center"
         },
         {
             title: "Giá nhập",
             dataIndex: "unitCost",
             key: "unitCost",
-            render: (value) => new Intl.NumberFormat('vn-VN', { style: 'currency', currency: 'VND' }).format(value)
+            render: (value) => new Intl.NumberFormat('vn-VN', { style: 'currency', currency: 'VND' }).format(value),
+            align: "right",
+            titleAlign: "center"
         },
         {
             title: "Mã số lô",
             dataIndex: "lotNumber",
             key: "lotNumber",
+            align: "center"
         },
         {
             title: "Ngày sản xuất",
@@ -72,7 +77,9 @@ const GrnItems = (props) => {
                     month: "2-digit",
                     year: "numeric"
                 }).format(new Date(value));
-            }
+            },
+            align: "right",
+            titleAlign: "center"
         },
         {
             title: "HSD",
@@ -84,7 +91,9 @@ const GrnItems = (props) => {
                     month: "2-digit",
                     year: "numeric"
                 }).format(new Date(value));
-            }
+            },
+            align: "right",
+            titleAlign: "center"
         }
         ,{
             title: "VAT",
@@ -92,7 +101,9 @@ const GrnItems = (props) => {
             key: "vatRate",
             render: (value) => {
                 return `${value*100}%`
-            }
+            },
+            align: "right",
+            titleAlign: "center"
         },
         {
             title: "Hành động",

@@ -52,17 +52,20 @@ const GrnTable = ({
         {
             title: "STT",
             key: "index",
-            render: (text, record, index) => index + 1
+            render: (text, record, index) => index + 1,
+            align: "center"
         },
         {
             title: "Mã phiếu",
             dataIndex: "id",
-            key: "id"
+            key: "id",
+            align: "center"
         },
         {
             title: "Nhà cung cấp",
             dataIndex: "vendorName",
             key: "vendorName",
+            align: "center"
         },
         {
             title: "Ngày tạo",
@@ -76,22 +79,28 @@ const GrnTable = ({
                     hour: "2-digit",
                     minute: "2-digit",
                 }).format(new Date(value));
-            }
+            },
+            align: "right",
+            titleAlign: "center"
         },
         {
             title: "Người tạo",
             dataIndex: "createdByUser",
             key: "createdByUser",
+            align: "center"
         },
         {
             title: "Số hóa đơn",
             dataIndex: "invoiceNumber",
             key: "invoiceNumber",
+            align: "center"
         },
         {
             title: "Ngày tạo hóa đơn",
             dataIndex: "invoiceDate",
             key: "invoiceDate",
+            align: "right",
+            titleAlign: "center"
         }
         ,{
             title: "Trạng thái",
@@ -104,7 +113,8 @@ const GrnTable = ({
                     )
                 }
                 return <Tag color="red">Chưa phê duyệt</Tag>
-            }
+            },
+            align: "center"
         },
         {
             title: "Hành động",

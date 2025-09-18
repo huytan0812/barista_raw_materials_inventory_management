@@ -1,9 +1,11 @@
 import React, {useState, useEffect, useRef} from 'react'
-import { useParams, NavLink } from 'react-router-dom'
+import { useParams, NavLink, useNavigate } from 'react-router-dom'
 import {Card, Row, Col, Button, Space, Breadcrumb, message, Modal, Form, Pagination} from 'antd'
 import GrnDetails from '../../components/import/grn/GrnDetails'
 import GrnItems from '../../components/import/grn_items/GrnItems'
 import AddGrnItemForm from '../../components/import/grn_items/AddGrnItemForm'
+import CancelGrnModal from '../../components/import/grn/CancelGrnModal'
+import ConfirmGrnModal from '../../components/import/grn/ConfirmGrnModal'
 import { useAuthContext } from '../../contexts/AuthContext'
 import grnHTTP from '../../services/GoodsReceiptNoteService'
 import grnItemHTTP from '../../services/GoodsReceiptItemService'
@@ -14,6 +16,7 @@ const AddGrnItems = () => {
     const persistToken = useRef(token);
     const params = useParams();
     const grnId = params.grnId;
+    const navigate = useNavigate();
     const [addGrnItemForm] = Form.useForm();
 
     // states for handling fetching GRN
@@ -36,6 +39,9 @@ const AddGrnItems = () => {
 
     // state for getting current login user role
     const [role, setRole] = useState(null);
+
+    // states for handling Confirm modal
+    const [openConfirmModal, setOpenConfirmModal] = useState(false)
 
     const successMsg = (msg) => {
         messageAPI.open({
@@ -128,10 +134,20 @@ const AddGrnItems = () => {
         console.log("Handling cancel GRN");
     };
     const handleCompleteGrn = () => {
-        console.log("Handling complete GRN");
+        navigate('/import');
     }
     const handleConfirmGrn = () => {
-        console.log("Handling confirm GRN");
+        setOpenConfirmModal(true);
+    }
+    const handleConfirmSuccess = (msg) => {
+        messageAPI.open({
+            type: 'success',
+            content: msg,
+            duration: 0.5,
+            onClose: () => {
+                navigate('/import');
+            }
+        });
     }
 
     // side effect for fetching GoodsReceiptNote
@@ -339,6 +355,13 @@ const AddGrnItems = () => {
                             >
                                 Duyệt phiếu
                             </Button>
+                            <ConfirmGrnModal 
+                                grnId={grnId}
+                                failMsg={failMsg}
+                                onConfirmSuccess={handleConfirmSuccess}
+                                open={openConfirmModal}
+                                setOpen={setOpenConfirmModal}
+                            />
                         </Col>
                     }
                 </Row>
