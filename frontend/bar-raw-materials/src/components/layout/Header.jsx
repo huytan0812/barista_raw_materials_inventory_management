@@ -4,7 +4,8 @@ import { useLayoutContext } from '../../contexts/LayoutContext'
 import { BellOutlined, UserOutlined, SettingFilled, LogoutOutlined } from '@ant-design/icons'
 import { Avatar, Divider, Flex, Dropdown, Tag } from 'antd'
 import { useAuthContext } from '../../contexts/AuthContext.jsx'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, NavLink } from 'react-router-dom'
+import userHTTP from '../../services/UserService.js'
 
 const notifyItems = [
   {
@@ -31,7 +32,9 @@ const ImsHeader = () => {
     const { logout, token } = useAuthContext();
     const persistToken = useRef(token);
     const [businessPeriod, setBusinessPeriod] = useState(null);
+    const [userInfo, setUserInfo] = useState({});
 
+    // side effect for fetching current business period
     useEffect(() => {
         const getBusinessPeriod = async() => {
             const response = await fetch('http://localhost:8080/api/staff/businessPeriod/current', {
@@ -49,6 +52,26 @@ const ImsHeader = () => {
         getBusinessPeriod();
     }, []);
 
+    // side effect for fetching current login user
+    useEffect(() => {
+        const fetchUser = async() => {
+            try {
+                const response = await userHTTP.get('lightInfo', {
+                    headers: {
+                        Authorization: `Bearer ${persistToken.current}`
+                    }
+                });
+                if (response.status === 200) {
+                    setUserInfo(response.data);
+                }
+            }
+            catch (error) {
+                console.log(error);
+            }
+        }
+        fetchUser();
+    }, []);
+
     const handleLogoutClick = () => {
         logout();
         console.log("Đăng xuất thành công");
@@ -59,9 +82,9 @@ const ImsHeader = () => {
         {
             key: '1',
             label: (
-            <a href="#">
-                Hồ sơ cá nhân
-            </a>
+                <NavLink to='/userDetails'>
+                    <span>Hồ sơ cá nhân</span>
+                </NavLink>
             ),
         },
         {
@@ -164,7 +187,7 @@ const ImsHeader = () => {
 
                             }}
                         >
-                            Nguyen Van A
+                            {userInfo?.username}
                         </p>
                         <p
                             style={{
@@ -173,7 +196,7 @@ const ImsHeader = () => {
                             }}
                         >
                             <strong>
-                                Admin
+                                {userInfo?.role}
                             </strong>
                         </p>
                     </Flex>   

@@ -6,7 +6,14 @@ import EditProductModal from './EditProductModal';
 import DeleteProductModal from './DeleteProductModal'
 import axiosHTTP from '../../services/ProductService'
 
-const ProductTable = ({currentPage, pageSize, refresh, setPageMetadata}) => {
+const ProductTable = (props) => {
+    const {
+        currentPage,
+        pageSize,
+        refresh,
+        setPageMetadata,
+        searchText
+    } = props;
     // fetching data from server
     const [data, setData] = useState([]);
     const [refreshAfterAction, setRefreshAfterAction] = useState(false);
@@ -28,20 +35,20 @@ const ProductTable = ({currentPage, pageSize, refresh, setPageMetadata}) => {
         });
     };
 
+    // handle product update
     const handleUpdateSuccess = (msg) => {
         success(msg);
         setRefreshAfterAction(prev => !prev);
     }
-
     const handleUpdateClick = (productId) => {
         setActiveModal(parseInt(productId));
     }
 
+    // handle product deletion
     const handleDeleteSuccess = (msg) => {
         success(msg);
         setRefreshAfterAction(prev => !prev);
     };
-
     const handleDeleteClick = (productId) => {
         setActiveDeleteModal(parseInt(productId));
     }
@@ -187,11 +194,38 @@ const ProductTable = ({currentPage, pageSize, refresh, setPageMetadata}) => {
         }
     }, [token, currentPage, pageSize, navigate]);
 
+    const searchProducts = useCallback(async() => {
+        try {
+            const response = await axiosHTTP.get('/search', {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+                params: {
+                    search: searchText,
+                    page: currentPage - 1,
+                    size: pageSize
+                }
+            });
+            if (response.status === 200) {
+                setData(response.data.content);
+                const {content:_, ...rest} = response.data;
+                setPageMetadata(rest);
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }, [searchText, token, currentPage, pageSize]);
+
     // side effect for refreshing product table
     useEffect(() => {
-        console.log("On refreshing...");
-        fetchProducts();
-    }, [refresh, refreshAfterAction, fetchProducts]);
+        if (searchText) {
+            searchProducts();
+        }
+        else {
+            fetchProducts();
+        }
+    }, [refresh, refreshAfterAction, searchText, fetchProducts, searchProducts]);
 
     return (
         <React.Fragment>

@@ -18,6 +18,7 @@ import VerifiedGrn from './pages/import/VerifiedGrn.jsx'
 import Customer from './pages/Customer'
 import Permission from './pages/Permission'
 import Report from './pages/Report'
+import UserDetails from './pages/UserDetails.jsx'
 import { useAuthContext } from './contexts/AuthContext.jsx'
 
 function App() {
@@ -47,6 +48,7 @@ function App() {
         <Route path='/customer' element={<Customer /> } />
         <Route path='/permissions' element={<Permission /> } />
         <Route path='/reports' element={<Report /> } />
+        <Route path='/userDetails' element={<UserDetails />} />
       </Route>
     </Routes>
   )

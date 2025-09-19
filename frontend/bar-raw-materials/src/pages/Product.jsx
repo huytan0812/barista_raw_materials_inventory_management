@@ -8,8 +8,8 @@ const { Search } = Input;
 const { Option } = Select;
 
 const Product = () => {
-  const [searchText, setSearchText] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState("");
+  const [searchText, setSearchText] = useState(null);
+  const [categoryFilter, setCategoryFilter] = useState(null);
 
   const [addProductForm] = Form.useForm();
 
@@ -54,7 +54,17 @@ const Product = () => {
     setOpen(false);
     // if new product is added successfully, refresh <ProductTable>
     setRefresh(prev => !prev);
+    // clear search text after a product is added successfully
+    setSearchText(null);
+    // reset current page
+    setCurrentPage(1);
   };
+
+  const handleSearch = (text) => {
+    setSearchText(text);
+    // reset current page
+    setCurrentPage(1);
+  }
 
   return (
     <Card
@@ -64,9 +74,9 @@ const Product = () => {
           <Space>
             <Search
               placeholder="Tìm theo tên sản phẩm"
-              onSearch={(value) => setSearchText(value)}
-              onChange={(e) => setSearchText(e.target.value)}
-              style={{ width: 200 }}
+              onSearch={(value) => handleSearch(value)}
+              // onChange={(e) => setSearchText(e.target.value)}
+              style={{ width: 250 }}
               allowClear
             />
             <Select
@@ -112,8 +122,11 @@ const Product = () => {
     >
       {contextHolder}
       <ProductTable 
-        currentPage={currentPage} pageSize={pageSize} 
-        refresh={refresh} setPageMetadata={setPageMetadata}
+        currentPage={currentPage} 
+        pageSize={pageSize} 
+        refresh={refresh} 
+        setPageMetadata={setPageMetadata}
+        searchText={searchText}
       />
       <div style={{ textAlign: "right", marginTop: 16 }}>
         <Pagination
