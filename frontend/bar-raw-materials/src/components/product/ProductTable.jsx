@@ -12,12 +12,13 @@ const ProductTable = (props) => {
         pageSize,
         refresh,
         setPageMetadata,
-        searchText
+        searchText,
+        categoryText
     } = props;
     // fetching data from server
     const [data, setData] = useState([]);
     const [refreshAfterAction, setRefreshAfterAction] = useState(false);
-    const navigate = useNavigate
+    const navigate = useNavigate();
     const { token } = useAuthContext();
 
     // handling active modal corresponding to the onClick event trigger
@@ -201,7 +202,8 @@ const ProductTable = (props) => {
                     Authorization: `Bearer ${token}`
                 },
                 params: {
-                    search: searchText,
+                    search: searchText ? searchText : '',
+                    filter: categoryText ? categoryText : '',
                     page: currentPage - 1,
                     size: pageSize
                 }
@@ -215,17 +217,17 @@ const ProductTable = (props) => {
         catch (error) {
             console.log(error);
         }
-    }, [searchText, token, currentPage, pageSize]);
+    }, [searchText, categoryText, token, currentPage, pageSize]);
 
     // side effect for refreshing product table
     useEffect(() => {
-        if (searchText) {
+        if (searchText || categoryText) {
             searchProducts();
         }
         else {
             fetchProducts();
         }
-    }, [refresh, refreshAfterAction, searchText, fetchProducts, searchProducts]);
+    }, [refresh, refreshAfterAction, searchText, categoryText, fetchProducts, searchProducts]);
 
     return (
         <React.Fragment>

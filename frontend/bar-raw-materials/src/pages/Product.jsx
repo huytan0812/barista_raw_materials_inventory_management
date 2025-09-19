@@ -1,17 +1,21 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import { Card, Input, Select, Pagination, Space, Button, Modal, message, Form } from "antd";
 import ProductTable from '../components/product/ProductTable';
 import AddProductForm from '../components/product/AddProductForm.jsx';
-import { SoundTwoTone } from '@ant-design/icons';
+import { useAuthContext } from '../contexts/AuthContext.jsx';
+import ctgHTTP from '../services/CategoryService.js'
 
 const { Search } = Input;
 const { Option } = Select;
 
 const Product = () => {
+  const [addProductForm] = Form.useForm();
+  const {token} = useAuthContext();
+
+  // states for handling search and filter
   const [searchText, setSearchText] = useState(null);
   const [categoryFilter, setCategoryFilter] = useState(null);
-
-  const [addProductForm] = Form.useForm();
+  const [categoryList, setCategoryList] = useState([]);
 
   // used for <ProductTable>
   const [refresh, setRefresh] = useState(false);
@@ -54,8 +58,9 @@ const Product = () => {
     setOpen(false);
     // if new product is added successfully, refresh <ProductTable>
     setRefresh(prev => !prev);
-    // clear search text after a product is added successfully
-    setSearchText(null);
+    // clear search text and filter after a product is added successfully
+    setSearchText("");
+    setCategoryFilter("");
     // reset current page
     setCurrentPage(1);
   };
@@ -65,6 +70,32 @@ const Product = () => {
     // reset current page
     setCurrentPage(1);
   }
+
+  const handleFilter = (text) => {
+    setCategoryFilter(text);
+    // reset current page
+    setCurrentPage(1);
+  }
+
+  // side effect for fetching categories
+  useEffect(() => {
+    const fetchCategories = async() => {
+      try {
+        const response = await ctgHTTP.get('allLight', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        if (response.status === 200) {
+          setCategoryList(response.data);
+        }
+      }
+      catch (error) {
+        console.log(error);
+      }
+    }
+    fetchCategories();
+  }, [token]);
 
   return (
     <Card
@@ -80,14 +111,16 @@ const Product = () => {
               allowClear
             />
             <Select
-              placeholder="Filter by Category"
-              style={{ width: 180 }}
+              placeholder="Lọc the danh mục"
+              style={{ width: 250 }}
               allowClear
-              onChange={(value) => setCategoryFilter(value)}
+              onChange={(value) => handleFilter(value)}
             >
-              <Option value="Grain">Grain</Option>
-              <Option value="Liquid">Liquid</Option>
-              <Option value="Powder">Powder</Option>
+              {
+                categoryList.map(ctg => {
+                  return (<Option key={ctg.id} value={ctg.name}>{ctg.name}</Option>)
+                })
+              }
             </Select>
             <Button 
               type="primary"
@@ -127,6 +160,7 @@ const Product = () => {
         refresh={refresh} 
         setPageMetadata={setPageMetadata}
         searchText={searchText}
+        categoryText={categoryFilter}
       />
       <div style={{ textAlign: "right", marginTop: 16 }}>
         <Pagination
