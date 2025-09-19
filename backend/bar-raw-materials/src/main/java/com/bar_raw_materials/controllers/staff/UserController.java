@@ -2,6 +2,7 @@ package com.bar_raw_materials.controllers.staff;
 
 import com.bar_raw_materials.entities.User;
 import com.bar_raw_materials.services.user.UserService;
+import com.bar_raw_materials.dto.user.LightUserDTO;
 
 import com.bar_raw_materials.utils.AuthUtils;
 import lombok.RequiredArgsConstructor;
@@ -34,5 +35,20 @@ public class UserController extends BaseStaffController {
         Map<String, String> responseData = new HashMap<>();
         responseData.put("role", user.getRole().getRole());
         return ResponseEntity.ok(responseData);
+    }
+
+    @GetMapping("lightInfo")
+    public ResponseEntity<LightUserDTO> getLightInfo() {
+        User user = authUtils.getCurrentAuthorizedUser();
+        LightUserDTO lightUserDTO = new LightUserDTO();
+        lightUserDTO.setId(user.getId());
+        lightUserDTO.setUsername(user.getUsername());
+        lightUserDTO.setFirstName(user.getFirstName());
+        lightUserDTO.setLastName(user.getLastName());
+        lightUserDTO.setEmail(user.getEmail());
+        lightUserDTO.setPhoneNumber(user.getPhoneNumber());
+        lightUserDTO.setGender(user.getGender());
+        lightUserDTO.setRole(user.getRole().getRole());
+        return ResponseEntity.ok(lightUserDTO);
     }
 }

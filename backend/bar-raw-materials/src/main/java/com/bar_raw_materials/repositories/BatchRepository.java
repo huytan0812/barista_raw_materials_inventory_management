@@ -21,7 +21,7 @@ public interface BatchRepository extends JpaRepository<Batch, Integer> {
 
     @Query(
             value="SELECT new com.bar_raw_materials.dto.batch.LightBatchDTO(" +
-                    "b.id, b.lotNumber, b.product.id AS productId, " +
+                    "b.id, b.lotNumber, b.product.id AS productId, b.product.name AS productName, " +
                     "b.mfgDate, b.expDate" +
                     ") FROM Batch b JOIN b.product"
     )

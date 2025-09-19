@@ -7,6 +7,7 @@ import com.bar_raw_materials.dto.goodsReceiptItem.LightGrnItemDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
@@ -33,11 +34,18 @@ public interface GoodsReceiptItemRepository extends JpaRepository<GoodsReceiptIt
     @Query(
             value="SELECT new com.bar_raw_materials.dto.goodsReceiptItem.LightGrnItemDTO(" +
                     "grnItem.id, grnItem.product.id AS productId, " +
-                    "grnItem.quantityImport, grnItem.unitCost" +
+                    "grnItem.quantityImport, grnItem.unitCost, grnItem.vatRate" +
                     ") FROM GoodsReceiptItem grnItem JOIN grnItem.product JOIN grnItem.grn" +
                     " WHERE grnItem.grn.id=:grnId"
     )
     public List<LightGrnItemDTO> getLightGrnItemsByGrnId(Integer grnId);
 
     public GoodsReceiptItem findById(int id);
+
+    @Query(
+            value="DELETE FROM goods_receipt_item WHERE goods_receipt_item.grnId=:grnId"
+            , nativeQuery=true
+    )
+    @Modifying
+    public void deleteByGrnId(int grnId);
 }

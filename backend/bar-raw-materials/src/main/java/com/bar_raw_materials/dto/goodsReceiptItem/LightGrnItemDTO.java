@@ -14,4 +14,5 @@ public class LightGrnItemDTO {
     private Integer productId;
     private Integer quantityImport;
     private BigDecimal unitCost;
+    private Float vatRate;
 }

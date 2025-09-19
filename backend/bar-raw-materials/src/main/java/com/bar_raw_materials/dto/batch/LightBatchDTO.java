@@ -13,6 +13,7 @@ public class LightBatchDTO {
     private Integer id;
     private String lotNumber;
     private Integer productId;
+    private String productName;
     private LocalDate mfgDate;
     private LocalDate expDate;
 }

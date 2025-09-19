@@ -158,4 +158,24 @@ public class GoodsReceiptNoteController extends BaseStaffController{
 
         return ResponseEntity.ok("Phê duyệt thành công");
     }
+
+    @GetMapping("delete/{id}")
+    public ResponseEntity<String> delete(
+            @PathVariable("id") Integer id
+    ) {
+        GoodsReceiptNote grn = goodsReceiptNoteService.getDetails(id);
+        if (grn == null) {
+            return new ResponseEntity<>("Không tìm thấy phiếu nhập kho", HttpStatus.NOT_FOUND);
+        }
+
+        try {
+            goodsReceiptNoteService.delete(grn);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("Có lỗi xảy ra", HttpStatus.BAD_REQUEST);
+        }
+
+        return ResponseEntity.ok("Phiếu nhập kho "+id+" được xóa thành công");
+    }
 }

@@ -4,14 +4,12 @@ import com.bar_raw_materials.dto.goodsReceiptItem.LightGrnItemDTO;
 import com.bar_raw_materials.dto.goodsReceiptNote.CreateGrnDTO;
 import com.bar_raw_materials.dto.goodsReceiptNote.GrnDTO;
 import com.bar_raw_materials.dto.productInventory.ImportValueDTO;
-import com.bar_raw_materials.entities.GoodsReceiptNote;
-import com.bar_raw_materials.entities.ProductInventory;
-import com.bar_raw_materials.entities.Vendor;
+import com.bar_raw_materials.entities.*;
 import com.bar_raw_materials.repositories.GoodsReceiptNoteRepository;
 import com.bar_raw_materials.repositories.ProductInventoryRepository;
 import com.bar_raw_materials.repositories.VendorRepository;
-import com.bar_raw_materials.entities.BusinessPeriod;
 import com.bar_raw_materials.repositories.BusinessPeriodRepository;
+import com.bar_raw_materials.repositories.GoodsReceiptItemRepository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
@@ -36,6 +34,7 @@ public class GoodsReceiptNoteServiceImpl implements GoodsReceiptNoteService {
     private final VendorRepository vendorRepository;
     private final BusinessPeriodRepository businessPeriodRepository;
     private final ProductInventoryRepository productInventoryRepository;
+    private final GoodsReceiptItemRepository grnItemRepository;
 
     @Override
     public List<?> getAll() {
@@ -92,6 +91,7 @@ public class GoodsReceiptNoteServiceImpl implements GoodsReceiptNoteService {
         List<Integer> productIds = new ArrayList<>();
         // use productId as key as productId is unique in this case
         Map<Integer, ImportValueDTO> importValues = new HashMap<>();
+        BigDecimal totalAmount = BigDecimal.ZERO;
 
         for (LightGrnItemDTO grnItem : grnItems) {
             // only get distinct product ids
@@ -110,6 +110,13 @@ public class GoodsReceiptNoteServiceImpl implements GoodsReceiptNoteService {
                 importValue.setImportAmount(
                         importValue.getImportAmount().add(importAmount)
                 );
+
+                // update for total amount field in GRN
+                totalAmount = totalAmount.add(
+                        importAmount.multiply(
+                                BigDecimal.valueOf(1 + grnItem.getVatRate())
+                        )
+                );
             }
             else {
                 ImportValueDTO importValue = new ImportValueDTO();
@@ -121,8 +128,13 @@ public class GoodsReceiptNoteServiceImpl implements GoodsReceiptNoteService {
                         BigDecimal.valueOf(grnItem.getQuantityImport())
                 );
                 importValue.setImportAmount(importAmount);
-
                 importValues.put(grnItem.getProductId(), importValue);
+
+                totalAmount = totalAmount.add(
+                        importAmount.multiply(
+                                BigDecimal.valueOf(1 + grnItem.getVatRate())
+                        )
+                );
             }
         }
         // get list of product inventories
@@ -142,5 +154,14 @@ public class GoodsReceiptNoteServiceImpl implements GoodsReceiptNoteService {
 
         productInventoryRepository.saveAll(productInventories);
         grn.setIsConfirmed(true);
+        grn.setTotalAmount(totalAmount);
+        goodsReceiptNoteRepository.save(grn);
+    }
+
+    @Override
+    @Transactional
+    public void delete(GoodsReceiptNote grn) {
+        grnItemRepository.deleteByGrnId(grn.getId());
+        goodsReceiptNoteRepository.delete(grn);
     }
 }
