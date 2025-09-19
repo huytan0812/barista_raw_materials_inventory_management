@@ -45,6 +45,25 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.pagination(pageable);
     }
 
+    // service methods for search and filter
+    @Override
+    public Page<ProductDTO> searchByProductName(String search, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
+        return productRepository.searchByProductName(search, pageable);
+    }
+
+    @Override
+    public Page<ProductDTO> filterByCategory(String category, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
+        return productRepository.filterByCategoryName(category, pageable);
+    }
+
+    @Override
+    public Page<ProductDTO> searchAndFilter(String search, String filter, int page, int size) {
+       Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
+       return productRepository.searchAndFilter(search, filter, pageable);
+    }
+
     @Override
     public Product getDetails(int id) {
         return productRepository.findById(id);

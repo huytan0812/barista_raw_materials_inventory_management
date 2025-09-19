@@ -1,6 +1,7 @@
 package com.bar_raw_materials.services.category;
 
 import com.bar_raw_materials.dto.category.CategoryDTO;
+import com.bar_raw_materials.dto.category.LightCategoryDTO;
 import com.bar_raw_materials.entities.Category;
 import com.bar_raw_materials.repositories.CategoryRepository;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +37,14 @@ public class CategoryServiceImpl implements CategoryService {
         }
 
         return categoryDTOs;
-    };
+    }
+
+    @Override
+    public List<LightCategoryDTO> getAllLight() {
+        return categoryRepository.findAllLightCategoryDTO();
+    }
+
+    ;
 
     @Override
     public Page<CategoryDTO> getPage(int page, int size) {

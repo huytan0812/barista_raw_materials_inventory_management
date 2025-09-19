@@ -1,7 +1,9 @@
 package com.bar_raw_materials.repositories;
 
 import com.bar_raw_materials.dto.category.CategoryDTO;
+import com.bar_raw_materials.dto.category.LightCategoryDTO;
 import com.bar_raw_materials.entities.Category;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,6 +21,14 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
                     ") FROM Category c LEFT JOIN c.parent"
     )
     Page<CategoryDTO> pagination(Pageable pageable);
+
+    @Query(
+            value="SELECT new com.bar_raw_materials.dto.category.LightCategoryDTO(" +
+                    "c.id, c.name" +
+                    ") FROM Category c LEFT JOIN c.parent"
+    )
+    List<LightCategoryDTO> findAllLightCategoryDTO();
+
 
     Category findById(int id);
 }

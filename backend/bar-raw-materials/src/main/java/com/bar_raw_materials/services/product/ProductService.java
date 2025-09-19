@@ -15,6 +15,11 @@ public interface ProductService extends EntityService {
     Product getDetails(int id);
 
     Page<ProductDTO> getPage(int page, int size);
+    // service method for search and filter
+    Page<ProductDTO> searchByProductName(String search, int page, int size);
+    Page<ProductDTO> filterByCategory(String category, int page, int size);
+    Page<ProductDTO> searchAndFilter(String search, String filter, int page, int size);
+
     void saveProduct(CreateProductDTO createProductDTO);
     void updateProduct(Product initProduct, CreateProductDTO createProductDTO);
     void deleteProduct(int id);

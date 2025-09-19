@@ -5,6 +5,7 @@ import com.bar_raw_materials.dto.product.LightProductDTO;
 import com.bar_raw_materials.dto.product.ProductDTO;
 import com.bar_raw_materials.utils.ImageUtils;
 
+import org.springframework.data.domain.Page;
 import org.springframework.lang.Nullable;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,14 +38,41 @@ public class ProductController extends BaseStaffController {
         this.imageUtils = imageUtils;
     }
 
+    @GetMapping("search")
+    public ResponseEntity<Page<ProductDTO>> search(
+            @Nullable @RequestParam("search") String search,
+            @Nullable @RequestParam("filter") String filter,
+            @Nullable @RequestParam(defaultValue="0", name="page") Integer page,
+            @Nullable @RequestParam(defaultValue="5", name="size") Integer size
+    ) {
+        Page<ProductDTO> responseData = null;
+        Boolean containSearch = search != null && !search.isEmpty();
+        Boolean containFilter = filter != null && !filter.isEmpty();
+
+        if (containSearch && containFilter) {
+            responseData = productService.searchAndFilter(search, filter, page, size);
+        }
+        else if (containSearch) {
+            responseData = productService.searchByProductName(search, page, size);
+        }
+        else {
+            System.out.println("Filter");
+            responseData = productService.filterByCategory(filter, page, size);
+        }
+
+        return ResponseEntity.ok(responseData);
+    }
+
     @GetMapping("allLight")
     public List<LightProductDTO> getAllLight() {
         return productService.getAllLight();
     }
 
     @PostMapping("add")
-    public ResponseEntity<Map<String, String>> add(@RequestPart("data") CreateProductDTO createProductDTO,
-                              @RequestPart("image") MultipartFile image) {
+    public ResponseEntity<Map<String, String>> add(
+            @RequestPart("data") CreateProductDTO createProductDTO,
+            @RequestPart("image") MultipartFile image
+    ) {
         if (productService.isDuplicateSKU(createProductDTO)) {
             HttpStatus badRequest = HttpStatus.BAD_REQUEST;
             Map<String, String> responseData = new HashMap<>();
