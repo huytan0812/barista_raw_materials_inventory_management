@@ -25,7 +25,7 @@ const onChange = (date, dateString) => {
 const GrnDetails = (props) => {
     const {grnId, grn, onEditSuccess} = props;
     // states for rendering vendors in form
-    const [vendor, setVendor] = useState({});
+    const [vendor, setVendor] = useState([]);
     // states for handling modal
     const [open, setOpen] = useState(false);
 
@@ -93,7 +93,7 @@ const GrnDetails = (props) => {
     useEffect(() => {
         const fetchVendor = async() => {
             try {
-                const response = await vendorHTTP.get('/all', {
+                const response = await vendorHTTP.get('/allLight', {
                     headers: {
                         Authorization: `Bearer ${persistToken.current}`
                     }

@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useRef} from 'react'
 import {useNavigate} from 'react-router-dom'
-import {Form, DatePicker, Select, Input, Upload, Card, Button, message} from 'antd'
+import {Form, Select, Card, message} from 'antd'
 import { useAuthContext } from '../../../contexts/AuthContext'
 import BaseGrnForm from './BaseGrnForm';
 import vendorHTTP from '../../../services/VendorService'
@@ -19,7 +19,7 @@ const onChange = (date, dateString) => {
 
 const {Option} = Select;
 
-const AddImportPaperForm = () => {
+const AddGrnForm = () => {
   const [vendor, setVendor] = useState([]);
   const [messageAPI, contextHolder] = message.useMessage();
   const {token} = useAuthContext();
@@ -96,9 +96,10 @@ const AddImportPaperForm = () => {
     addGrn();
   }
 
+  // side effect for fetching all vendors
   useEffect(() => {
     const fetchVendor = async() => {
-      const response = await vendorHTTP.get('/all', {
+      const response = await vendorHTTP.get('/allLight', {
         headers: {
           Authorization: `Bearer ${persistToken.current}`
         }
@@ -128,4 +129,4 @@ const AddImportPaperForm = () => {
   )
 }
 
-export default AddImportPaperForm
+export default AddGrnForm
