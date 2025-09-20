@@ -26,7 +26,7 @@ public class Vendor {
     @Size(max = 30)
     @NotNull
     @ColumnDefault("''")
-    @Column(name = "taxCode", nullable = false, length = 30)
+    @Column(name = "taxCode", nullable = false, length = 30, unique = true)
     private String taxCode;
 
     @Size(max = 15)
@@ -43,5 +43,13 @@ public class Vendor {
     @ColumnDefault("''")
     @Column(name = "address", length = 15)
     private String address;
+
+    @Size(max = 50)
+    @Column(name = "businessLicenseImgName", length = 50)
+    private String businessLicenseImgName;
+
+    @Size(max = 50)
+    @Column(name = "foodSafetyCertImgName", length = 50)
+    private String foodSafetyCertImgName;
 
 }
