@@ -13,7 +13,8 @@ const ProductTable = (props) => {
         refresh,
         setPageMetadata,
         searchText,
-        categoryText
+        categoryText,
+        setLoadingTable
     } = props;
     // fetching data from server
     const [data, setData] = useState([]);
@@ -189,6 +190,7 @@ const ProductTable = (props) => {
             setData(response.data.content);
             const { content: _, ...rest } = response.data;
             setPageMetadata(rest);
+            setLoadingTable(false);
         } catch (error) {
             console.log(error);
             navigate("/login");
@@ -212,6 +214,7 @@ const ProductTable = (props) => {
                 setData(response.data.content);
                 const {content:_, ...rest} = response.data;
                 setPageMetadata(rest);
+                setLoadingTable(false);
             }
         }
         catch (error) {

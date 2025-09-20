@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react'
-import { Card, Input, Select, Pagination, Space, Button, Modal, message, Form } from "antd";
+import { Card, Input, Select, Pagination, Space, Button, Modal, message, Form, Spin } from "antd";
+import { LoadingOutlined } from '@ant-design/icons';
 import ProductTable from '../components/product/ProductTable';
 import AddProductForm from '../components/product/AddProductForm.jsx';
 import { useAuthContext } from '../contexts/AuthContext.jsx';
@@ -17,11 +18,14 @@ const Product = () => {
   const [categoryFilter, setCategoryFilter] = useState(null);
   const [categoryList, setCategoryList] = useState([]);
 
-  // used for <ProductTable>
+  // states for handling <ProductTable>
   const [refresh, setRefresh] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageMetadata, setPageMetadata] = useState({});
   const pageSize = 5;
+
+  // states for handling spinner
+  const [loadingTable, setLoadingTable] = useState(false);
 
   // used for <AddProductForm>
   const [loading, setLoading] = useState(false);
@@ -67,12 +71,14 @@ const Product = () => {
 
   const handleSearch = (text) => {
     setSearchText(text);
+    setLoadingTable(true);
     // reset current page
     setCurrentPage(1);
   }
 
   const handleFilter = (text) => {
     setCategoryFilter(text);
+    setLoadingTable(true);
     // reset current page
     setCurrentPage(1);
   }
@@ -154,14 +160,21 @@ const Product = () => {
       variant='bordered'
     >
       {contextHolder}
-      <ProductTable 
+      <Spin
+        spinning={loadingTable}
+        tip="Đang tải dữ liệu..."
+        indicator={<LoadingOutlined spin />}
+      >
+        <ProductTable 
         currentPage={currentPage} 
         pageSize={pageSize} 
         refresh={refresh} 
         setPageMetadata={setPageMetadata}
         searchText={searchText}
         categoryText={categoryFilter}
-      />
+        setLoadingTable={setLoadingTable}
+        />
+      </Spin>
       <div style={{ textAlign: "right", marginTop: 16 }}>
         <Pagination
           current={currentPage}

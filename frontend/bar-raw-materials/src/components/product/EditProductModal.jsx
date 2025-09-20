@@ -1,19 +1,27 @@
 import React, {useState, useEffect} from 'react'
-import { Modal, Button } from 'antd'
+import { Modal, Button, Form } from 'antd'
 import EditProductForm from './EditProductForm'
 
-const EditProductModal = ({isActive, productId, resetActiveModal, onUpdateSuccess}) => {
+const EditProductModal = (props) => {
+    const {
+        isActive, 
+        productId, 
+        resetActiveModal, 
+        onUpdateSuccess
+    } = props;
+
+    // states for handling modal
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [submitForm, setSubmitForm] = useState(false);
+    // state for handling form
+    const [editProductForm] = Form.useForm();
 
     const handleOk = () => {
-        setSubmitForm(true);
+        editProductForm.submit();
         setLoading(true);
 
         setTimeout(() => {
             setLoading(false);
-            setSubmitForm(false);
         })
     }
 
@@ -36,7 +44,7 @@ const EditProductModal = ({isActive, productId, resetActiveModal, onUpdateSucces
 
     return (
         <Modal
-            title="Sửa"
+            title="Cập nhật sản phẩm"
             open={open}
             style={{
                 fontSize: '1.4rem',
@@ -55,8 +63,8 @@ const EditProductModal = ({isActive, productId, resetActiveModal, onUpdateSucces
         >
             <EditProductForm
                 productId={productId}
-                isSubmit={submitForm}
                 onSubmitSuccess={handleSubmitSuccess}
+                form={editProductForm}
             />
         </Modal>
     )

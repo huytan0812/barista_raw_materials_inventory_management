@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useCallback, useRef} from 'react'
+import React, {useEffect, useState, useRef} from 'react'
 import {Form, Input, Select, InputNumber, Upload} from 'antd'
 import { UploadOutlined } from '@ant-design/icons';
 import {useAuthContext} from '../../contexts/AuthContext'
@@ -16,13 +16,13 @@ const normFile = e => {
 const {Option} = Select;
 
 const EditProductForm = (props) => {
+  const { token } = useAuthContext();
+  const { onSubmitSuccess, productId, form } = props;
+  const persistToken = useRef(token);
+  
+  // states for fetching select options
   const [baseUnit, setBaseUnit] = useState([]);
   const [category, setCategory] = useState([]);
-  const [form] = Form.useForm();
-
-  const { token } = useAuthContext();
-  const { isSubmit, onSubmitSuccess, productId } = props;
-  const persistToken = useRef(token);
 
   const uploadConfig = {
     beforeUpload: () => false, 
@@ -32,7 +32,7 @@ const EditProductForm = (props) => {
     name: "image",
   }
 
-  const onFinish = useCallback((values, form) => {
+  const handleSubmit = (values) => {
     // handle submission
     const submitData = async() => {
       try {
@@ -67,7 +67,6 @@ const EditProductForm = (props) => {
         );
           const responseData = await response.json();
           if (response.ok) {
-            console.log(responseData);
             onSubmitSuccess(`Sản phẩm ${values.name} đã được cập nhật thành công`);
           }
           else {
@@ -87,52 +86,37 @@ const EditProductForm = (props) => {
         }
       }
     submitData();
-  }, [onSubmitSuccess, token, productId]);
+  }
 
   // side effect for fetching product form fields
-  const populatingFormData = async() => {
-    const response = await axiosHTTP.get(`/details/${productId}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    });
-    const product = response.data;
-    form.setFieldsValue({
-      'sku': product.sku,
-      'name': product.name,
-      'baseUnitId': product.baseUnit.id,
-      'packSize': product.packSize,
-      'description': product.description,
-      'categoryId': product.category.id,
-      'image': product.imageName != null ? [
-        {
-          uid: String(product.id),
-          name: product.imageName,
-          status: "done",
-          url: `http://localhost:8080/api/image/product/${product.imageName}`,
-        },
-      ] : null,
-      'listPrice': product.listPrice
-    });
-  }
   useEffect(() => {
-    populatingFormData();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  // side effect for handling submit form
-  useEffect(() => {
-    if (isSubmit) {
-      // form.validateFields() is used for validate base on the `rules` array in Form.Item
-      form.validateFields()
-      .then((values) => {
-        onFinish(values, form);
-      })
-     .catch(err => {
-        console.log(err);
-      })
+    const populatingFormData = async() => {
+      const response = await axiosHTTP.get(`/details/${productId}`, {
+        headers: {
+          'Authorization': `Bearer ${persistToken.current}`
+        }
+      });
+      const product = response.data;
+      form.setFieldsValue({
+        'sku': product.sku,
+        'name': product.name,
+        'baseUnitId': product.baseUnit.id,
+        'packSize': product.packSize,
+        'description': product.description,
+        'categoryId': product.category.id,
+        'image': product.imageName != null ? [
+          {
+            uid: String(product.id),
+            name: product.imageName,
+            status: "done",
+            url: `http://localhost:8080/api/image/product/${product.imageName}`,
+          },
+        ] : null,
+        'listPrice': product.listPrice
+      });
     }
-  }, [form, isSubmit, onSubmitSuccess, onFinish]);
+    populatingFormData();
+  }, [form, productId])
 
   // side effect for fetching base units
   useEffect(() => {
@@ -187,6 +171,7 @@ const EditProductForm = (props) => {
       wrapperCol={{ span: 24 }}
       style={{ maxWidth: 600 }}
       initialValues={{ remember: true }}
+      onFinish={handleSubmit}
       autoComplete="off"
       encType='multipart/form-data'
     >

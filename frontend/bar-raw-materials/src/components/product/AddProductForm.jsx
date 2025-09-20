@@ -21,7 +21,6 @@ const AddProductForm = (props) => {
   const persistToken = useRef(token);
 
   const handleSubmit = (values) => {
-    console.log("Submitting new product:", values);
     // handle submission
     const submitData = async() => {
       try {
