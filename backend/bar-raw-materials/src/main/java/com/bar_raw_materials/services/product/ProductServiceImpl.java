@@ -9,6 +9,7 @@ import com.bar_raw_materials.entities.Product;
 import com.bar_raw_materials.repositories.BaseUnitRepository;
 import com.bar_raw_materials.repositories.CategoryRepository;
 import com.bar_raw_materials.repositories.ProductRepository;
+import com.bar_raw_materials.services.productInventory.ProductInventoryService;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
     private final BaseUnitRepository baseUnitRepository;
+    private final ProductInventoryService productInventoryService;
 
     @Override
     public List<ProductDTO> getAll() {
@@ -84,6 +86,8 @@ public class ProductServiceImpl implements ProductService {
         product.setCategory(category);
 
         productRepository.save(product);
+        // create new ProductInventory for new product
+        productInventoryService.createProductInventory(product);
     }
 
     @Override

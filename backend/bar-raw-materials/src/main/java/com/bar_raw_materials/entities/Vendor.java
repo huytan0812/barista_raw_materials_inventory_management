@@ -45,10 +45,12 @@ public class Vendor {
     private String address;
 
     @Size(max = 50)
+    @ColumnDefault("''")
     @Column(name = "businessLicenseImgName", length = 50)
     private String businessLicenseImgName;
 
     @Size(max = 50)
+    @ColumnDefault("''")
     @Column(name = "foodSafetyCertImgName", length = 50)
     private String foodSafetyCertImgName;
 

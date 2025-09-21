@@ -37,7 +37,7 @@ public class VendorServiceImpl implements VendorService {
 
     @Override
     public Vendor getDetails(int id) {
-        return null;
+        return vendorRepository.findById(id);
     }
 
     @Override
@@ -62,6 +62,41 @@ public class VendorServiceImpl implements VendorService {
         Vendor vendor = new Vendor();
         BeanUtils.copyProperties(createVendorDTO, vendor);
         vendorRepository.save(vendor);
+    }
+
+    @Override
+    public void updateVendor(
+            Vendor vendor,
+            CreateVendorDTO updateVendorDTO,
+            MultipartFile businessImgFile,
+            MultipartFile foodSafetyCertImgFile
+    ) {
+        // handle duplicate tax code
+        if (!updateVendorDTO.getTaxCode().equals(vendor.getTaxCode())) {
+            if (isDuplicatedTaxCode(updateVendorDTO.getTaxCode())) {
+                throw new DuplicatedTaxCodeException("Mã số thuế đã tồn tại");
+            }
+        }
+
+        String updateBsnLcsImgName = updateVendorDTO.getBusinessLicenseImgName();
+        // When user uploads new image
+        if (updateBsnLcsImgName.isEmpty() && businessImgFile != null) {
+            String bsnIcsImgName = imageUtils.upload(businessImgFile, "vendor");
+            updateVendorDTO.setBusinessLicenseImgName(bsnIcsImgName);
+        }
+        String updateFSCImgName = updateVendorDTO.getFoodSafetyCertImgName();
+        if (updateFSCImgName.isEmpty() && foodSafetyCertImgFile != null) {
+            String foodSafetyCertImgName = imageUtils.upload(foodSafetyCertImgFile, "vendor");
+            updateVendorDTO.setFoodSafetyCertImgName(foodSafetyCertImgName);
+        }
+
+        BeanUtils.copyProperties(updateVendorDTO, vendor);
+        vendorRepository.save(vendor);
+    }
+
+    @Override
+    public void deleteVendor(Vendor vendor) {
+        vendorRepository.delete(vendor);
     }
 
     @Override

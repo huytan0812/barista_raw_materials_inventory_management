@@ -20,6 +20,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleGeneralException(Exception ex) {
+//        ex.printStackTrace();
         return ResponseEntity.badRequest().body("Có lỗi xảy ra");
     }
 }

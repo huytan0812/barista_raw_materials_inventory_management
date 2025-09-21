@@ -19,4 +19,6 @@ public interface VendorRepository extends JpaRepository<Vendor, Integer> {
     List<LightVendorDTO> findAllLightVendors();
 
     Vendor findByTaxCode(String taxCode);
+
+    Vendor findById(int id);
 }
