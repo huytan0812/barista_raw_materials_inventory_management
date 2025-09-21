@@ -9,6 +9,7 @@ import vendorHTTP from '../../services/VendorService'
 const VendorTable = (props) => {
   const {
     success,
+    failMsg,
     currentPage,
     pageSize,
     refresh,
@@ -24,7 +25,7 @@ const VendorTable = (props) => {
 
   // handling active modal corresponding to the onClick event trigger
   // from a edit button on a vendor record
-  const [activeModal, setActiveModal] = useState(0);
+  const [activeEditModal, setActiveEditModal] = useState(0);
   // handling active delete modal
   const [activeDeleteModal, setActiveDeleteModal] = useState(0);
 
@@ -32,15 +33,17 @@ const VendorTable = (props) => {
   const handleUpdateSuccess = (msg) => {
       success(msg);
       setRefreshAfterAction(prev => !prev);
+      resetEditActiveModal();
   }
   const handleUpdateClick = (vendorId) => {
-      setActiveModal(parseInt(vendorId));
+      setActiveEditModal(parseInt(vendorId));
   }
 
   // handle vendor deletion
   const handleDeleteSuccess = (msg) => {
       success(msg);
       setRefreshAfterAction(prev => !prev);
+      resetDeleteActiveModal();
   };
   const handleDeleteClick = (vendorId) => {
       setActiveDeleteModal(parseInt(vendorId));
@@ -48,7 +51,7 @@ const VendorTable = (props) => {
 
   // reset edit vendor active modal
   const resetEditActiveModal = () => {
-      setActiveModal(0);
+      setActiveEditModal(0);
   }
 
   // reset delete vendor active modal
@@ -89,13 +92,13 @@ const VendorTable = (props) => {
         render: (businessLicenseImgName) => {
             return (
               <Image 
-                  src={`http://localhost:8080/api/image/vendor/${businessLicenseImgName}`}
-                  width={150}
-                  height={150}
-                  preview={{
-                      mask: <span>Xem ảnh</span>
-                  }}
-                  fallback="http://localhost:8080/api/image/default.png"
+                src={`http://localhost:8080/api/image/vendor/${businessLicenseImgName}`}
+                width={150}
+                height={150}
+                preview={{
+                    mask: <span>Xem ảnh</span>
+                }}
+                fallback="http://localhost:8080/api/image/default.png"
               />
             )
         }
@@ -107,13 +110,13 @@ const VendorTable = (props) => {
         render: (foodSafetyCertImgName) => {
             return (
               <Image 
-                  src={`http://localhost:8080/api/image/vendor/${foodSafetyCertImgName}`}
-                  width={150}
-                  height={150}
-                  preview={{
-                      mask: <span>Xem ảnh</span>
-                  }}
-                  fallback="http://localhost:8080/api/image/default.png"
+                src={`http://localhost:8080/api/image/vendor/${foodSafetyCertImgName}`}
+                width={150}
+                height={150}
+                preview={{
+                    mask: <span>Xem ảnh</span>
+                }}
+                fallback="http://localhost:8080/api/image/default.png"
               />
             )
         }
@@ -127,31 +130,33 @@ const VendorTable = (props) => {
               <Button 
                 color="blue" 
                 variant="solid" 
-                onClick={() => handleUpdateClick(record.vendorId)}
-                value={record.vendorId}
+                onClick={() => handleUpdateClick(record.id)}
+                value={record.id}
               >
                   <span style={{fontSize: '1.4rem'}}>Sửa</span>
               </Button>
-              {/* <EditVendorModal
-                isActive={activeModal === record.vendorId}
-                vendorId={record.vendorId}
+              <EditVendorModal
+                isActive={activeEditModal === record.id}
+                vendorId={record.id}
                 resetActiveModal={resetEditActiveModal}
                 onUpdateSuccess={handleUpdateSuccess}
-              /> */}
+                failMsg={failMsg}
+              />
               <Button 
                 color="red" 
                 variant="solid"
-                onClick={() => {handleDeleteClick(record.vendorId)}}
+                onClick={() => {handleDeleteClick(record.id)}}
               >
-                <span value={record.vendorId} style={{fontSize: '1.4rem'}}>Xóa</span>
+                <span value={record.id} style={{fontSize: '1.4rem'}}>Xóa</span>
               </Button>
-              {/* <DeleteVendorModal
-                isActive={activeDeleteModal === record.vendorId}
+              <DeleteVendorModal
+                isActive={activeDeleteModal === record.id}
                 resetActiveModal={resetDeleteActiveModal}
-                vendorId={record.vendorId}
+                vendorId={record.id}
                 vendorName={record.name}
                 onDeleteSuccess={handleDeleteSuccess}
-              /> */}
+                failMsg={failMsg}
+              />
             </Flex>
           )
         },

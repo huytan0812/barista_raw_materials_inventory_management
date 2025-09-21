@@ -68,3 +68,8 @@ p, span, a, li, h3 {
 .ant-table-thead th {
   text-align: center !important;
 }
+
+.ant-form-item-label {
+  display: flex;
+  align-items: center;
+}

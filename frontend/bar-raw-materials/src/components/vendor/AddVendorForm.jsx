@@ -9,7 +9,6 @@ const AddVendorForm = (props) => {
     const persistToken = useRef(token);
     
     const handleSubmit = (values) => {
-        console.log(values);
         const submitData = async() => {
             try {
                 const formData = new FormData();
@@ -29,7 +28,6 @@ const AddVendorForm = (props) => {
                     const {foodSafetyCertImage:_, ...rest} = data;
                     data = rest;
                 }
-                console.log("Data:", data);
                 formData.append('data', new Blob([JSON.stringify(data)], { type: 'application/json' }));
 
                 const response = await vendorHTTP.post("/add", formData, {

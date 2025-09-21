@@ -1,7 +1,8 @@
-import React, {useEffect, useState, useRef} from 'react'
+import React, {useEffect, useRef} from 'react'
 import {Form, Input, Select, Upload} from 'antd'
 import { UploadOutlined } from '@ant-design/icons';
 import {useAuthContext} from '../../contexts/AuthContext'
+import vendorHTTP from '../../services/VendorService'
 
 const businessLicenseNormFile = e => {
   if (Array.isArray(e)) {
@@ -25,10 +26,55 @@ const BaseVendorForm = (props) => {
     handleSubmit,
     mode,
     form,
-    formName 
+    formName,
+    vendorId 
   } = props;
 
-  console.log(mode);
+  useEffect(() => {
+    if (mode === "update" && vendorId) {
+      const fetchVendor = async() => {
+        try {
+          const response = await vendorHTTP.get(`details/${vendorId}`, {
+            headers: {
+              Authorization: `Bearer ${persistToken.current}`
+            }
+          });
+          if (response.status === 200) {
+            const vendor = response.data;
+            form.setFieldsValue({
+              'id': vendor?.id,
+              'name': vendor?.name,
+              'taxCode': vendor?.taxCode,
+              'phoneNumber': vendor?.phoneNumber,
+              'email': vendor?.email,
+              'address': vendor?.address,
+              'businessImage': vendor?.businessLicenseImgName ? [
+                {
+                  uid: String(vendor?.id),
+                  name: vendor?.businessLicenseImgName,
+                  status: "done",
+                  url: `http://localhost:8080/api/image/vendor/${vendor?.businessLicenseImgName}`,
+                },
+              ] : null,
+              'foodSafetyCertImage': vendor?.foodSafetyCertImgName ? [
+                {
+                  uid: String(vendor?.id),
+                  name: vendor?.foodSafetyCertImgName,
+                  status: "done",
+                  url: `http://localhost:8080/api/image/vendor/${vendor?.foodSafetyCertImgName}`,
+                },
+              ] : null
+            })
+          }
+        }
+        catch (error) {
+          console.log(error);
+        }
+      };
+      fetchVendor();
+    }
+
+  }, [mode, form, vendorId])
 
   return (
     <Form
@@ -36,7 +82,9 @@ const BaseVendorForm = (props) => {
       name={formName}
       labelCol={{ span: 8 }}
       wrapperCol={{ span: 32 }}
-      style={{ maxWidth: 966 }}
+      style={{ 
+        maxWidth: 966
+      }}
       initialValues={{ remember: true }}
       onFinish={handleSubmit}
       autoComplete="off"
@@ -75,13 +123,32 @@ const BaseVendorForm = (props) => {
         >
           <Input />
         </Form.Item>
+        <Form.Item
+          label="Địa chỉ"
+          labelAlign='left'
+          name="address"
+          rules={[{ required: true, message: 'Nhập địa chỉ' }]}
+        >
+          <Input />
+        </Form.Item>
 
         <Form.Item 
-          label="Ảnh giấy đăng ký kinh doanh"
+          label={
+            <span 
+              style={{ 
+                whiteSpace: "normal", 
+                wordBreak: "break-word" ,
+                fontSize: '1.4rem'
+              }}
+            >
+              Ảnh giấy đăng ký kinh doanh:
+            </span>
+          }
           labelAlign="left"
           name="businessImage"
           valuePropName="fileList" 
           getValueFromEvent={businessLicenseNormFile}
+          colon={false}
         >
           <Upload 
             beforeUpload={() => false} 
@@ -100,11 +167,22 @@ const BaseVendorForm = (props) => {
         </Form.Item>
 
         <Form.Item 
-          label="Ảnh giấy vệ sinh ATTP"
+          label={
+            <span 
+              style={{ 
+                whiteSpace: "normal", 
+                wordBreak: "break-word" ,
+                fontSize: '1.4rem'
+              }}
+            >
+              Ảnh giấy chứng nhận vệ sinh an toàn thực phẩm:
+            </span>
+          }
           labelAlign="left"
           name="foodSafetyCertImage"
           valuePropName="fileList" 
           getValueFromEvent={foodSafetyCertNormFile}
+          colon={false}
         >
           <Upload 
             beforeUpload={() => false} 

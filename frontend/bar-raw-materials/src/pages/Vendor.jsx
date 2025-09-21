@@ -128,7 +128,7 @@ const Vendor = () => {
       >
         <VendorTable
           success={successMsg}
-          fail={failMsg}
+          failMsg={failMsg}
           currentPage={currentPage} 
           pageSize={pageSize} 
           refresh={refresh} 
