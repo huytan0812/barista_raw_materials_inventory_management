@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 
 @Getter
 @Setter
@@ -21,33 +22,32 @@ public class Customer {
 
     @Size(max = 50)
     @ColumnDefault("'0'")
-    @Column(name = "firstName", length = 50)
-    private String firstName;
+    @Column(name = "name", length = 50)
+    private String name;
 
-    @Size(max = 50)
-    @ColumnDefault("''")
-    @Column(name = "lastName", length = 50)
-    private String lastName;
+    @NotNull
+    @Column(name = "dateCreated", nullable = false)
+    private Instant dateCreated;
+
+    @Column(name = "lastBuy", nullable = true)
+    private Instant lastBuy;
 
     @Size(max = 15)
     @ColumnDefault("'0'")
-    @Column(name = "phoneNumber", length = 15)
+    @Column(name = "phoneNumber", length = 15, unique = true)
     private String phoneNumber;
 
     @Size(max = 15)
-    @NotNull
     @ColumnDefault("'bronze'")
-    @Column(name = "rank", nullable = false, length = 15)
-    private String rank;
+    @Column(name = "customerRank", nullable = false, length = 15)
+    private String customerRank;
 
-    @NotNull
     @ColumnDefault("(0)")
-    @Column(name = "bonusDiscount", nullable = false)
+    @Column(name = "bonusDiscount", nullable = true)
     private Float bonusDiscount;
 
-    @NotNull
     @ColumnDefault("(0)")
-    @Column(name = "totalBuy", nullable = false, precision = 20, scale = 6)
+    @Column(name = "totalBuy", nullable = true, precision = 20, scale = 6)
     private BigDecimal totalBuy;
 
 }

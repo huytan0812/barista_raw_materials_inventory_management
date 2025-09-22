@@ -40,4 +40,9 @@ public class ExportItemDetail {
     @Column(name = "importCost", nullable = false, precision = 20, scale = 2)
     private BigDecimal importCost;
 
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "grnItemId", nullable = false)
+    private GoodsReceiptItem grnItem;
+
 }

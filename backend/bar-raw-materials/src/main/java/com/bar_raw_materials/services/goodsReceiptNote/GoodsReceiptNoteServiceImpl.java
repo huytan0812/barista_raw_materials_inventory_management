@@ -58,7 +58,7 @@ public class GoodsReceiptNoteServiceImpl implements GoodsReceiptNoteService {
         BeanUtils.copyProperties(createGrnDTO, grn);
 
         int vendorId = createGrnDTO.getVendorId();
-        Vendor vendor = vendorRepository.findById(vendorId).orElse(null);
+        Vendor vendor = vendorRepository.findById(vendorId);
         grn.setVendor(vendor);
 
         BusinessPeriod bp = businessPeriodRepository.getCurrent();
@@ -80,7 +80,7 @@ public class GoodsReceiptNoteServiceImpl implements GoodsReceiptNoteService {
         BeanUtils.copyProperties(createGrnDTO, grn);
         int vendorId = createGrnDTO.getVendorId();
         if (vendorId != grn.getVendor().getId()) {
-            grn.setVendor(vendorRepository.findById(vendorId).orElse(null));
+            grn.setVendor(vendorRepository.findById(vendorId));
         }
         goodsReceiptNoteRepository.save(grn);
     }
