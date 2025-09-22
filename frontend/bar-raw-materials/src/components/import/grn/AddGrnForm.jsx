@@ -31,7 +31,7 @@ const AddGrnForm = () => {
     messageAPI.open({
       type: 'success',
       content: msg,
-      duration: 0.5,
+      duration: 0.25,
       onClose: () => {
         navigate(`/import/add_grn/${grnId}/add_grn_item`);
       }

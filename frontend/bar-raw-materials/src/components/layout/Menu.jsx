@@ -67,6 +67,15 @@ const items = [
         ),
     },
     {
+        key: 'Export',
+        label: (
+            <NavLink to="/export">
+                <BankOutlined />
+                <span className={"menu-item"}>Xuất kho</span>
+            </NavLink>
+        ),
+    },
+    {
         key: 'Customer',
         label: (
             <NavLink to="/customer">

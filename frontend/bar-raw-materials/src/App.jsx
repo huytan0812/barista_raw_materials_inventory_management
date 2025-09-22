@@ -15,6 +15,11 @@ import Import from './pages/import/Import.jsx'
 import AddGrn from './pages/import/AddGrn.jsx'
 import AddGrnItems from './pages/import/AddGrnItems.jsx'
 import VerifiedGrn from './pages/import/VerifiedGrn.jsx'
+import MainExportPage from './pages/MainExportPage.jsx'
+import Export from './pages/export/Export.jsx'
+import AddSalesOrder from './pages/export/AddSalesOrder.jsx'
+import AddSalesOrderItems from './pages/export/AddSalesOrderItems.jsx'
+import SalesOrderDetails from './pages/export/SalesOrderDetails.jsx'
 import Customer from './pages/Customer'
 import Permission from './pages/Permission'
 import Report from './pages/Report'
@@ -44,6 +49,12 @@ function App() {
           <Route path='/import/add_grn' element={<AddGrn />} />
           <Route path='/import/add_grn/:grnId/add_grn_item' element={<AddGrnItems />} />
           <Route path='/import/grn/:grnId' element={<VerifiedGrn />} />
+        </Route>
+        <Route path='/export' element={<MainExportPage /> }>
+          <Route index element={<Export />} />
+          <Route path='/export/add_sales_order' element={<AddSalesOrder />} />
+          <Route path='/export/add_sales_order/:salesOrderId/add_sales_order_item' element={<AddSalesOrderItems />} />
+          <Route path='/export/salesOrder/:salesOrderId' element={<SalesOrderDetails />} />
         </Route>
         <Route path='/customer' element={<Customer /> } />
         <Route path='/permissions' element={<Permission /> } />
