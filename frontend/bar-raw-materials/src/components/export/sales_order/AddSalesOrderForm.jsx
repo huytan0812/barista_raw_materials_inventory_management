@@ -34,7 +34,7 @@ const AddSalesOrderForm = (props) => {
             content: msg,
             duration: 0.25,
             onClose: () => {
-                navigate(`/export/add_sales_order/${salesOrderId}/add_sales_order_item`);
+                navigate(`/export/add_sales_order/${salesOrderId}/add_item`);
             }
         })
     }
@@ -44,8 +44,6 @@ const AddSalesOrderForm = (props) => {
         setOpenAddCustomerForm(true);
     }
     const handleAddCustomerSuccess = (msg, newCustomer) => {
-        console.log(newCustomer);
-        console.log(msg);
         popUpMsg('success', msg);
         addCustomerForm.resetFields();
         setOpenAddCustomerForm(false);
@@ -92,7 +90,6 @@ const AddSalesOrderForm = (props) => {
                 });
                 if (response.status === 200) {
                     const salesOrder = response.data;
-                    console.log(salesOrder);
                     successMsgAndNavigation("Thêm phiếu xuất kho thành công", salesOrder?.id);
                 }
             }

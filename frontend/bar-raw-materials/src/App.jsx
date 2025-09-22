@@ -53,7 +53,7 @@ function App() {
         <Route path='/export' element={<MainExportPage /> }>
           <Route index element={<Export />} />
           <Route path='/export/add_sales_order' element={<AddSalesOrder />} />
-          <Route path='/export/add_sales_order/:salesOrderId/add_sales_order_item' element={<AddSalesOrderItems />} />
+          <Route path='/export/add_sales_order/:salesOrderId/add_item' element={<AddSalesOrderItems />} />
           <Route path='/export/salesOrder/:salesOrderId' element={<SalesOrderDetails />} />
         </Route>
         <Route path='/customer' element={<Customer /> } />
