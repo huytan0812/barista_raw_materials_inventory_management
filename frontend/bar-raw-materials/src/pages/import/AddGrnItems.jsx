@@ -324,13 +324,13 @@ const AddGrnItems = () => {
                         failMsg={failMsg}
                     />
                     <div style={{ textAlign: "right", marginTop: 16 }}>
-                    <Pagination
-                        current={currentPage}
-                        pageSize={PAGE_SIZE}
-                        total={pageMetadata.page?.totalElements || 0}
-                        onChange={(page) => setCurrentPage(page)}
-                        showTotal={(total) => `Hiện đang có ${total} lô hàng`}
-                    />
+                        <Pagination
+                            current={currentPage}
+                            pageSize={PAGE_SIZE}
+                            total={pageMetadata.page?.totalElements || 0}
+                            onChange={(page) => setCurrentPage(page)}
+                            showTotal={(total) => `Hiện đang có ${total} lô hàng`}
+                        />
                     </div>
                 </Card>
                 {/* Footer */}
