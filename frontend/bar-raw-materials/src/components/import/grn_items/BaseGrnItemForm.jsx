@@ -213,7 +213,7 @@ const BaseGrnItemForm = (props) => {
                     style={{
                     float: 'right',
                     fontSize: '2.4rem',
-                    width: '100%'
+                        width: '100%'
                     }}
                     size="middle"
                 />
