@@ -59,6 +59,22 @@ const AddSalesOrderItems = () => {
     };
     const handleCancel = () => {
         addSalesItemForm.resetFields();
+        const deleteSalesItem = async() => {
+            try {
+                const response = await salesItemHTTP.get(`/delete/${salesItem.id}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                if (response.status === 200) {
+                    popUpMsg('success', "Đơn hàng bán được hủy thành công");
+                }
+            }
+            catch (error) {
+                console.log(error);
+            }
+        }
+        deleteSalesItem();
         setOpen(false);
     };
 
@@ -145,7 +161,7 @@ const AddSalesOrderItems = () => {
                                     </Button>
                                 ]}
                                 style={{
-                                    width: '840px'
+                                    width: '880px'
                                 }}
                                 >
                                     <AddSalesItemForm

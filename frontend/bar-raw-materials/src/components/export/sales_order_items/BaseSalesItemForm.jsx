@@ -1,10 +1,10 @@
 import React, {useState, useEffect, useRef} from 'react'
-import {Form, Input, Select, InputNumber, Button, Table, Flex, message} from 'antd'
-import { FileProtectOutlined } from '@ant-design/icons';
+import {Form, Modal, Select, InputNumber, Button, Table, Flex, message} from 'antd'
 import {useAuthContext} from '../../../contexts/AuthContext'
 import productHTTP from '../../../services/ProductService'
 import grnItemHTTP from '../../../services/GoodsReceiptItemService'
 import exportItemHTTP from '../../../services/ExportItemService'
+import EditExpItemModal from '../exp_items/EditExpItemModal'
 
 const {Option} = Select
 
@@ -34,8 +34,11 @@ const BaseSalesItemForm = (props) => {
 
     // states for fetching a list of Grn items based on selected product
     const [grnItems, setGrnItems] = useState([]);
-    const [refresh, setRefresh] = useState(false);
+    const [refreshGrnItems, setRefreshGrnItems] = useState(false);
     const [exportItems, setExportItems] = useState([]);
+
+    // states for handling edit export item
+    const [activeEditExpItem, setActiveEditExpItem] = useState(false);
 
     // state for handling message
     const [messageApi, contextHolder] = message.useMessage();
@@ -87,11 +90,12 @@ const BaseSalesItemForm = (props) => {
       if (selectedProduct) {
         fetchGrnItems();
       }
-    }, [selectedProduct, refresh]);
+    }, [selectedProduct, refreshGrnItems]);
 
+    // used for fetching list of ExportItems
     const fetchExportItems = async() => {
       try {
-        const response = await exportItemHTTP.get('/', {
+        const response = await exportItemHTTP.get(`salesItem/${salesItem.id}/list`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -108,7 +112,6 @@ const BaseSalesItemForm = (props) => {
     const handleAddExportItem = async () => {
       const values = form.getFieldsValue(["grnItemId", "quantityTake"]);
       values.salesItemId = salesItem.id;
-      console.log(values);
       try {
         // create ExportItemDetails
         const response = await exportItemHTTP.post('/add', values, {
@@ -118,13 +121,15 @@ const BaseSalesItemForm = (props) => {
         });
         if (response.status === 200) {
           popUpMsg('success', "Thêm thành công");
-          exportItems.push(response.data);
           // update the list of ExportItems table
           fetchExportItems();
           // disabled product to lock in
           setDisableProduct(true);
+          // reset selectedGrnItem and reset <Select> of Grn items
+          setSelectedGrnItem(null);
+          form.resetFields(['grnItemId']);
           // refresh the list of grn items by product
-          setRefresh(prev=>!prev);
+          setRefreshGrnItems(prev=>!prev);
         }
       }
       catch (error) {
@@ -134,10 +139,19 @@ const BaseSalesItemForm = (props) => {
       }
     };
     const handleEditExportItem = (exportItemId) => {
-      console.log("Edit ExportItemId:", exportItemId);
+      setActiveEditExpItem(parseInt(exportItemId));
+    }
+    const handleEditExportItemSuccess = (msg) => {
+      popUpMsg('success', msg);
+      // reset grn items
+      setRefreshGrnItems(prev=>!prev);
+      // reset table
+      fetchExportItems();
+    }
+    const handleEditExportItemFailure = (msg) => {
+      popUpMsg('error', msg);
     }
     const handleDeleteExportItem = (exportItemId) => {
-      console.log("Delete ExportItemId:", exportItemId);
       const deleteExpItem = async() => {
         try {
           const response = await exportItemHTTP.get(`/delete/${exportItemId}`, {
@@ -147,8 +161,10 @@ const BaseSalesItemForm = (props) => {
           });
           if (response.status === 200) {
             popUpMsg('success', response.data);
+            // reset grn items
+            setRefreshGrnItems(prev=>!prev);
             // reset table
-            
+            fetchExportItems();
           }
         }
         catch (error) {
@@ -194,13 +210,19 @@ const BaseSalesItemForm = (props) => {
             return (
                 <Flex gap="1rem">
                   <Button 
-                      color="blue" 
-                      variant="solid" 
-                      value={record.id}
+                      color="primary" 
+                      variant="solid"
                       onClick={() => handleEditExportItem(record.id)}
                   >
-                      <span style={{fontSize: '1.4rem'}}>Sửa</span>
+                    <span value={record.id} style={{fontSize: '1.4rem'}}>Sửa</span>
                   </Button>
+                  <EditExpItemModal 
+                    isActive={activeEditExpItem === record.id}
+                    resetActiveEditModal={() => setActiveEditExpItem(0)}
+                    onEditSuccess={handleEditExportItemSuccess}
+                    onEditFailure={handleEditExportItemFailure}
+                    expItem={record}
+                  />
                   <Button 
                       color="red" 
                       variant="solid"
@@ -229,11 +251,11 @@ const BaseSalesItemForm = (props) => {
           onFinish={handleSubmit}
         >
           <Form.Item
+            shouldUpdate
             label="Sản phẩm"
             labelAlign='left'
             name="productId"
             rules={[{ required: true, message: "Sản phẩm không được để trống" }]}
-            disabled={disableProduct}
           >
               <Select 
                 placeholder="Chọn sản phẩm"
@@ -248,8 +270,11 @@ const BaseSalesItemForm = (props) => {
                   setSelectedProduct(product);
                   setSelectedGrnItem(null);
                   setExportItems([]); // reset when switching product
+                  // set unitPrice with product's listPrice
+                  form.setFieldsValue({ unitPrice: product.listPrice });
                   form.resetFields(["grnItemId", "quantityTake"]);
                 }}
+                disabled={disableProduct}
               >
                   {products?.map((product) => (
                     <Option 
@@ -279,12 +304,13 @@ const BaseSalesItemForm = (props) => {
                   setSelectedGrnItem(grnItem);
                   form.setFieldsValue({ quantityTake: undefined });
                 }}
+                popupMatchSelectWidth={false}
               >
                 {grnItems?.map((grnItem) => (
                   <Option key={grnItem.id} value={grnItem.id}>
-                    {grnItem.lotNumber}-{" HSD: "}{new Intl.DateTimeFormat("vi-VN", dateFormat).format(
+                    {grnItem.lotNumber}-{"HSD: "}{new Intl.DateTimeFormat("vi-VN", dateFormat).format(
                       new Date(grnItem.expDate)
-                    )}-{` Giá nhập: ${grnItem.unitCost}`}             
+                    )}-{`Giá nhập: ${grnItem.unitCost}`}-{`SLCL: ${grnItem.quantityRemain}`}             
                   </Option>
                 ))}
               </Select>
@@ -396,7 +422,6 @@ const BaseSalesItemForm = (props) => {
             labelAlign='left'
             name="unitPrice"
             rules={[{required: true, message: "Đơn giá bán không được để trống"}]}
-            initialValue={selectedProduct ? selectedProduct.listPrice : null}
           >
             <InputNumber 
               min={1}
