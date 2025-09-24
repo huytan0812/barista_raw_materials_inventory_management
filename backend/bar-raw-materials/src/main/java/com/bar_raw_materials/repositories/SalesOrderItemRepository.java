@@ -22,12 +22,7 @@ public interface SalesOrderItemRepository extends JpaRepository<SalesOrderItem, 
     Page<SalesOrderItemDTO> findBySalesOrderId(Integer salesOrderId, Pageable pageable);
 
     @Query(
-            value="SELECT new com.bar_raw_materials.dto.salesOrderItem.SalesOrderItemDTO(" +
-                    "s.id, s.product.id, s.product.name AS productName, s.salesOrder.id AS salesOrderId, " +
-                    "s.quantitySold, s.unitPrice, " +
-                    "s.discount, s.vatRate, s.note" +
-                    ") FROM SalesOrderItem s JOIN s.product " +
-                    "WHERE s.id=:id"
+            value="SELECT s FROM SalesOrderItem s WHERE s.id=:id"
     )
     SalesOrderItem findById(int id);
 }

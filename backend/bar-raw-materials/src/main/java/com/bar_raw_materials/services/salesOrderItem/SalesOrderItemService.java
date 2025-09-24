@@ -8,4 +8,5 @@ import org.springframework.data.domain.Page;
 public interface SalesOrderItemService extends EntityService {
     Page<SalesOrderItemDTO> getPageBySalesOrderId(Integer salesOrderId, int page, int size);
     SalesOrderItemDTO create(Integer salesOrderId);
+    void delete(int id);
 }

@@ -13,6 +13,6 @@ public class ExportItemDTO {
     private Integer id;
     private String lotNumber;
     private Integer quantityTake;
-    private BigDecimal importCost;
+    private BigDecimal unitCost;
     private LocalDate expDate;
 }

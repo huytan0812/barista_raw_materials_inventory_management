@@ -3,6 +3,9 @@ package com.bar_raw_materials.exceptions;
 import com.bar_raw_materials.exceptions.customer.CustomerDoesNotExistException;
 import com.bar_raw_materials.exceptions.customer.DuplicatedPhoneNumberException;
 import com.bar_raw_materials.exceptions.exportItem.ExceedQuantityRemainException;
+import com.bar_raw_materials.exceptions.exportItem.ExportItemDetailDoesNotExistException;
+import com.bar_raw_materials.exceptions.grnItem.GoodsReceiptItemDoesNotExistException;
+import com.bar_raw_materials.exceptions.salesItem.SalesOrderItemDoesNotExistException;
 import com.bar_raw_materials.exceptions.salesOrder.SalesOrderDoesNotExistException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,6 +53,23 @@ public class GlobalExceptionHandler {
         Map<String, String> errors = new HashMap<>();
         errors.put("exceedQuantityRemain", ex.getMessage());
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(GoodsReceiptItemDoesNotExistException.class)
+    public ResponseEntity<Map<String, String>> handleGoodsReceiptItemDoesNotExist(GoodsReceiptItemDoesNotExistException ex) {
+        Map<String, String> errors = new HashMap<>();
+        errors.put("goodsReceiptItemDoesNotExist", ex.getMessage());
+        return new ResponseEntity<>(errors, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(SalesOrderItemDoesNotExistException.class)
+    public ResponseEntity<String> handleSalesOrderItemDoesNotExist(SalesOrderItemDoesNotExistException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(ExportItemDetailDoesNotExistException.class)
+    public ResponseEntity<String> handleExportItemDetailDoesNotExist(ExportItemDetailDoesNotExistException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(Exception.class)

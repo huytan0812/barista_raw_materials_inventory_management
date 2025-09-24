@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class CreateExportItemDTO {
     private Integer grnItemId;
     private Integer quantityTake;
+    private Integer salesItemId;
 }

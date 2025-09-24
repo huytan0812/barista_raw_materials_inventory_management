@@ -39,4 +39,12 @@ public class SalesOrderItemController extends BaseStaffController{
         SalesOrderItemDTO salesOrderItemDTO = salesOrderItemService.create(salesOrderId);
         return ResponseEntity.ok(salesOrderItemDTO);
     }
+
+    @GetMapping("delete/{id}")
+    public ResponseEntity<String> delete(
+            @PathVariable("id") Integer id
+    ) {
+        salesOrderItemService.delete(id);
+        return ResponseEntity.ok("Đơn hàng bán được xóa thành công");
+    }
 }

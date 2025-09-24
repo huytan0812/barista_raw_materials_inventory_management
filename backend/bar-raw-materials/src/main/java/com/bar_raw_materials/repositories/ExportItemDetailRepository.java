@@ -8,10 +8,23 @@ import java.util.List;
 
 public interface ExportItemDetailRepository extends JpaRepository<ExportItemDetail, Integer> {
     @Query(
-            value="SELECT new com.bar_raw_materials.dto.exportItem.ExportItemDTO(" +
-                    "ex.id, ex.grnItem.batch.lotNumber, ex.quantityTake, ex.unitCost, " +
-                    " ex.grnItem.batch.expDate" +
-                    ") FROM ExportItemDetail ex JOIN ex.orderItem JOIN ex.grnItem"
+            value="SELECT expItem FROM ExportItemDetail expItem" +
+                    " JOIN FETCH expItem.orderItem WHERE expItem.orderItem.id=:salesOrderItemId"
     )
-    List<ExportItemDTO> findBySalesOrderId(Integer salesOrderId);
+    List<ExportItemDetail> findBySalesOrderItemId(Integer salesOrderItemId);
+
+    @Query(
+            value="SELECT new com.bar_raw_materials.dto.exportItem.ExportItemDTO(" +
+                    "expItem.id, expItem.grnItem.batch.lotNumber AS lotNumber, " +
+                    " expItem.quantityTake, expItem.unitCost, expItem.grnItem.batch.expDate" +
+                    ") FROM ExportItemDetail expItem JOIN expItem.orderItem" +
+                    " JOIN expItem.grnItem WHERE expItem.orderItem.id=:salesOrderItemId"
+    )
+    List<ExportItemDTO> findExpItemDTOBySalesItemId(Integer salesOrderItemId);
+
+    @Query(
+            value="SELECT ex FROM ExportItemDetail ex" +
+                    " JOIN FETCH ex.grnItem WHERE ex.id=:id"
+    )
+    ExportItemDetail findById(int id);
 }
