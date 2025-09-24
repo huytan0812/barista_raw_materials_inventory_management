@@ -4,6 +4,7 @@ import {useParams, NavLink} from 'react-router-dom'
 import SalesOrderItems from '../../components/export/sales_order_items/SalesOrderItems'
 import { useAuthContext } from '../../contexts/AuthContext'
 import salesOrderHTTP from '../../services/SalesOrderService'
+import salesItemHTTP from '../../services/SalesOrderItemService'
 import AddSalesItemForm from '../../components/export/sales_order_items/AddSalesItemForm'
 
 const AddSalesOrderItems = () => {
@@ -14,6 +15,8 @@ const AddSalesOrderItems = () => {
 
     // states for handling fetching SalesOrder
     const [salesOrder, setSalesOrder] = useState({});
+    // states for handling SalesOrderItem
+    const [salesItem, setSalesItem] = useState({});
 
     // states for handling open AddSalesItemForm Modal and AddSalesItemForm
     const [open, setOpen] = useState(false);
@@ -32,8 +35,24 @@ const AddSalesOrderItems = () => {
         });
     }
 
-    const showModal = () => {
-        setOpen(true);
+    const handleAddSalesItem = () => {
+        const createSalesItem = async() => {
+            try {
+                const response = await salesItemHTTP.get(`/salesOrder/${salesOrderId}/createSaleItem`, {
+                    headers: {
+                        Authorization: `Bearer ${persistToken.current}`
+                    }
+                });
+                if (response.status === 200) {
+                    setSalesItem(response.data);
+                    setOpen(true);
+                }
+            }
+            catch (error) {
+                console.log(error);
+            }
+        }
+        createSalesItem();
     };
     const handleOk = () => {
         addSalesItemForm.submit();
@@ -106,7 +125,7 @@ const AddSalesOrderItems = () => {
                         <React.Fragment>
                             <Button
                                 type="primary"
-                                onClick={showModal}
+                                onClick={handleAddSalesItem}
                             >
                                 Thêm hàng bán
                             </Button>
@@ -125,9 +144,13 @@ const AddSalesOrderItems = () => {
                                         Xác nhận
                                     </Button>
                                 ]}
+                                style={{
+                                    width: '840px'
+                                }}
                                 >
                                     <AddSalesItemForm
                                         salesOrderId={salesOrderId}
+                                        salesItem={salesItem}
                                         form={addSalesItemForm}
                                         onSubmitSuccess={handleSubmitSuccess}
                                         onSubmitFailure={handleSubmitFailure}

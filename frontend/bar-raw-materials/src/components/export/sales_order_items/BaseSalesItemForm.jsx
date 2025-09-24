@@ -1,9 +1,10 @@
 import React, {useState, useEffect, useRef} from 'react'
-import {Form, Input, Select, InputNumber, Button, Table, Flex} from 'antd'
+import {Form, Input, Select, InputNumber, Button, Table, Flex, message} from 'antd'
 import { FileProtectOutlined } from '@ant-design/icons';
 import {useAuthContext} from '../../../contexts/AuthContext'
 import productHTTP from '../../../services/ProductService'
 import grnItemHTTP from '../../../services/GoodsReceiptItemService'
+import exportItemHTTP from '../../../services/ExportItemService'
 
 const {Option} = Select
 
@@ -15,6 +16,7 @@ const dateFormat = {
 
 const BaseSalesItemForm = (props) => {
     const {
+        salesItem,
         form,
         formName,
         handleSubmit
@@ -22,14 +24,28 @@ const BaseSalesItemForm = (props) => {
     const {token} = useAuthContext();
     const persistToken = useRef(token); 
 
-    // states for fetching a list of product and selected product
+    // states for fetching a list of produc, selected product and selected GrnItem
     const [products, setProducts] = useState([]);
+    // once chosen, never change
     const [selectedProduct, setSelectedProduct] = useState(null);
+    const [disableProduct, setDisableProduct] = useState(false);
+    // will refresh after creating a new ExportItem successfully
+    const [selectedGrnItem, setSelectedGrnItem] = useState(null);
 
     // states for fetching a list of Grn items based on selected product
     const [grnItems, setGrnItems] = useState([]);
-    const [selectedGrnItems, setSelectedGrnItems] = useState([]);
-    const [selectedGrnItem, setSelectedGrnItem] = useState(null);
+    const [refresh, setRefresh] = useState(false);
+    const [exportItems, setExportItems] = useState([]);
+
+    // state for handling message
+    const [messageApi, contextHolder] = message.useMessage();
+
+    const popUpMsg = (type, msg) => {
+      messageApi.open({
+        type: type,
+        content: msg
+      })
+    }; 
 
     // side effect for fetching products
     useEffect(() => {
@@ -51,7 +67,7 @@ const BaseSalesItemForm = (props) => {
       fetchProducts();
     }, []);
 
-    // side effect for fetching list of grn items
+    // side effect for fetching list of grn items based on selected product
     useEffect(() => {
       const fetchGrnItems = async() => {
         try {
@@ -71,54 +87,77 @@ const BaseSalesItemForm = (props) => {
       if (selectedProduct) {
         fetchGrnItems();
       }
-    }, [selectedProduct]);
+    }, [selectedProduct, refresh]);
 
-    const handleAddGrnItem = async () => {
-      const values = form.getFieldsValue(["grnItemId", "quantityTake"]);
-      if (!values.grnItemId || !values.quantityTake) return;
-
-      const grnItem = grnItems.find((g) => g.id === values.grnItemId);
-
-      // Build payload for backend
-      const payload = {
-        grnItemId: grnItem.id,
-        productId: selectedProduct.id,
-        quantityTake: values.quantityTake,
-      };
-
+    const fetchExportItems = async() => {
       try {
-      // 🔹 Placeholder: submit to server
-      // Replace this with your API call
-      // Example: await axios.post("/api/export-items", payload);
-      console.log("Submitting to server:", payload);
-
-      // If success, update local UI
-      const existsIndex = selectedGrnItems.findIndex(
-        (item) => item.id === grnItem.id
-      );
-
-      let newList;
-      if (existsIndex >= 0) {
-        newList = [...selectedGrnItems];
-        newList[existsIndex].quantityTake = values.quantityTake;
-      } else {
-        newList = [
-          ...selectedGrnItems,
-          { ...grnItem, quantityTake: values.quantityTake },
-        ];
+        const response = await exportItemHTTP.get('/', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        if (response.status === 200) {
+          setExportItems(response.data);
+        }
       }
-      setSelectedGrnItems(newList);
-
-      // Reset child fields
-      form.setFieldsValue({ grnItemId: undefined, quantityTake: undefined });
-      setSelectedGrnItem(null);
-
-      } catch (error) {
-        // 🔹 Placeholder error handling
-        console.error("Error submitting export item:", error);
-        // You can show notification here
+      catch (error) {
+        console.log(error);
+      }
+    }
+    // event handlers for handling ExportItem
+    const handleAddExportItem = async () => {
+      const values = form.getFieldsValue(["grnItemId", "quantityTake"]);
+      values.salesItemId = salesItem.id;
+      console.log(values);
+      try {
+        // create ExportItemDetails
+        const response = await exportItemHTTP.post('/add', values, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+        });
+        if (response.status === 200) {
+          popUpMsg('success', "Thêm thành công");
+          exportItems.push(response.data);
+          // update the list of ExportItems table
+          fetchExportItems();
+          // disabled product to lock in
+          setDisableProduct(true);
+          // refresh the list of grn items by product
+          setRefresh(prev=>!prev);
+        }
+      }
+      catch (error) {
+        const responseErr = error.response;
+        console.log(responseErr);
+        popUpMsg('error', responseErr?.data);
       }
     };
+    const handleEditExportItem = (exportItemId) => {
+      console.log("Edit ExportItemId:", exportItemId);
+    }
+    const handleDeleteExportItem = (exportItemId) => {
+      console.log("Delete ExportItemId:", exportItemId);
+      const deleteExpItem = async() => {
+        try {
+          const response = await exportItemHTTP.get(`/delete/${exportItemId}`, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          });
+          if (response.status === 200) {
+            popUpMsg('success', response.data);
+            // reset table
+            
+          }
+        }
+        catch (error) {
+          const responseErr = error.response;
+          popUpMsg('error', responseErr?.data);
+        }
+      }
+      deleteExpItem();
+    }
 
     const columns = [
       { title: "Mã lô",
@@ -157,15 +196,17 @@ const BaseSalesItemForm = (props) => {
                   <Button 
                       color="blue" 
                       variant="solid" 
-                      value={record.productId}
+                      value={record.id}
+                      onClick={() => handleEditExportItem(record.id)}
                   >
                       <span style={{fontSize: '1.4rem'}}>Sửa</span>
                   </Button>
                   <Button 
                       color="red" 
                       variant="solid"
+                      onClick={() => handleDeleteExportItem(record.id)}
                   >
-                    <span value={record.productId} style={{fontSize: '1.4rem'}}>Xóa</span>
+                    <span value={record.id} style={{fontSize: '1.4rem'}}>Xóa</span>
                   </Button>
                 </Flex>
             )
@@ -175,220 +216,234 @@ const BaseSalesItemForm = (props) => {
     ];
 
     return (
-      <Form
-        size="middle"
-        form={form}
-        name={formName}
-        labelCol={{ span: 8 }}
-        wrapperCol={{ span: 16 }}
-        initialValues={{ remember: true }}
-        autoComplete="off"
-        onFinish={handleSubmit}
-      >
-        <Form.Item
-          label="Sản phẩm"
-          labelAlign='left'
-          name="productId"
-          rules={[{ required: true, message: "Sản phẩm không được để trống" }]}
+      <React.Fragment>
+        {contextHolder}
+        <Form
+          size="middle"
+          form={form}
+          name={formName}
+          labelCol={{ span: 8 }}
+          wrapperCol={{ span: 16 }}
+          initialValues={{ remember: true }}
+          autoComplete="off"
+          onFinish={handleSubmit}
         >
-            <Select 
-              placeholder="Chọn sản phẩm"
-              showSearch
-              optionFilterProp="productName"  // search by product name
-              filterOption={(input, option) =>
-                  option?.productName?.toLowerCase().includes(input.toLowerCase())
-              }
-              allowClear
-              onChange={(productId) => {
-                const product = products.find((p) => p.productId === productId);
-                setSelectedProduct(product);
-                setSelectedGrnItem(null);
-                setSelectedGrnItems([]); // reset when switching product
-                form.resetFields(["grnItemId", "quantityTake"]);
-              }}
-            >
-                {products?.map((product) => (
-                  <Option 
+          <Form.Item
+            label="Sản phẩm"
+            labelAlign='left'
+            name="productId"
+            rules={[{ required: true, message: "Sản phẩm không được để trống" }]}
+            disabled={disableProduct}
+          >
+              <Select 
+                placeholder="Chọn sản phẩm"
+                showSearch
+                optionFilterProp="productName"  // search by product name
+                filterOption={(input, option) =>
+                    option?.productName?.toLowerCase().includes(input.toLowerCase())
+                }
+                allowClear
+                onChange={(productId) => {
+                  const product = products.find((p) => p.productId === productId);
+                  setSelectedProduct(product);
+                  setSelectedGrnItem(null);
+                  setExportItems([]); // reset when switching product
+                  form.resetFields(["grnItemId", "quantityTake"]);
+                }}
+              >
+                  {products?.map((product) => (
+                    <Option 
                       key={product.productId} 
                       value={product.productId}
                       productName={product.name}
-                  >
-                    {product.name}
-                  </Option>
-                ))}
-            </Select>
-        </Form.Item>
-
-        {/* 2. Select GRN item */}
-        {selectedProduct && (
-          <Form.Item
-            label={`Lô hàng nhập kho`}
-            labelAlign="left"
-            name="grnItemId"
-            rules={[{ required: true, message: "Lô hàng không được để trống" }]}
-          >
-            <Select
-              placeholder="Chọn lô hàng"
-              allowClear
-              onChange={(grnItemId) => {
-                const grnItem = grnItems.find((g) => g.id === grnItemId);
-                setSelectedGrnItem(grnItem);
-                form.setFieldsValue({ quantityTake: undefined });
-              }}
-            >
-              {grnItems?.map((grnItem) => (
-                <Option key={grnItem.id} value={grnItem.id}>
-                  {grnItem.lotNumber}-{" HSD: "}{new Intl.DateTimeFormat("vi-VN", dateFormat).format(
-                    new Date(grnItem.expDate)
-                  )}-{` Giá nhập: ${grnItem.unitCost}`}             
-                </Option>
-              ))}
-            </Select>
+                    >
+                      {product.name}
+                    </Option>
+                  ))}
+              </Select>
           </Form.Item>
-        )}
 
-        {/* 3. Quantity take */}
-        {selectedGrnItem && (
-          <React.Fragment>
-            <p 
-              style={{
-                fontSize: '1.4rem',
-                textAlign: 'center'
-              }}
-            >
-              SLCL: {selectedGrnItem.quantityRemain}, đơn giá nhập: {selectedGrnItem.unitCost},
-              HSD: {new Intl.DateTimeFormat("vi-VN", dateFormat).format(
-                    new Date(selectedGrnItem.expDate)
-                  )}
-            </p>
+          {/* 2. Select GRN item */}
+          {selectedProduct && (
             <Form.Item
-              label="Số lượng lấy ra"
+              label={`Lô hàng nhập kho`}
               labelAlign="left"
-              name="quantityTake"
-              labelCol={{ span: 8 }}
-              wrapperCol={{ span: 16 }}
-              rules={[
-                { required: true, message: "Số lượng lấy ra không được để trống" },
-              ]}
-              style={{
-                marginTop: '0.8rem'
-              }}
+              name="grnItemId"
+              rules={[{ required: true, message: "Lô hàng không được để trống" }]}
             >
-              <div
-                style={{
-                  display: 'flex'
+              <Select
+                placeholder="Chọn lô hàng"
+                allowClear
+                onChange={(grnItemId) => {
+                  const grnItem = grnItems.find((g) => g.id === grnItemId);
+                  setSelectedGrnItem(grnItem);
+                  form.setFieldsValue({ quantityTake: undefined });
                 }}
               >
-                <InputNumber
-                  min={0}
+                {grnItems?.map((grnItem) => (
+                  <Option key={grnItem.id} value={grnItem.id}>
+                    {grnItem.lotNumber}-{" HSD: "}{new Intl.DateTimeFormat("vi-VN", dateFormat).format(
+                      new Date(grnItem.expDate)
+                    )}-{` Giá nhập: ${grnItem.unitCost}`}             
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
+          )}
+
+          {/* 3. Quantity take */}
+          {selectedGrnItem && (
+            <React.Fragment>
+              <p 
+                style={{
+                  fontSize: '1.4rem',
+                  textAlign: 'center'
+                }}
+              >
+                SLCL: {selectedGrnItem.quantityRemain}, đơn giá nhập: {selectedGrnItem.unitCost},
+                HSD: {new Intl.DateTimeFormat("vi-VN", dateFormat).format(
+                      new Date(selectedGrnItem.expDate)
+                    )}
+              </p>
+              <Form.Item
+                  label="Số lượng lấy ra"
+                  labelAlign="left"
+                  name="quantityTake"
+                  labelCol={{ span: 8 }}
+                  wrapperCol={{ span: 16 }}
+                  rules={[
+                    { required: true, message: "Số lượng lấy ra không được để trống" },
+                    ({ getFieldValue }) => ({
+                      validator(_, value) {
+                        if (!value || value <= selectedGrnItem.quantityRemain) {
+                          return Promise.resolve();
+                        }
+                        return Promise.reject(
+                          new Error("Số lượng lấy ra không được lớn hơn SLCL")
+                        );
+                      },
+                    }),
+                  ]}
                   style={{
-                  float: 'right',
-                  fontSize: '2.4rem',
-                  width: '100%'
-                  }}
-                  size="middle"
-                  onPressEnter={handleAddGrnItem}
-                />
-                <Button
-                  color="primary" 
-                  variant="outlined"
-                  onClick={handleAddGrnItem}
-                  style={{
-                    marginLeft: '0.8rem'
+                    marginTop: '0.8rem'
                   }}
                 >
-                  <span style={{fontSize: '1.4rem'}}>
-                    Thêm
-                  </span>
-                </Button>
-              </div>
-            </Form.Item>
-          </React.Fragment>
-        )}
+                  <InputNumber
+                    min={1}
+                    style={{
+                      float: 'right',
+                      width: '100%'
+                    }}
+                    size="middle"
+                    onPressEnter={handleAddExportItem}
+                    addonAfter={
+                      <Form.Item noStyle shouldUpdate>
+                        {({ getFieldError, getFieldValue }) => {
+                          const hasError = getFieldError("quantityTake").length > 0;
+                          const isEmpty = !getFieldValue("quantityTake");
 
-        {/* 4. Display list of selected GRN items */}
-        {selectedGrnItems.length > 0 && (
-          <Table
-            rowKey="id"
-            columns={columns}
-            dataSource={selectedGrnItems}
-            pagination={false}
-            bordered
-            size="small"
-            style={{
-              marginBottom: '0.8rem'
-            }}
-          />
-        )}
+                          return (
+                            <Button
+                              color="primary"
+                              variant="outlined"
+                              onClick={handleAddExportItem}
+                              disabled={hasError || isEmpty}
+                            >
+                              Thêm
+                            </Button>
+                          );
+                        }}
+                      </Form.Item>
+                    }
+                  />
+              </Form.Item>
+            </React.Fragment>
+          )}
 
-        <Form.Item
-          label="Số lượng xuất"
-          labelAlign='left'
-          name="quantitySold"
-          rules={[{required: true, message: "Số lượng xuất không được để trống"}]}
-        >
-          <InputNumber 
-            min={0}
-            style={{
-            float: 'right',
-            fontSize: '2.4rem',
-            width: '100%'
-            }}
-            size="middle"
-          />
-        </Form.Item>
-        <Form.Item
-          label="Đơn giá bán"
-          labelAlign='left'
-          name="unitPrice"
-          rules={[{required: true, message: "Đơn giá bán không được để trống"}]}
-          initialValue={selectedProduct ? selectedProduct.listPrice : null}
-        >
-          <InputNumber 
-            min={0}
-            style={{
+          {/* 4. Display list of selected GRN items */}
+          {exportItems.length > 0 && (
+            <Table
+              rowKey="id"
+              columns={columns}
+              dataSource={exportItems}
+              pagination={false}
+              bordered
+              size="small"
+              style={{
+                marginBottom: '0.8rem'
+              }}
+            />
+          )}
+
+          <Form.Item
+            label="Số lượng xuất"
+            labelAlign='left'
+            name="quantitySold"
+            rules={[{required: true, message: "Số lượng xuất không được để trống"}]}
+          >
+            <InputNumber 
+              min={0}
+              style={{
               float: 'right',
               fontSize: '2.4rem',
               width: '100%'
-            }}
-            size="middle"
-          />
-        </Form.Item>
-        <Form.Item
-          label="Giảm giá (%)"
-          labelAlign='left'
-          name="discount"
-          rules={[{required: true, message: "Giảm giá hàng bán không được để trống"}]}
-          initialValue={0}
-        >
-          <InputNumber 
-            min={0}
-            style={{
-            float: 'right',
-            fontSize: '2.4rem',
-            width: '100%'
-            }}
-            size="middle"
-          />
-        </Form.Item>
-        <Form.Item
-          label="VAT đầu ra (%)"
-          labelAlign='left'
-          name="vatRate"
-          rules={[{required: true, message: "VAT đầu ra không được để trống"}]}
-          initialValue={10}
-        >
-          <InputNumber 
-            min={0}
-            style={{
-            float: 'right',
-            fontSize: '2.4rem',
-            width: '100%'
-            }}
-            size="middle"
-          />
-        </Form.Item>
-      </Form>
+              }}
+              size="middle"
+            />
+          </Form.Item>
+          <Form.Item
+            label="Đơn giá bán"
+            labelAlign='left'
+            name="unitPrice"
+            rules={[{required: true, message: "Đơn giá bán không được để trống"}]}
+            initialValue={selectedProduct ? selectedProduct.listPrice : null}
+          >
+            <InputNumber 
+              min={1}
+              style={{
+                float: 'right',
+                fontSize: '2.4rem',
+                width: '100%'
+              }}
+              size="middle"
+            />
+          </Form.Item>
+          <Form.Item
+            label="Giảm giá (%)"
+            labelAlign='left'
+            name="discount"
+            rules={[{required: true, message: "Giảm giá hàng bán không được để trống"}]}
+            initialValue={0}
+          >
+            <InputNumber 
+              min={0}
+              style={{
+                float: 'right',
+                fontSize: '2.4rem',
+                width: '100%'
+              }}
+              size="middle"
+            />
+          </Form.Item>
+          <Form.Item
+            label="VAT đầu ra (%)"
+            labelAlign='left'
+            name="vatRate"
+            rules={[{required: true, message: "VAT đầu ra không được để trống"}]}
+            initialValue={10}
+          >
+            <InputNumber 
+              min={0}
+              style={{
+              float: 'right',
+              fontSize: '2.4rem',
+              width: '100%'
+              }}
+              size="middle"
+            />
+          </Form.Item>
+        </Form>
+      </React.Fragment>
   )
 }
 

@@ -73,3 +73,13 @@ p, span, a, li, h3 {
   display: flex;
   align-items: center;
 }
+
+.ant-input-number-group-addon {
+  background-color: white !important; /* Change background color *//* Change text color */
+  border: 0 !important; /* Adjust border */
+  padding: 5px; /* Add padding */
+}
+
+.ant-input-number-input-wrap {
+  font-size: 1.4rem;
+}

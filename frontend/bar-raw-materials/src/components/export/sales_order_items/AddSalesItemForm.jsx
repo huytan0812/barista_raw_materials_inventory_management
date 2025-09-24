@@ -6,6 +6,7 @@ import salesItemHTTP from '../../../services/SalesOrderItemService'
 const AddSalesItemForm = (props) => {
     const {
         salesOrderId,
+        salesItem,
         form,
         onSubmitSuccess,
         onSubmitFailure
@@ -35,6 +36,7 @@ const AddSalesItemForm = (props) => {
 
     return (
         <BaseSalesItemForm
+            salesItem={salesItem}
             form={form}
             formName="add_sales_item"
             handleSubmit={handleSubmit}
