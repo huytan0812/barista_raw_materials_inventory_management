@@ -13,6 +13,7 @@ public class SalesOrderItemDTO {
     private Integer id;
     private Integer productId;
     private String productName;
+    private Integer salesOrderId;
     private Integer quantitySold;
     private BigDecimal unitPrice;
     private Float discount;

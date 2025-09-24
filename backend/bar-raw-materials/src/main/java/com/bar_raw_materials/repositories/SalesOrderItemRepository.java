@@ -13,7 +13,8 @@ import java.util.List;
 public interface SalesOrderItemRepository extends JpaRepository<SalesOrderItem, Integer> {
     @Query(
             value="SELECT new com.bar_raw_materials.dto.salesOrderItem.SalesOrderItemDTO(" +
-                    "s.id, s.product.id, s.product.name AS productName, s.quantitySold, s.unitPrice, " +
+                    "s.id, s.product.id, s.product.name AS productName, s.salesOrder.id AS salesOrderId, " +
+                    "s.quantitySold, s.unitPrice, " +
                     "s.discount, s.vatRate, s.note" +
                     ") FROM SalesOrderItem s JOIN s.product JOIN s.salesOrder " +
                     "WHERE s.salesOrder.id=:salesOrderId"
@@ -22,7 +23,8 @@ public interface SalesOrderItemRepository extends JpaRepository<SalesOrderItem, 
 
     @Query(
             value="SELECT new com.bar_raw_materials.dto.salesOrderItem.SalesOrderItemDTO(" +
-                    "s.id, s.product.id, s.product.name AS productName, s.quantitySold, s.unitPrice, " +
+                    "s.id, s.product.id, s.product.name AS productName, s.salesOrder.id AS salesOrderId, " +
+                    "s.quantitySold, s.unitPrice, " +
                     "s.discount, s.vatRate, s.note" +
                     ") FROM SalesOrderItem s JOIN s.product " +
                     "WHERE s.id=:id"

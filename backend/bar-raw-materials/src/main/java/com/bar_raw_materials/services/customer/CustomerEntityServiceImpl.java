@@ -36,7 +36,7 @@ public class CustomerEntityServiceImpl implements CustomerService {
 
     @Override
     public Customer getDetails(int id) {
-        return null;
+        return customerRepository.findCustomerById(id);
     }
 
     @Override
@@ -51,8 +51,8 @@ public class CustomerEntityServiceImpl implements CustomerService {
         }
         Customer customer = new Customer();
         BeanUtils.copyProperties(createCustomerDTO, customer);
-//        customer.setRank("Đồng");
-//        customer.setBonusDiscount(0f);
+        customer.setCustomerRank("Đồng");
+        customer.setBonusDiscount(0f);
         customer.setTotalBuy(BigDecimal.ZERO);
         customer.setDateCreated(Instant.now());
         customerRepository.save(customer);

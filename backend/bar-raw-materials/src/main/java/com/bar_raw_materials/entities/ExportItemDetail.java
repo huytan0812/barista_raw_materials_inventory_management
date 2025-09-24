@@ -32,13 +32,13 @@ public class ExportItemDetail {
 
     @NotNull
     @ColumnDefault("(0)")
-    @Column(name = "quantityExport", nullable = false)
-    private Integer quantityExport;
+    @Column(name = "quantityTake", nullable = false)
+    private Integer quantityTake;
 
     @NotNull
     @ColumnDefault("(0)")
-    @Column(name = "importCost", nullable = false, precision = 20, scale = 2)
-    private BigDecimal importCost;
+    @Column(name = "unitCost", nullable = false, precision = 20, scale = 2)
+    private BigDecimal unitCost;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

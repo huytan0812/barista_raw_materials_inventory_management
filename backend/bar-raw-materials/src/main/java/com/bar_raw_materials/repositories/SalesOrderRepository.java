@@ -11,9 +11,23 @@ import java.math.BigDecimal;
 public interface SalesOrderRepository extends JpaRepository<SalesOrder, Integer> {
     @Query(
             value="SELECT new com.bar_raw_materials.dto.salesOrder.SalesOrderDTO(" +
-                    "s.id, s.customer.name AS customerName, " +
+                    "s.id, s.customer.name AS customerName, s.customer.phoneNumber AS customerPhoneNumber, " +
                     "s.createdBy.username AS createdByUser, s.dateCreated, s.totalAmount" +
                     ") FROM SalesOrder s JOIN s.customer JOIN s.createdBy"
     )
     List<SalesOrderDTO> findAllSalesOrderDTO();
+
+    @Query(
+            value="SELECT new com.bar_raw_materials.dto.salesOrder.SalesOrderDTO(" +
+                    "s.id, s.customer.name AS customerName, s.customer.phoneNumber AS customerPhoneNumber, " +
+                    "s.createdBy.username AS createdByUser, s.dateCreated, s.totalAmount" +
+                    ") FROM SalesOrder s JOIN s.customer JOIN s.createdBy " +
+                    "WHERE s.id=:id"
+    )
+    SalesOrderDTO findById(int id);
+
+    @Query(
+        value="SELECT s FROM SalesOrder s WHERE s.id=:id"
+    )
+    SalesOrder findSalesOrderById(int id);
 }

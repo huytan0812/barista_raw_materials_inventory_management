@@ -2,6 +2,7 @@ package com.bar_raw_materials.services.goodsReceiptItem;
 
 import com.bar_raw_materials.dto.goodsReceiptItem.CreateGrnItemDTO;
 import com.bar_raw_materials.dto.goodsReceiptItem.GrnItemDTO;
+import com.bar_raw_materials.dto.goodsReceiptItem.GrnItemForExportingDTO;
 import com.bar_raw_materials.dto.goodsReceiptItem.LightGrnItemDTO;
 import com.bar_raw_materials.entities.GoodsReceiptItem;
 import com.bar_raw_materials.services.EntityService;
@@ -21,6 +22,9 @@ public interface GoodsReceiptItemService extends EntityService {
 
     // get all light grn items dto per GRN
     List<LightGrnItemDTO> getAllLightGrnItems(Integer grnId);
+
+    // get all grn items dto by product id for exporting
+    List<GrnItemForExportingDTO> getGrnItemsForExporting(Integer productId);
 
     void createGrnItem(GoodsReceiptItem grnItem, CreateGrnItemDTO createGrnItemDTO);
     void updateGrnItem(GoodsReceiptItem grnItem, CreateGrnItemDTO updateGrnItemDTO);

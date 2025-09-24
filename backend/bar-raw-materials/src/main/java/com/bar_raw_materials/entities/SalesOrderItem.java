@@ -18,7 +18,6 @@ public class SalesOrderItem {
     @Column(name = "id", nullable = false)
     private Integer id;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @ColumnDefault("0")
     @JoinColumn(name = "productId", nullable = false)
@@ -50,7 +49,6 @@ public class SalesOrderItem {
     @Column(name = "vatRate", nullable = false)
     private Float vatRate;
 
-    @NotNull
     @Lob
     @Column(name = "note", nullable = false)
     private String note;

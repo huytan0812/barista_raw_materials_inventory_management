@@ -1,5 +1,6 @@
 package com.bar_raw_materials.repositories;
 
+import com.bar_raw_materials.dto.goodsReceiptItem.GrnItemForExportingDTO;
 import com.bar_raw_materials.entities.GoodsReceiptItem;
 import com.bar_raw_materials.dto.goodsReceiptItem.GrnItemDTO;
 import com.bar_raw_materials.dto.goodsReceiptItem.LightGrnItemDTO;
@@ -39,6 +40,15 @@ public interface GoodsReceiptItemRepository extends JpaRepository<GoodsReceiptIt
                     " WHERE grnItem.grn.id=:grnId"
     )
     public List<LightGrnItemDTO> getLightGrnItemsByGrnId(Integer grnId);
+
+    @Query(
+            value="SELECT new com.bar_raw_materials.dto.goodsReceiptItem.GrnItemForExportingDTO(" +
+                    "grnItem.id, grnItem.batch.lotNumber AS lotNumber, grnItem.product.id AS productId," +
+                    " grnItem.quantityRemain, grnItem.unitCost, grnItem.batch.expDate AS expDate" +
+                    ") FROM GoodsReceiptItem grnItem JOIN grnItem.product JOIN grnItem.batch" +
+                    " WHERE grnItem.product.id=:productId"
+    )
+    public List<GrnItemForExportingDTO> findGrnItemForExportingByProductId(Integer productId);
 
     public GoodsReceiptItem findById(int id);
 

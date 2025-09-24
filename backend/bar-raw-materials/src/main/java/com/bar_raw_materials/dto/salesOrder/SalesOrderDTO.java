@@ -13,6 +13,7 @@ import java.time.Instant;
 public class SalesOrderDTO {
     private Integer id;
     private String customerName;
+    private String customerPhoneNumber;
     private String createdByUser;
     private Instant dateCreated;
     private BigDecimal totalAmount;

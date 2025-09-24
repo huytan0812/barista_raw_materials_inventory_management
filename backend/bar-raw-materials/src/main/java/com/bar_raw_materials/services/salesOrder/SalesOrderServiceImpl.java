@@ -40,8 +40,13 @@ public class SalesOrderServiceImpl implements SalesOrderService{
     }
 
     @Override
-    public <T> T getDetails(int id) {
-        return null;
+    public SalesOrderDTO getDetails(int id) {
+        return salesOrderRepository.findById(id);
+    }
+
+    @Override
+    public SalesOrder getSalesOrder(int id) {
+        return salesOrderRepository.findSalesOrderById(id);
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.bar_raw_materials.services.goodsReceiptItem;
 
 import com.bar_raw_materials.dto.goodsReceiptItem.CreateGrnItemDTO;
 import com.bar_raw_materials.dto.goodsReceiptItem.GrnItemDTO;
+import com.bar_raw_materials.dto.goodsReceiptItem.GrnItemForExportingDTO;
 import com.bar_raw_materials.dto.goodsReceiptItem.LightGrnItemDTO;
 import com.bar_raw_materials.entities.Batch;
 import com.bar_raw_materials.entities.GoodsReceiptItem;
@@ -67,6 +68,11 @@ public class GoodsReceiptItemServiceImpl implements GoodsReceiptItemService {
     }
 
     @Override
+    public List<GrnItemForExportingDTO> getGrnItemsForExporting(Integer productId) {
+        return goodsReceiptItemRepository.findGrnItemForExportingByProductId(productId);
+    }
+
+    @Override
     @Transactional
     public void createGrnItem(GoodsReceiptItem grnItem, CreateGrnItemDTO createGrnItemDTO) {
         Batch batch = batchService.getBatchByLotNumber(createGrnItemDTO.getLotNumber());
@@ -74,6 +80,7 @@ public class GoodsReceiptItemServiceImpl implements GoodsReceiptItemService {
             batch = batchService.createBatchByGrnItemDTO(createGrnItemDTO, grnItem.getProduct());
         }
         grnItem.setBatch(batch);
+        grnItem.setQuantityRemain(grnItem.getQuantityImport());
         goodsReceiptItemRepository.save(grnItem);
     }
 
@@ -90,6 +97,7 @@ public class GoodsReceiptItemServiceImpl implements GoodsReceiptItemService {
             }
             grnItem.setBatch(batch);
         }
+        grnItem.setQuantityRemain(grnItem.getQuantityImport());
         goodsReceiptItemRepository.save(grnItem);
     }
 

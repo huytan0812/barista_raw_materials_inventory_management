@@ -20,7 +20,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query(
             value="SELECT new com.bar_raw_materials.dto.product.LightProductDTO(" +
-                    "p.id, p.name)" + " FROM Product p "
+                    "p.id, p.name, p.listPrice)" + " FROM Product p "
     )
     List<LightProductDTO> findAllLight();
 

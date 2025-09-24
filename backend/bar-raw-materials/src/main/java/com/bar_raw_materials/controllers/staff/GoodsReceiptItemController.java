@@ -1,6 +1,8 @@
 package com.bar_raw_materials.controllers.staff;
 
 import com.bar_raw_materials.dto.goodsReceiptItem.GrnItemDTO;
+import com.bar_raw_materials.dto.goodsReceiptItem.GrnItemForExportingDTO;
+import com.bar_raw_materials.dto.goodsReceiptItem.LightGrnItemDTO;
 import com.bar_raw_materials.entities.Batch;
 import com.bar_raw_materials.entities.GoodsReceiptNote;
 import com.bar_raw_materials.entities.Product;
@@ -19,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -163,5 +166,12 @@ public class GoodsReceiptItemController extends BaseStaffController {
         }
         responseData.put("successfulMsg", "Đơn hàng nhập kho sản phẩm "+grnItem.getProduct().getName()+" được xóa thành công");
         return ResponseEntity.ok(responseData);
+    }
+
+    @GetMapping("allLight/{productId}")
+    public List<GrnItemForExportingDTO> getGrnItemsByProductId(
+            @PathVariable("productId") Integer productId
+    ) {
+        return grnItemService.getGrnItemsForExporting(productId);
     }
 }

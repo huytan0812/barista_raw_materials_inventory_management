@@ -21,4 +21,5 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
     )
     List<LightCustomerDTO> findAllLightCustomers();
     Customer findCustomerByPhoneNumber(String phoneNumber);
+    Customer findCustomerById(int id);
 }
