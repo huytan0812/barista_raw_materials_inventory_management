@@ -6,10 +6,11 @@ import com.bar_raw_materials.entities.ExportItemDetail;
 import com.bar_raw_materials.entities.SalesOrder;
 import com.bar_raw_materials.entities.SalesOrderItem;
 import com.bar_raw_materials.exceptions.salesItem.SalesOrderItemDoesNotExistException;
+import com.bar_raw_materials.repositories.GoodsReceiptItemRepository;
 import com.bar_raw_materials.repositories.SalesOrderItemRepository;
 import com.bar_raw_materials.services.salesOrder.SalesOrderService;
 import com.bar_raw_materials.exceptions.salesOrder.SalesOrderDoesNotExistException;
-import com.bar_raw_materials.services.exportItem.ExportItemService;
+import com.bar_raw_materials.repositories.ExportItemDetailRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +27,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SalesOrderItemServiceImpl implements SalesOrderItemService {
     private final SalesOrderItemRepository salesOrderItemRepository;
+    private final ExportItemDetailRepository expItemRepository;
+    private final GoodsReceiptItemRepository grnItemRepository;
     private final SalesOrderService salesOrderService;
-    private final ExportItemService exportItemService;
 
     @Override
     public List<?> getAll() {
@@ -79,11 +81,13 @@ public class SalesOrderItemServiceImpl implements SalesOrderItemService {
             throw new SalesOrderItemDoesNotExistException("Đơn hàng bán không tồn tại");
         }
         // get list of ExportItemDetail records
-        List<ExportItemDetail> expItems = exportItemService.getBySalesOrderItemId(salesItem.getId());
+        List<ExportItemDetail> expItems = expItemRepository.findBySalesOrderItemId(id);
         for (ExportItemDetail expItem : expItems) {
-            // return quantity take to quantity remain to each grn item in ExportItemService
-            exportItemService.delete(expItem.getId());
+            int grnItemId = expItem.getGrnItem().getId();
+            // return quantityTake back to grnItem's quantityRemain field
+            grnItemRepository.updateQuantityRemain(expItem.getQuantityTake(), grnItemId);
         }
+        expItemRepository.deleteAll(expItems);
         salesOrderItemRepository.delete(salesItem);
     }
 

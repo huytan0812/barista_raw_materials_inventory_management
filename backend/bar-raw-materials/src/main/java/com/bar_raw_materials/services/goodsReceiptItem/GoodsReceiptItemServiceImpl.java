@@ -107,6 +107,11 @@ public class GoodsReceiptItemServiceImpl implements GoodsReceiptItemService {
     }
 
     @Override
+    public Integer getQuantityRemain(Integer id) {
+        return goodsReceiptItemRepository.getQuantityRemainByGrnItemId(id);
+    }
+
+    @Override
     public Boolean isValidExpDate(CreateGrnItemDTO createGrnItemDTO) {
         LocalDate mfgDate = createGrnItemDTO.getMfgDate();
         LocalDate expDate = createGrnItemDTO.getExpDate();

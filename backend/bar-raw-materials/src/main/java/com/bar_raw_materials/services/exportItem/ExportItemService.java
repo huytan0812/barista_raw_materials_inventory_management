@@ -11,5 +11,6 @@ public interface ExportItemService extends EntityService {
     ExportItemDetail create(CreateExportItemDTO createExportItemDTO);
     List<ExportItemDetail> getBySalesOrderItemId(int id);
     List<ExportItemDTO> getExportItemBySalesItemId(int id);
+    void update(int id, int quantityTake);
     void delete(int id);
 }

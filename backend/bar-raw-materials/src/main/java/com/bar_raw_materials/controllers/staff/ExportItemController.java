@@ -41,6 +41,15 @@ public class ExportItemController extends BaseStaffController{
         return ResponseEntity.ok(responseData);
     }
 
+    @PostMapping("update/{id}")
+    public ResponseEntity<String> update(
+            @PathVariable("id") Integer id,
+            @RequestBody Integer quantityTake
+    ) {
+        exportItemService.update(id, quantityTake);
+        return ResponseEntity.ok("Updated Successfully");
+    }
+
     @GetMapping("delete/{id}")
     public ResponseEntity<String> delete(
             @PathVariable("id") Integer id

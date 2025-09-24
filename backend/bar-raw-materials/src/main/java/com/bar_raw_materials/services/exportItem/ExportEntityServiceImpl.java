@@ -89,6 +89,19 @@ public class ExportEntityServiceImpl implements ExportItemService{
 
     @Override
     @Transactional
+    public void update(int id, int quantityTake) {
+        ExportItemDetail expItem = exportItemDetailRepository.findById(id);
+        if (expItem == null) {
+            throw new ExportItemDetailDoesNotExistException("Chi tiết hàng bán không tồn tại");
+        }
+        GoodsReceiptItem grnItem = expItem.getGrnItem();
+        grnItem.setQuantityRemain(grnItem.getQuantityRemain() + expItem.getQuantityTake() - quantityTake);
+        grnItemRepository.save(grnItem);
+        exportItemDetailRepository.save(expItem);
+    }
+
+    @Override
+    @Transactional
     public void delete(int id) {
         ExportItemDetail expItem = exportItemDetailRepository.findById(id);
         if (expItem == null) {

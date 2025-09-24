@@ -11,6 +11,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class ExportItemDTO {
     private Integer id;
+    private Integer grnItemId;
     private String lotNumber;
     private Integer quantityTake;
     private BigDecimal unitCost;

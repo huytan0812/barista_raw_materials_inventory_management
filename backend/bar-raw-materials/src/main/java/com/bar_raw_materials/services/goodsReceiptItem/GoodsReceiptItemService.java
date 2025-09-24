@@ -31,5 +31,6 @@ public interface GoodsReceiptItemService extends EntityService {
     void deleteGrnItem(GoodsReceiptItem grnItem);
 
     // util service
+    Integer getQuantityRemain(Integer id);
     Boolean isValidExpDate(CreateGrnItemDTO createGrnItemDTO);
 }

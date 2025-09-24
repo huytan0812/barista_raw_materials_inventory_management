@@ -15,7 +15,8 @@ public interface ExportItemDetailRepository extends JpaRepository<ExportItemDeta
 
     @Query(
             value="SELECT new com.bar_raw_materials.dto.exportItem.ExportItemDTO(" +
-                    "expItem.id, expItem.grnItem.batch.lotNumber AS lotNumber, " +
+                    "expItem.id, expItem.grnItem.id AS grnItemId, " +
+                    "expItem.grnItem.batch.lotNumber AS lotNumber, " +
                     " expItem.quantityTake, expItem.unitCost, expItem.grnItem.batch.expDate" +
                     ") FROM ExportItemDetail expItem JOIN expItem.orderItem" +
                     " JOIN expItem.grnItem WHERE expItem.orderItem.id=:salesOrderItemId"

@@ -174,4 +174,14 @@ public class GoodsReceiptItemController extends BaseStaffController {
     ) {
         return grnItemService.getGrnItemsForExporting(productId);
     }
+
+    @GetMapping("grnItem/{id}/quantityRemain")
+    public ResponseEntity<Map<String, Integer>> getQuantityRemain(
+            @PathVariable("id") Integer id
+    ) {
+        Integer quantityRemain = grnItemService.getQuantityRemain(id);
+        Map<String, Integer> responseData = new HashMap<>();
+        responseData.put("quantityRemain", quantityRemain);
+        return ResponseEntity.ok(responseData);
+    }
 }

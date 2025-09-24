@@ -10,6 +10,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
 import java.util.List;
 
 public interface GoodsReceiptItemRepository extends JpaRepository<GoodsReceiptItem, Integer> {
@@ -46,7 +48,7 @@ public interface GoodsReceiptItemRepository extends JpaRepository<GoodsReceiptIt
                     "grnItem.id, grnItem.batch.lotNumber AS lotNumber, grnItem.product.id AS productId," +
                     " grnItem.quantityRemain, grnItem.unitCost, grnItem.batch.expDate AS expDate" +
                     ") FROM GoodsReceiptItem grnItem JOIN grnItem.product JOIN grnItem.batch" +
-                    " WHERE grnItem.product.id=:productId"
+                    " WHERE grnItem.product.id=:productId AND grnItem.quantityRemain > 0"
     )
     public List<GrnItemForExportingDTO> findGrnItemForExportingByProductId(Integer productId);
 
@@ -58,4 +60,20 @@ public interface GoodsReceiptItemRepository extends JpaRepository<GoodsReceiptIt
     )
     @Modifying
     public void deleteByGrnId(int grnId);
+
+    // used for returning quantityTake back from ExportItemDetails
+    @Query(
+            value="UPDATE goods_receipt_item SET quantityRemain = quantityRemain + :quantityTake" +
+                    " WHERE goods_receipt_item.id=:grnItemId"
+            , nativeQuery=true
+    )
+    @Modifying
+    public void updateQuantityRemain(@Param("quantityTake")  int quantityTake, @Param("grnItemId") int grnItemId);
+
+    @Query(
+            value="SELECT grnItem.quantityRemain FROM goods_receipt_item grnItem" +
+                    " WHERE grnItem.id=:grnItemId"
+            , nativeQuery=true
+    )
+    public Integer getQuantityRemainByGrnItemId(int grnItemId);
 }
