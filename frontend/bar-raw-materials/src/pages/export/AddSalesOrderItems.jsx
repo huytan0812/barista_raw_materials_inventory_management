@@ -160,17 +160,15 @@ const AddSalesOrderItems = () => {
                                         Xác nhận
                                     </Button>
                                 ]}
-                                style={{
-                                    width: '880px'
-                                }}
-                                >
-                                    <AddSalesItemForm
-                                        salesOrderId={salesOrderId}
-                                        salesItem={salesItem}
-                                        form={addSalesItemForm}
-                                        onSubmitSuccess={handleSubmitSuccess}
-                                        onSubmitFailure={handleSubmitFailure}
-                                    />
+                                width={768}
+                            >
+                                <AddSalesItemForm
+                                    salesOrderId={salesOrderId}
+                                    salesItem={salesItem}
+                                    form={addSalesItemForm}
+                                    onSubmitSuccess={handleSubmitSuccess}
+                                    onSubmitFailure={handleSubmitFailure}
+                                />
                             </Modal>
                         </React.Fragment>
                     )}

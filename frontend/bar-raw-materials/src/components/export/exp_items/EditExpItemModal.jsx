@@ -16,35 +16,36 @@ const EditExpItemModal = (props) => {
     const {token} = useAuthContext();
     const persistToken = useRef(token);
     const [open, setOpen] = useState(false);
-    const [editExpItemForm] = Form.useForm();
     const [quantityRemain, setQuantityRemain] = useState(null);
-    const grnItemId = expItem.grnItemId;
+    const [editExpItemForm] = Form.useForm();
 
     // side effect for handling open modal
     useEffect(() => {
         if (isActive) {
             setOpen(true);
-        }
-    }, [isActive]);
-
-    useEffect(() => {
-        const fetchQuantityRemain = async() => {
-            try {
-                const response = await grnItemHTTP.get(`grnItem/${grnItemId}/quantityRemain`, {
-                    headers: {
-                        Authorization: `Bearer ${persistToken.current}`
+            const fetchQuantityRemain = async() => {
+                try {
+                    const response = await grnItemHTTP.get(`grnItem/${expItem.grnItemId}/quantityRemain`, {
+                        headers: {
+                            Authorization: `Bearer ${persistToken.current}`
+                        }
+                    });
+                    if (response.status === 200) {
+                        editExpItemForm.setFieldsValue({ 
+                            quantityRemain: response.data?.quantityRemain,
+                            quantityTakeBefore: expItem.quantityTake,
+                            quantityTake: expItem.quantityTake
+                        });
+                        setQuantityRemain(response.data?.quantityRemain);
                     }
-                });
-                if (response.status === 200) {
-                    setQuantityRemain(response.data?.quantityRemain);
+                }
+                catch (error) {
+                    console.log(error);
                 }
             }
-            catch (error) {
-                console.log(error);
-            }
+            fetchQuantityRemain();
         }
-        fetchQuantityRemain();
-    }, [grnItemId]);
+    }, [isActive, expItem, editExpItemForm]);
 
     const handleOk = () => {
         editExpItemForm.submit();
@@ -53,15 +54,18 @@ const EditExpItemModal = (props) => {
         setOpen(false);
         resetActiveEditModal();
     }
-    const handleSubmit = () => {
+    const handleSubmit = (values) => {
+        const {quantityTake, ...rest} = values;
         const editExpItem = async() => {
             try {
-                const response = await exportItemHTTP.post(`/update/${expItem.id}`, {
+                const response = await exportItemHTTP.post(`/update/${expItem.id}`, quantityTake, {
                     headers: {
-                    Authorization: `Bearer ${token}`
+                        Authorization: `Bearer ${token}`
                     }
                 });
                 if (response.status === 200) {
+                    setOpen(false);
+                    resetActiveEditModal();
                     onEditSuccess(response.data);
                 }
             }

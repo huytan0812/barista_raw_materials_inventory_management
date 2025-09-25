@@ -101,7 +101,13 @@ const BaseSalesItemForm = (props) => {
           }
         });
         if (response.status === 200) {
-          setExportItems(response.data);
+          const data = response.data;
+          let totalQuantityTake = 0;
+          for (let exp in data) {
+            totalQuantityTake += data[exp].quantityTake;
+          }
+          setExportItems(data);
+          form.setFieldsValue({quantitySold: totalQuantityTake});
         }
       }
       catch (error) {
@@ -208,7 +214,10 @@ const BaseSalesItemForm = (props) => {
         key: "action",
         render: (_,record) => {
             return (
-                <Flex gap="1rem">
+                <Flex 
+                  gap="1rem"
+                  justify='center'
+                >
                   <Button 
                       color="primary" 
                       variant="solid"
@@ -398,11 +407,12 @@ const BaseSalesItemForm = (props) => {
               style={{
                 marginBottom: '0.8rem'
               }}
+              scroll={{ y: 250 }}
             />
           )}
 
           <Form.Item
-            label="Số lượng xuất"
+            label="Tổng số lượng xuất"
             labelAlign='left'
             name="quantitySold"
             rules={[{required: true, message: "Số lượng xuất không được để trống"}]}
@@ -415,6 +425,7 @@ const BaseSalesItemForm = (props) => {
               width: '100%'
               }}
               size="middle"
+              disabled={true}
             />
           </Form.Item>
           <Form.Item
