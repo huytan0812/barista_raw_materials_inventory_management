@@ -21,7 +21,9 @@ const BaseSalesItemForm = (props) => {
         formName,
         handleSubmit,
         edit,
-        expItems
+        expItems,
+        // used for cancel edit button
+        setCancelExpItemIds
     } = props;
     const {token} = useAuthContext();
     const persistToken = useRef(token); 
@@ -41,6 +43,9 @@ const BaseSalesItemForm = (props) => {
 
     // states for handling edit export item
     const [activeEditExpItem, setActiveEditExpItem] = useState(false);
+    
+    // states for new Export Item in updating Sales Order Ite,
+    const [preExpItemIds, setPreExpItemIds] = useState([]);
 
     // state for handling message
     const [messageApi, contextHolder] = message.useMessage();
@@ -64,6 +69,12 @@ const BaseSalesItemForm = (props) => {
           quantitySold: salesItem.quantitySold,
           unitPrice: salesItem.unitPrice
         });
+        // set preExpItemIds for filtering new Export Items when edit Sales Order Item
+        const tmpPreExpItemIds = [];
+        for (let exp in expItems) {
+          tmpPreExpItemIds.push(expItems[exp].id);
+        }
+        setPreExpItemIds(tmpPreExpItemIds);
       }
     }, [edit, products, salesItem, expItems, form]);
 
@@ -120,9 +131,17 @@ const BaseSalesItemForm = (props) => {
         if (response.status === 200) {
           const data = response.data;
           let totalQuantityTake = 0;
+          // only for editing
+          // set cancelExpItemIds for deleting new Export Items if cancel the Edit Sales Item button
+          let tmpCancelExpItemIds = [];
           for (let exp in data) {
             totalQuantityTake += data[exp].quantityTake;
+            // only for editing Sales Order Item
+            if (edit && !preExpItemIds.includes(data[exp].id)) {
+              tmpCancelExpItemIds.push(data[exp].id);
+            }
           }
+          if (edit) setCancelExpItemIds(tmpCancelExpItemIds);
           setExportItems(data);
           form.setFieldsValue({quantitySold: totalQuantityTake});
         }

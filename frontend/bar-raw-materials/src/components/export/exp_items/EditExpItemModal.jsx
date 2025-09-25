@@ -66,7 +66,7 @@ const EditExpItemModal = (props) => {
                 if (response.status === 200) {
                     setOpen(false);
                     resetActiveEditModal();
-                    onEditSuccess(response.data);
+                    onEditSuccess("Cập nhật chi tiết hàng bán thành công");
                 }
             }
             catch (error) {

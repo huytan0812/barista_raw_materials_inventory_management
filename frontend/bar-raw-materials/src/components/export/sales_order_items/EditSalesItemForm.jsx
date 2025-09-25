@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useRef} from 'react'
 import { useAuthContext } from '../../../contexts/AuthContext'
-import salesItemHTTP from '../../../services/GoodsReceiptItemService'
+import salesItemHTTP from '../../../services/SalesOrderItemService'
 import exportItemHTTP from '../../../services/ExportItemService'
 import BaseSalesItemForm from './BaseSalesItemForm'
 
@@ -9,7 +9,8 @@ const EditSalesItemForm = (props) => {
         form,
         salesItem,
         handleSubmitSuccess,
-        handleSubmitFail
+        handleSubmitFail,
+        setCancelExpItemIds
     } = props;
     const {token} = useAuthContext();
     const persistToken = useRef(token);
@@ -38,13 +39,11 @@ const EditSalesItemForm = (props) => {
 
     // submitting to server
     const handleSubmit = (values) => {
-        console.log(values);
         const submit = async() => {
             try {
                 const formData = new FormData();
                 const {salesItemId,...rest} = values;
                 const data = rest;
-                
                 // convert vat rate to percentage
                 if (data.vatRate) data.vatRate /= 100;
                 if (data.discount) data.discount /= 100;
@@ -74,8 +73,10 @@ const EditSalesItemForm = (props) => {
             form={form}
             formName={`edit_sales_item_${salesItem.id}`}
             handleSubmit={handleSubmit}
+            // for edit Sales Order Item
             edit={true}
             expItems={expItems}
+            setCancelExpItemIds={setCancelExpItemIds}
         />
     )
 }

@@ -20,8 +20,9 @@ const AddSalesItemForm = (props) => {
             const data = rest;
             console.log("Origin sales item id:", salesItem.id);
             console.log("Form sales item id:", salesItemId);
-            data.discount = data.discount / 100;
-            data.vatRate = data.vatRate / 100;
+            // convert vat rate to percentage
+            if (data.vatRate) data.vatRate /= 100;
+            if (data.discount) data.discount /= 100;
             formData.append('data', new Blob([JSON.stringify(data)], {type: 'application/json'}))
             try {
                 const response = await salesItemHTTP.post(`/confirmSaleItem/${salesItem.id}`, formData, {
