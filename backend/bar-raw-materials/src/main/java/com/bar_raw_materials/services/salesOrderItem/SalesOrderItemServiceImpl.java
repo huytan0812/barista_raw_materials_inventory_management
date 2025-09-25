@@ -1,19 +1,26 @@
 package com.bar_raw_materials.services.salesOrderItem;
 
 import com.bar_raw_materials.dto.salesOrder.SalesOrderDTO;
+import com.bar_raw_materials.dto.salesOrderItem.CreateSalesOrderItemDTO;
 import com.bar_raw_materials.dto.salesOrderItem.SalesOrderItemDTO;
+import com.bar_raw_materials.dto.salesOrderItem.UpdateSalesOrderItemDTO;
 import com.bar_raw_materials.entities.ExportItemDetail;
+import com.bar_raw_materials.entities.Product;
 import com.bar_raw_materials.entities.SalesOrder;
 import com.bar_raw_materials.entities.SalesOrderItem;
+import com.bar_raw_materials.exceptions.product.ProductDoesNotExistException;
 import com.bar_raw_materials.exceptions.salesItem.SalesOrderItemDoesNotExistException;
 import com.bar_raw_materials.repositories.GoodsReceiptItemRepository;
 import com.bar_raw_materials.repositories.SalesOrderItemRepository;
 import com.bar_raw_materials.services.salesOrder.SalesOrderService;
 import com.bar_raw_materials.exceptions.salesOrder.SalesOrderDoesNotExistException;
 import com.bar_raw_materials.repositories.ExportItemDetailRepository;
+import com.bar_raw_materials.repositories.ProductRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -29,6 +36,7 @@ public class SalesOrderItemServiceImpl implements SalesOrderItemService {
     private final SalesOrderItemRepository salesOrderItemRepository;
     private final ExportItemDetailRepository expItemRepository;
     private final GoodsReceiptItemRepository grnItemRepository;
+    private final ProductRepository productRepository;
     private final SalesOrderService salesOrderService;
 
     @Override
@@ -71,6 +79,32 @@ public class SalesOrderItemServiceImpl implements SalesOrderItemService {
         salesOrderItemDTO.setId(newSalesOrderItem.getId());
         salesOrderItemDTO.setSalesOrderId(salesOrderId);
         return salesOrderItemDTO;
+    }
+
+    @Override
+    @Transactional
+    public void confirmSalesOrderItem(int salesItemId, CreateSalesOrderItemDTO createSalesItem) {
+        SalesOrderItem salesItem = salesOrderItemRepository.findById(salesItemId);
+        if (salesItem == null) {
+            throw new SalesOrderItemDoesNotExistException("Đơn hàng xuất kho không tồn tại");
+        }
+        Product product = productRepository.findById(createSalesItem.getProductId());
+        if (product == null) {
+            throw new ProductDoesNotExistException("Sản phẩm không tồn tại");
+        }
+        salesItem.setProduct(product);
+        BeanUtils.copyProperties(createSalesItem, salesItem);
+        salesOrderItemRepository.save(salesItem);
+    }
+
+    @Override
+    public void updateSalesItem(int salesItemId, UpdateSalesOrderItemDTO updateSalesItem) {
+        SalesOrderItem salesOrderItem = salesOrderItemRepository.findById(salesItemId);
+        if (salesOrderItem == null) {
+            throw new SalesOrderItemDoesNotExistException("Đơn hàng xuất kho không tồn tại");
+        }
+        BeanUtils.copyProperties(updateSalesItem, salesOrderItem);
+        salesOrderItemRepository.save(salesOrderItem);
     }
 
     @Override

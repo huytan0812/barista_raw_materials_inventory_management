@@ -13,4 +13,5 @@ public interface ExportItemService extends EntityService {
     List<ExportItemDTO> getExportItemBySalesItemId(int id);
     void update(int id, int quantityTake);
     void delete(int id);
+    void deleteCancelExpItems(List<Integer> expItemIdList);
 }

@@ -57,4 +57,11 @@ public class ExportItemController extends BaseStaffController{
         exportItemService.delete(id);
         return ResponseEntity.ok("Chi tiết hàng bán được xóa thành công");
     }
+    @PostMapping("deleteCancelExpItems")
+    public ResponseEntity<String> deleteCancelExpItems(
+            @RequestBody() List<Integer> expItemIdList
+    ) {
+        exportItemService.deleteCancelExpItems(expItemIdList);
+        return ResponseEntity.ok("Hủy thành công các chi tiết hàng bán");
+    }
 }

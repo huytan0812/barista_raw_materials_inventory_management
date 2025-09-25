@@ -5,8 +5,10 @@ import com.bar_raw_materials.exceptions.customer.DuplicatedPhoneNumberException;
 import com.bar_raw_materials.exceptions.exportItem.ExceedQuantityRemainException;
 import com.bar_raw_materials.exceptions.exportItem.ExportItemDetailDoesNotExistException;
 import com.bar_raw_materials.exceptions.grnItem.GoodsReceiptItemDoesNotExistException;
+import com.bar_raw_materials.exceptions.product.ProductDoesNotExistException;
 import com.bar_raw_materials.exceptions.salesItem.SalesOrderItemDoesNotExistException;
 import com.bar_raw_materials.exceptions.salesOrder.SalesOrderDoesNotExistException;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -72,9 +74,14 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(ProductDoesNotExistException.class)
+    public ResponseEntity<String> handleProductDoesNotExist(ProductDoesNotExistException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleGeneralException(Exception ex) {
-//        ex.printStackTrace();
+        ex.printStackTrace();
         return ResponseEntity.badRequest().body("Có lỗi xảy ra");
     }
 }

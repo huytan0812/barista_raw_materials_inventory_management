@@ -25,7 +25,13 @@ public interface ExportItemDetailRepository extends JpaRepository<ExportItemDeta
 
     @Query(
             value="SELECT ex FROM ExportItemDetail ex" +
-                    " JOIN FETCH ex.grnItem WHERE ex.id=:id"
+                    " JOIN FETCH ex.grnItem JOIN FETCH ex.orderItem WHERE ex.id=:id"
     )
     ExportItemDetail findById(int id);
+
+    @Query(
+            value="SELECT ex FROM ExportItemDetail ex " +
+                    "JOIN FETCH ex.grnItem JOIN FETCH ex.orderItem WHERE ex.id IN :ids"
+    )
+    List<ExportItemDetail> findByListOfIds(List<Integer> ids);
 }
