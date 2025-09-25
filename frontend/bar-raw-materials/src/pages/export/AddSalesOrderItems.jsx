@@ -17,6 +17,7 @@ const AddSalesOrderItems = () => {
     const [salesOrder, setSalesOrder] = useState({});
     // states for handling SalesOrderItem
     const [salesItem, setSalesItem] = useState({});
+    const [refreshSaleItems, setRefreshSaleItems] = useState(false);
 
     // states for handling open AddSalesItemForm Modal and AddSalesItemForm
     const [open, setOpen] = useState(false);
@@ -84,6 +85,8 @@ const AddSalesOrderItems = () => {
         addSalesItemForm.resetFields();
         setOpen(false);
         setSalesItem(null);
+        // refresh Sale Items table after creating a new Sales Order Item successfully
+        setRefreshSaleItems(prev=>!prev);
     }
     const handleSubmitFailure = (msg) => {
         popUpMsg('error', msg);
@@ -183,6 +186,8 @@ const AddSalesOrderItems = () => {
                         setPageMetadata={setPageMetadata}
                         currentPage={currentPage}
                         pageSize={PAGE_SIZE}
+                        refreshSaleItems={refreshSaleItems}
+                        setRefreshSaleItems={setRefreshSaleItems}
                     />
                     <div style={{ textAlign: "right", marginTop: 16 }}>
                         <Pagination

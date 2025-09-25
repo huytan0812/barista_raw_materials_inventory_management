@@ -2,6 +2,7 @@ import React, {useState, useEffect, useRef} from 'react'
 import {Table, Flex, Button} from 'antd'
 import { useAuthContext } from '../../../contexts/AuthContext'
 import salesItemHTTP from '../../../services/SalesOrderItemService'
+import EditSalesItemModal from './EditSalesItemModal'
 import DeleteSalesItemModal from './DeleteSalesItemModal'
 
 const SalesOrderItems = (props) => {
@@ -10,13 +11,14 @@ const SalesOrderItems = (props) => {
         salesOrderId,
         setPageMetadata,
         currentPage,
-        pageSize
+        pageSize,
+        refreshSaleItems,
+        setRefreshSaleItems
     } = props;
     const {token} = useAuthContext();
     const persistToken = useRef(token);
     // states for handling fetching Sales Order Items
     const [salesItems, setSalesItems] = useState([]);
-    const [refreshSaleItems, setRefreshSaleItems] = useState(false);
 
     // states for handling trigger corresponding edit or delete GRN item
     const [activeEditModal, setActiveEditModal] = useState(0);
@@ -35,6 +37,7 @@ const SalesOrderItems = (props) => {
         setActiveDeleteModal(0);
     }
 
+    // side effect for fetching Sales Order Item and refreshing
     useEffect(() => {
         const fetchSalesItems = async() => {
             try {
@@ -59,7 +62,11 @@ const SalesOrderItems = (props) => {
         }
         fetchSalesItems();
     }, [salesOrderId, currentPage, pageSize, refreshSaleItems]);
-
+    const handleEditSuccess = (msg) => {
+        popUpMsg('success', msg);
+        resetActiveEditModal();
+        setRefreshSaleItems(prev=>!prev);
+    }
     const handleDeleteSuccess = (msg) => {
         popUpMsg('success', msg);
         resetActiveDeleteModal();
@@ -129,10 +136,17 @@ const SalesOrderItems = (props) => {
                     <Button 
                         color="blue" 
                         variant="solid"
-                        // onClick={() => handleClickEdit(record.id)} 
+                        onClick={() => handleClickEdit(record.id)} 
                     >
                         <span style={{fontSize: '1.4rem'}}>Sửa</span>
                     </Button>
+                    <EditSalesItemModal
+                        isActive={activeEditModal === record.id}
+                        salesItem={record}
+                        popUpMsg={popUpMsg}
+                        onEditSuccess={handleEditSuccess}
+                        resetActiveEditModal={resetActiveEditModal}
+                    />
                     <Button 
                         color="red" 
                         variant="solid"

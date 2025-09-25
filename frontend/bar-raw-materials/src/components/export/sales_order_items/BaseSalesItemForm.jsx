@@ -19,7 +19,9 @@ const BaseSalesItemForm = (props) => {
         salesItem,
         form,
         formName,
-        handleSubmit
+        handleSubmit,
+        edit,
+        expItems
     } = props;
     const {token} = useAuthContext();
     const persistToken = useRef(token); 
@@ -49,6 +51,21 @@ const BaseSalesItemForm = (props) => {
         content: msg
       })
     }; 
+
+    // side effect for editing Sales Order Item
+    useEffect(() => {
+      if (edit) {
+        const product = products.find((p) => p.productId === salesItem.productId);
+        setSelectedProduct(product);
+        setDisableProduct(true);
+        setExportItems(expItems);
+        form.setFieldsValue({
+          productId: salesItem.productId,
+          quantitySold: salesItem.quantitySold,
+          unitPrice: salesItem.unitPrice
+        });
+      }
+    }, [edit, products, salesItem, expItems, form]);
 
     // side effect for fetching products
     useEffect(() => {
@@ -115,6 +132,7 @@ const BaseSalesItemForm = (props) => {
       }
     }
     // event handlers for handling ExportItem
+    // add
     const handleAddExportItem = async () => {
       const values = form.getFieldsValue(["grnItemId", "quantityTake"]);
       values.salesItemId = salesItem.id;
@@ -144,6 +162,7 @@ const BaseSalesItemForm = (props) => {
         popUpMsg('error', responseErr?.data);
       }
     };
+    // edit
     const handleEditExportItem = (exportItemId) => {
       setActiveEditExpItem(parseInt(exportItemId));
     }
@@ -157,6 +176,7 @@ const BaseSalesItemForm = (props) => {
     const handleEditExportItemFailure = (msg) => {
       popUpMsg('error', msg);
     }
+    // delete
     const handleDeleteExportItem = (exportItemId) => {
       const deleteExpItem = async() => {
         try {
