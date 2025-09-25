@@ -16,10 +16,18 @@ const AddSalesItemForm = (props) => {
     const handleSubmit = (values) => {
         const submit = async() => {
             const formData = new FormData();
+            const {salesItemId, ...rest} = values;
+            const data = rest;
+            console.log("Origin sales item id:", salesItem.id);
+            console.log("Form sales item id:", salesItemId);
+            data.discount = data.discount / 100;
+            data.vatRate = data.vatRate / 100;
+            formData.append('data', new Blob([JSON.stringify(data)], {type: 'application/json'}))
             try {
-                const response = await salesItemHTTP.post('/add', formData, {
+                const response = await salesItemHTTP.post(`/confirmSaleItem/${salesItem.id}`, formData, {
                     headers: {
-                        Authorization: `Bearer ${token}`
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': "multipart/form-data"
                     }
                 });
                 if (response.status === 200) {

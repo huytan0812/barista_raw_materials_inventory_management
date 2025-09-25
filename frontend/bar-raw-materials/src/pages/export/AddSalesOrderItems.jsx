@@ -83,6 +83,7 @@ const AddSalesOrderItems = () => {
         popUpMsg('success', msg);
         addSalesItemForm.resetFields();
         setOpen(false);
+        setSalesItem(null);
     }
     const handleSubmitFailure = (msg) => {
         popUpMsg('error', msg);
@@ -177,6 +178,7 @@ const AddSalesOrderItems = () => {
                     }}
                 >
                     <SalesOrderItems
+                        popUpMsg={popUpMsg}
                         salesOrderId={salesOrderId}
                         setPageMetadata={setPageMetadata}
                         currentPage={currentPage}

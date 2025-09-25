@@ -2,9 +2,11 @@ import React, {useState, useEffect, useRef} from 'react'
 import {Table, Flex, Button} from 'antd'
 import { useAuthContext } from '../../../contexts/AuthContext'
 import salesItemHTTP from '../../../services/SalesOrderItemService'
+import DeleteSalesItemModal from './DeleteSalesItemModal'
 
 const SalesOrderItems = (props) => {
     const {
+        popUpMsg,
         salesOrderId,
         setPageMetadata,
         currentPage,
@@ -12,7 +14,26 @@ const SalesOrderItems = (props) => {
     } = props;
     const {token} = useAuthContext();
     const persistToken = useRef(token);
+    // states for handling fetching Sales Order Items
     const [salesItems, setSalesItems] = useState([]);
+    const [refreshSaleItems, setRefreshSaleItems] = useState(false);
+
+    // states for handling trigger corresponding edit or delete GRN item
+    const [activeEditModal, setActiveEditModal] = useState(0);
+    const [activeDeleteModal, setActiveDeleteModal] = useState(0);
+
+    const handleClickEdit = (salesItemId) => {
+        setActiveEditModal(parseInt(salesItemId));
+    }
+    const handleClickDelete = (salesItemId) => {
+        setActiveDeleteModal(parseInt(salesItemId));
+    }
+    const resetActiveEditModal = () => {
+        setActiveEditModal(0);
+    }
+    const resetActiveDeleteModal = () => {
+        setActiveDeleteModal(0);
+    }
 
     useEffect(() => {
         const fetchSalesItems = async() => {
@@ -37,7 +58,13 @@ const SalesOrderItems = (props) => {
             }
         }
         fetchSalesItems();
-    }, [salesOrderId]);
+    }, [salesOrderId, currentPage, pageSize, refreshSaleItems]);
+
+    const handleDeleteSuccess = (msg) => {
+        popUpMsg('success', msg);
+        resetActiveDeleteModal();
+        setRefreshSaleItems(prev=>!prev);
+    }
 
     const columns = [
         {
@@ -71,7 +98,9 @@ const SalesOrderItems = (props) => {
             title: "Giảm giá",
             dataIndex: "discount",
             key: "discount",
-            render: (value) => {value ? `${value}%` : "0%"},
+            render: (value) => {
+                return `${value*100}%`
+            },
             align: "right",
             titleAlign: "center"
         },
@@ -79,6 +108,9 @@ const SalesOrderItems = (props) => {
             title: "VAT",
             dataIndex: "vatRate",
             key: "vatRate",
+            render: (value) => {
+                return `${value*100}%`
+            },
             align: "right",
             titleAlign: "center"
         },
@@ -104,10 +136,18 @@ const SalesOrderItems = (props) => {
                     <Button 
                         color="red" 
                         variant="solid"
-                        // onClick={() => handleClickDelete(record.id)}  
+                        onClick={() => handleClickDelete(record.id)}  
                     >
                         <span style={{fontSize: '1.4rem'}}>Xóa</span>
                     </Button>
+                    <DeleteSalesItemModal
+                        isActive={activeDeleteModal === record.id}
+                        resetActiveDeleteModal={resetActiveDeleteModal}
+                        popUpMsg={popUpMsg}
+                        onDeleteSuccess={handleDeleteSuccess}
+                        salesItemId={record.id}
+                        productName={record.productName}
+                    />
                   </Flex>
                 )
             }

@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react'
-import {Form, Modal, Select, InputNumber, Button, Table, Flex, message} from 'antd'
+import {Form, Input, Modal, Select, InputNumber, Button, Table, Flex, message} from 'antd'
 import {useAuthContext} from '../../../contexts/AuthContext'
 import productHTTP from '../../../services/ProductService'
 import grnItemHTTP from '../../../services/GoodsReceiptItemService'
@@ -259,6 +259,16 @@ const BaseSalesItemForm = (props) => {
           autoComplete="off"
           onFinish={handleSubmit}
         >
+          <Form.Item 
+            label={null} 
+            name="salesItemId"
+            hidden={true}
+            initialValue={salesItem.id}
+          >
+            <Input
+              disabled={true}
+            />
+          </Form.Item>
           <Form.Item
             shouldUpdate
             label="Sản phẩm"
@@ -303,7 +313,6 @@ const BaseSalesItemForm = (props) => {
               label={`Lô hàng nhập kho`}
               labelAlign="left"
               name="grnItemId"
-              rules={[{ required: true, message: "Lô hàng không được để trống" }]}
             >
               <Select
                 placeholder="Chọn lô hàng"
