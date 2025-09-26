@@ -44,6 +44,9 @@ public class SalesOrderItem {
     @Column(name = "discount", nullable = false)
     private Float discount;
 
+    @Column(name = "cogs", precision = 20, scale = 6)
+    private BigDecimal cogs;
+
     @NotNull
     @ColumnDefault("(0)")
     @Column(name = "vatRate", nullable = false)
@@ -52,5 +55,4 @@ public class SalesOrderItem {
     @Lob
     @Column(name = "note", nullable = false)
     private String note;
-
 }

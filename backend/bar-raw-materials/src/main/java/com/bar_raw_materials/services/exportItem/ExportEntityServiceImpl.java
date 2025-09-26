@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -67,6 +68,17 @@ public class ExportEntityServiceImpl implements ExportItemService{
         }
         // add the quantityTake to the quantitySold in the salesOrderItem
         salesOrderItem.setQuantitySold(salesOrderItem.getQuantitySold() + createExportItemDTO.getQuantityTake());
+        // update cogs in salesOrderItem
+        BigDecimal calcCogs;
+        BigDecimal quantityTake = new BigDecimal(createExportItemDTO.getQuantityTake());
+        BigDecimal unitCost = grnItem.getUnitCost();
+        calcCogs = quantityTake.multiply(unitCost);
+        if (salesOrderItem.getCogs() == null) {
+            salesOrderItem.setCogs(calcCogs);
+        }
+        else {
+            salesOrderItem.setCogs(salesOrderItem.getCogs().add(calcCogs));
+        }
         salesItemRepository.save(salesOrderItem);
 
         // subtract quantity remain in GrnItem and update
@@ -100,8 +112,7 @@ public class ExportEntityServiceImpl implements ExportItemService{
         if (expItem == null) {
             throw new ExportItemDetailDoesNotExistException("Chi tiết hàng bán không tồn tại");
         }
-        SalesOrderItem salesItem = expItem.getOrderItem();
-        salesItem.setQuantitySold(salesItem.getQuantitySold() - expItem.getQuantityTake() + quantityTake);
+        SalesOrderItem salesItem = updateSalesItem(quantityTake, expItem);
         salesItemRepository.save(salesItem);
 
         GoodsReceiptItem grnItem = expItem.getGrnItem();
@@ -110,6 +121,22 @@ public class ExportEntityServiceImpl implements ExportItemService{
 
         expItem.setQuantityTake(quantityTake);
         exportItemDetailRepository.save(expItem);
+    }
+
+    private static SalesOrderItem updateSalesItem(int quantityTake, ExportItemDetail expItem) {
+        // update quantity sold
+        SalesOrderItem salesItem = expItem.getOrderItem();
+        salesItem.setQuantitySold(salesItem.getQuantitySold() - expItem.getQuantityTake() + quantityTake);
+        // update cogs
+        BigDecimal preCalcCogs;
+        BigDecimal preQuantityTake = new BigDecimal(expItem.getQuantityTake());
+        BigDecimal unitCost = expItem.getUnitCost();
+        preCalcCogs = preQuantityTake.multiply(unitCost);
+        BigDecimal newCalcCogs;
+        BigDecimal newQuantityTake = new BigDecimal(quantityTake);
+        newCalcCogs = newQuantityTake.multiply(unitCost);
+        salesItem.setCogs(salesItem.getCogs().subtract(preCalcCogs).add(newCalcCogs));
+        return salesItem;
     }
 
     @Override
@@ -121,6 +148,11 @@ public class ExportEntityServiceImpl implements ExportItemService{
         }
         SalesOrderItem salesItem = expItem.getOrderItem();
         salesItem.setQuantitySold(salesItem.getQuantitySold() - expItem.getQuantityTake());
+        BigDecimal preCalcCogs;
+        BigDecimal preQuantityTake = new BigDecimal(expItem.getQuantityTake());
+        BigDecimal unitCost = expItem.getUnitCost();
+        preCalcCogs = preQuantityTake.multiply(unitCost);
+        salesItem.setCogs(salesItem.getCogs().subtract(preCalcCogs));
         salesItemRepository.save(salesItem);
 
         // return the quantity take to the quantity remain
@@ -136,15 +168,24 @@ public class ExportEntityServiceImpl implements ExportItemService{
     public void deleteCancelExpItems(List<Integer> expItemIdList) {
         List<ExportItemDetail> expItems = exportItemDetailRepository.findByListOfIds(expItemIdList);
         Integer totalQuantityTake = 0;
+        BigDecimal totalCogs = BigDecimal.ZERO;
+        BigDecimal quantityTake;
+        BigDecimal unitCost;
         SalesOrderItem salesOrderItem = expItems.getFirst().getOrderItem();
         for (ExportItemDetail expItem : expItems) {
+            quantityTake = new BigDecimal(expItem.getQuantityTake());
+            unitCost = expItem.getUnitCost();
+            totalCogs = totalCogs.add(unitCost.multiply(quantityTake));
+
             totalQuantityTake += expItem.getQuantityTake();
+
             GoodsReceiptItem grnItem = expItem.getGrnItem();
             grnItem.setQuantityRemain(grnItem.getQuantityRemain() + expItem.getQuantityTake());
             grnItemRepository.save(grnItem);
         }
         if (salesOrderItem != null) {
             salesOrderItem.setQuantitySold(salesOrderItem.getQuantitySold() - totalQuantityTake);
+            salesOrderItem.setCogs(salesOrderItem.getCogs().subtract(totalCogs));
             salesItemRepository.save(salesOrderItem);
         }
         exportItemDetailRepository.deleteAll(expItems);

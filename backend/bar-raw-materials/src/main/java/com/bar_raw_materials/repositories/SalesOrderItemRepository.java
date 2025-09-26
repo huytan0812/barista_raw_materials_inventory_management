@@ -25,4 +25,10 @@ public interface SalesOrderItemRepository extends JpaRepository<SalesOrderItem, 
             value="SELECT s FROM SalesOrderItem s WHERE s.id=:id"
     )
     SalesOrderItem findById(int id);
+
+    @Query(
+            value="SELECT s FROM SalesOrderItem s " +
+                    "JOIN s.salesOrder WHERE s.salesOrder.id=:salesOrderId"
+    )
+    List<SalesOrderItem> findAllBySalesOrderId(Integer salesOrderId);
 }

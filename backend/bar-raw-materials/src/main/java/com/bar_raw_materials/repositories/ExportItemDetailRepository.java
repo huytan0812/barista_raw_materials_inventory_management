@@ -34,4 +34,11 @@ public interface ExportItemDetailRepository extends JpaRepository<ExportItemDeta
                     "JOIN FETCH ex.grnItem JOIN FETCH ex.orderItem WHERE ex.id IN :ids"
     )
     List<ExportItemDetail> findByListOfIds(List<Integer> ids);
+
+    @Query(
+            value="SELECT expItem FROM ExportItemDetail expItem" +
+                    " JOIN FETCH expItem.orderItem JOIN FETCH expItem.grnItem" +
+                    " WHERE expItem.orderItem.id=:salesOrderItemId"
+    )
+    List<ExportItemDetail> findAllBySalesOrderItemId(Integer salesOrderItemId);
 }

@@ -3,6 +3,8 @@ package com.bar_raw_materials.repositories;
 import com.bar_raw_materials.entities.SalesOrder;
 import com.bar_raw_materials.dto.salesOrder.SalesOrderDTO;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import java.util.List;
@@ -16,6 +18,14 @@ public interface SalesOrderRepository extends JpaRepository<SalesOrder, Integer>
                     ") FROM SalesOrder s JOIN s.customer JOIN s.createdBy"
     )
     List<SalesOrderDTO> findAllSalesOrderDTO();
+
+    @Query(
+            value="SELECT new com.bar_raw_materials.dto.salesOrder.SalesOrderDTO(" +
+                    "s.id, s.customer.name AS customerName, s.customer.phoneNumber AS customerPhoneNumber, " +
+                    "s.createdBy.username AS createdByUser, s.dateCreated, s.totalAmount" +
+                    ") FROM SalesOrder s JOIN s.customer JOIN s.createdBy"
+    )
+    Page<SalesOrderDTO> findAllSalesOrderDTO(Pageable pageable);
 
     @Query(
             value="SELECT new com.bar_raw_materials.dto.salesOrder.SalesOrderDTO(" +

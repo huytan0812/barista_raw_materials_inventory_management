@@ -5,10 +5,7 @@ import com.bar_raw_materials.dto.salesOrder.SalesOrderDTO;
 import com.bar_raw_materials.entities.SalesOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.bar_raw_materials.services.salesOrder.SalesOrderService;
 
@@ -35,5 +32,21 @@ public class SalesOrderController extends BaseStaffController{
         salesOrderDTO.setDateCreated(salesOrder.getDateCreated());
         salesOrderDTO.setTotalAmount(salesOrder.getTotalAmount());
         return ResponseEntity.ok(salesOrderDTO);
+    }
+
+    @GetMapping("confirm/{id}")
+    public ResponseEntity<String> confirm(
+        @PathVariable("id") Integer id
+    ) {
+        salesOrderService.confirmSalesOrder(id);
+        return ResponseEntity.ok("Duyệt phiếu xuất thành công");
+    }
+
+    @GetMapping("delete/{id}")
+    public ResponseEntity<String> delete(
+            @PathVariable("id") Integer id
+    ) {
+        salesOrderService.deleteSalesOrder(id);
+        return ResponseEntity.ok("Hủy thành công phiếu xuất kho " + id);
     }
 }

@@ -8,4 +8,6 @@ import com.bar_raw_materials.services.EntityService;
 public interface SalesOrderService extends EntityService {
     SalesOrder addSalesOrder(CreateSalesOrderDTO createSalesOrderDTO);
     SalesOrder getSalesOrder(int id);
+    void deleteSalesOrder(int id);
+    void confirmSalesOrder(int id);
 }
