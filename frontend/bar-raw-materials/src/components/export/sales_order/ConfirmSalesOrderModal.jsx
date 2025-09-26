@@ -2,22 +2,22 @@ import React from 'react'
 import {Modal, Button} from 'antd'
 import { WarningFilled } from '@ant-design/icons'
 import { useAuthContext } from '../../../contexts/AuthContext'
-import grnHTTP from '../../../services/GoodsReceiptNoteService'
+import salesOrderHTTP from '../../../services/SalesOrderService'
 
-const ConfirmGrnModal = (props) => {
+const ConfirmSalesOrderModal = (props) => {
     const {
-        grnId, 
-        failMsg,
-        onConfirmSuccess,
-        open,
-        setOpen
+      salesOrderId, 
+      popUpMsg,
+      onConfirmSuccess,
+      open,
+      setOpen
     } = props;
     const { token } = useAuthContext();
 
     const handleOk = () => {
         const deleteGrnItem = async() => {
             try {
-                const response = await grnHTTP.get(`/confirm/${grnId}`, {
+                const response = await salesOrderHTTP.get(`/confirm/${salesOrderId}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -32,7 +32,7 @@ const ConfirmGrnModal = (props) => {
             }
             catch (error) {
                 console.log(error);
-                failMsg(error.response.data.failToDelete);
+                popUpMsg('error', "Duyệt phiếu xuất kho thất bại");
             }
         }
         deleteGrnItem();   
@@ -51,7 +51,7 @@ const ConfirmGrnModal = (props) => {
                             color: '#E9D502'
                         }}
                     />
-                    <span style={{fontWeight: 600, marginLeft: '1rem'}}>Duyệt phiếu nhập</span>
+                    <span style={{fontWeight: 600, marginLeft: '1rem'}}>Duyệt phiếu xuất</span>
                 </p>
             }
             open={open}
@@ -77,4 +77,4 @@ const ConfirmGrnModal = (props) => {
     )
 }
 
-export default ConfirmGrnModal
+export default ConfirmSalesOrderModal

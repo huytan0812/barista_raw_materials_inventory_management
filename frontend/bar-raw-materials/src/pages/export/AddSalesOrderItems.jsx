@@ -1,17 +1,20 @@
 import React, {useState, useEffect, useRef} from 'react'
-import {Card, Breadcrumb, Button, Pagination, Form, Modal, message} from 'antd'
-import {useParams, NavLink} from 'react-router-dom'
+import {Card, Row, Col, Breadcrumb, Button, Pagination, Form, Modal, message} from 'antd'
+import {useParams, NavLink, useNavigate} from 'react-router-dom'
 import SalesOrderItems from '../../components/export/sales_order_items/SalesOrderItems'
 import { useAuthContext } from '../../contexts/AuthContext'
 import salesOrderHTTP from '../../services/SalesOrderService'
 import salesItemHTTP from '../../services/SalesOrderItemService'
 import AddSalesItemForm from '../../components/export/sales_order_items/AddSalesItemForm'
+import CancelSalesOrderModal from '../../components/export/sales_order/CancelSalesOrderModal'
+import ConfirmSalesOrderModal from '../../components/export/sales_order/ConfirmSalesOrderModal'
 
 const AddSalesOrderItems = () => {
     const params = useParams();
     const salesOrderId = params.salesOrderId;
     const {token} = useAuthContext();
     const persistToken = useRef(token);
+    const navigate = useNavigate();
 
     // states for handling fetching SalesOrder
     const [salesOrder, setSalesOrder] = useState({});
@@ -28,6 +31,11 @@ const AddSalesOrderItems = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [pageMetadata, setPageMetadata] = useState({});
     const PAGE_SIZE = 5;
+
+    // state for handling Confirm Sales Order modal
+    const [openConfirmModal, setOpenConfirmModal] = useState(false)
+    // state for handling Delete Sales Order modal
+    const [openDeleteModal, setOpenDeleteModal] = useState(false);
 
     const popUpMsg = (type, msg) => {
         messageApi.open({
@@ -92,6 +100,7 @@ const AddSalesOrderItems = () => {
         popUpMsg('error', msg);
     }
 
+    // side effect for fetching Sales Order
     useEffect(() => {
         const fetchSalesOrder = async() => {
             try {
@@ -110,6 +119,36 @@ const AddSalesOrderItems = () => {
         }
         fetchSalesOrder();
     }, [salesOrderId]);
+
+    // event handlers for handling Sales Order confirmation
+    const handleConfirmSalesOrder = () => {
+        setOpenConfirmModal(true);
+    }
+    const handleConfirmSuccess = (msg) => {
+        messageApi.open({
+            type: 'success',
+            content: msg,
+            duration: 0.5,
+            onClose: () => {
+                navigate(`/export/salesOrder/${salesOrderId}`);
+            }
+        });
+    }
+
+    // event handler for handling cancel sales order
+    const handleCancelSalesOrder = () => {
+        setOpenDeleteModal(true);
+    };
+    const handleCancelSalesOrderSuccess = (msg) => {
+        messageApi.open({
+            type: 'success',
+            content: msg,
+            duration: 0.25,
+            onClose: () => {
+                navigate('/export');
+            }
+        });
+    }
 
     return (
         <React.Fragment>
@@ -199,6 +238,47 @@ const AddSalesOrderItems = () => {
                         />
                     </div>
                 </Card>
+                <Row 
+                    justify="end" 
+                    gutter={8}
+                    style={{
+                        marginTop: '0.8rem',
+                        paddingRight: '2rem'
+                    }}
+                >
+                    <Col>
+                        <Button
+                            color="red"
+                            variant="solid"
+                            onClick={handleCancelSalesOrder}
+                        >
+                            Hủy phiếu
+                        </Button>
+                        <CancelSalesOrderModal
+                            salesOrderId={salesOrder.id}
+                            popUpMsg={popUpMsg}
+                            onCancelSuccess={handleCancelSalesOrderSuccess}
+                            open={openDeleteModal}
+                            setOpen={setOpenDeleteModal}
+                        />
+                    </Col>
+                    <Col>
+                        <Button 
+                            color="green" 
+                            variant="solid"
+                            onClick={handleConfirmSalesOrder}
+                        >
+                            Duyệt phiếu
+                        </Button>
+                        <ConfirmSalesOrderModal
+                            salesOrderId={salesOrder.id}
+                            popUpMsg={popUpMsg}
+                            onConfirmSuccess={handleConfirmSuccess}
+                            open={openConfirmModal}
+                            setOpen={setOpenConfirmModal}
+                        />
+                    </Col>
+                </Row>
             </Card>
         </React.Fragment>
     )

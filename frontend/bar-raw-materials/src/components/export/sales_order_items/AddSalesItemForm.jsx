@@ -18,8 +18,6 @@ const AddSalesItemForm = (props) => {
             const formData = new FormData();
             const {salesItemId, ...rest} = values;
             const data = rest;
-            console.log("Origin sales item id:", salesItem.id);
-            console.log("Form sales item id:", salesItemId);
             // convert vat rate to percentage
             if (data.vatRate) data.vatRate /= 100;
             if (data.discount) data.discount /= 100;

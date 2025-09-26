@@ -2,13 +2,13 @@ import React from 'react'
 import {Modal, Button} from 'antd'
 import { WarningFilled } from '@ant-design/icons'
 import { useAuthContext } from '../../../contexts/AuthContext'
-import grnHTTP from '../../../services/GoodsReceiptNoteService'
+import salesOrderHTTP from '../../../services/SalesOrderService'
 
-const ConfirmGrnModal = (props) => {
+const CancelSalesOrderModal = (props) => {
     const {
-        grnId, 
-        failMsg,
-        onConfirmSuccess,
+        salesOrderId, 
+        popUpMsg,
+        onCancelSuccess,
         open,
         setOpen
     } = props;
@@ -17,22 +17,19 @@ const ConfirmGrnModal = (props) => {
     const handleOk = () => {
         const deleteGrnItem = async() => {
             try {
-                const response = await grnHTTP.get(`/confirm/${grnId}`, {
+                const response = await salesOrderHTTP.get(`/delete/${salesOrderId}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
                 });
                 if (response.status === 200) {
                     setOpen(false);
-                    onConfirmSuccess(response.data);
-                }
-                else {
-                    console.log(response.body);
+                    onCancelSuccess(response.data);
                 }
             }
             catch (error) {
-                console.log(error);
-                failMsg(error.response.data.failToDelete);
+                const responseErr = error.response;
+                popUpMsg('error', responseErr?.data);
             }
         }
         deleteGrnItem();   
@@ -51,7 +48,7 @@ const ConfirmGrnModal = (props) => {
                             color: '#E9D502'
                         }}
                     />
-                    <span style={{fontWeight: 600, marginLeft: '1rem'}}>Duyệt phiếu nhập</span>
+                    <span style={{fontWeight: 600, marginLeft: '1rem'}}>Hủy phiếu xuất</span>
                 </p>
             }
             open={open}
@@ -71,10 +68,10 @@ const ConfirmGrnModal = (props) => {
             }
         >
             <p style={{ fontSize: '1.4rem' }}>
-                Vui lòng kiểm tra kỹ trước khi phê duyệt. Một khi phê duyệt thành công sẽ không chỉnh sửa được nữa
+                Bạn có hủy phiếu xuất với mã số <strong style={{fontSize: '1.4rem'}}>{salesOrderId}</strong> không?
             </p>
         </Modal>
     )
 }
 
-export default ConfirmGrnModal
+export default CancelSalesOrderModal

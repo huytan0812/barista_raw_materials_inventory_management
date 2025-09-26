@@ -159,7 +159,7 @@ const AddGrnItems = () => {
             content: msg,
             duration: 0.5,
             onClose: () => {
-                navigate('/import');
+                navigate(`/import/grn/${grnId}`);
             }
         });
     }
