@@ -84,7 +84,8 @@ const SalesOrderItems = (props) => {
             title: "Sản phẩm",
             dataIndex: "productName",
             key: "productName",
-            align: "center"
+            align: "left",
+            titleAlign: "center"
         },
         {
             title: "SL xuất",

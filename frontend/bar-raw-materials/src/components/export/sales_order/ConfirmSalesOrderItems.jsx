@@ -23,6 +23,7 @@ const ConfirmSalesOrderItems = (props) => {
                     }
                 });
                 if (response.status === 200) {
+                    console.log(response.data.content);
                     setSalesItems(response.data.content);
                     const {content:_, ...rest} = response.data;
                     setPageMetadata(rest);
@@ -46,7 +47,8 @@ const ConfirmSalesOrderItems = (props) => {
             title: "Sản phẩm",
             dataIndex: "productName",
             key: "productName",
-            align: "center"
+            align: "left",
+            titleAlign: "center",
         },
         {
             title: "SL xuất",
@@ -84,10 +86,12 @@ const ConfirmSalesOrderItems = (props) => {
             titleAlign: "center"
         },
         {
-            title: "Ghi chú",
-            dataIndex: "note",
-            key: "note",
-            align: "center",
+            title: "GVHB",
+            dataIndex: "cogs",
+            key: "cogs",
+            render: (value) => new Intl.NumberFormat('vn-VN', { style: 'currency', currency: 'VND' }).format(value),
+            align: "right",
+            titleAlign: "center"
         },
         {
             title: "Thanh toán",

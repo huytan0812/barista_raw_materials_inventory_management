@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react'
-import { Breadcrumb, Card, Pagination, Row, Col } from 'antd'
+import { Breadcrumb, Card, Pagination, Row, Col, Button, message } from 'antd'
 import {useParams, NavLink} from 'react-router-dom'
 import { useAuthContext } from '../../contexts/AuthContext'
 import ConfirmSalesOrderItems from '../../components/export/sales_order/ConfirmSalesOrderItems'
@@ -11,11 +11,19 @@ const SalesOrderDetails = () => {
     const {token} = useAuthContext();
     const persistToken = useRef(token);
 
+    const [messageApi, contextHolder] = message.useMessage();
     const [salesOrder, setSalesOrder] = useState({});
     // Sales Order Items pagination
     const [currentPage, setCurrentPage] = useState(1);
     const [pageMetadata, setPageMetadata] = useState({});
     const PAGE_SIZE = 5;
+
+    const successMsg = (msg) => {
+        messageApi.open({
+            type: 'success',
+            content: msg
+        })
+    }
 
     // side effect for fetching Sales Order
     useEffect(() => {
@@ -37,6 +45,58 @@ const SalesOrderDetails = () => {
         fetchSalesOrder();
     }, [salesOrderId]);
 
+    const handleExportSalesOrder = () => {
+        const exportSalesOrder = async() => {
+            try {
+                const response = await salesOrderHTTP.get(`/export-sales-order-pdf/${salesOrderId}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    },
+                    responseType: "blob", // very important
+                });
+
+                // Create blob link to download
+                const url = window.URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement("a");
+                link.href = url;
+                link.setAttribute("download", `phieu-xuat-kho-${salesOrderId}.pdf`);
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+                successMsg("Phiếu xuất kho được xuất thành công");
+            } catch (error) {
+                console.error("Export PDF failed", error);
+            }
+        }
+        exportSalesOrder();
+    }
+
+    const handleExportSalesInvoice = () => {
+        const exportSalesInvoice = async() => {
+            try {
+                const response = await salesOrderHTTP.get(`/export-sales-invoice-pdf/${salesOrderId}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    },
+                    responseType: "blob", // very important
+                });
+
+                // Create blob link to download
+                const url = window.URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement("a");
+                link.href = url;
+                link.setAttribute("download", `hoa-don-ban-hang-${salesOrderId}.pdf`);
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+                successMsg("Hóa đơn bán hàng được xuất thành công");
+            } catch (error) {
+                console.error("Export PDF failed", error);
+            }
+        }
+        exportSalesInvoice();
+    }
+
     return (
         <React.Fragment>
             <div>
@@ -54,6 +114,7 @@ const SalesOrderDetails = () => {
                 }
                 />
             </div>
+            {contextHolder}
             <Card
                 title={
                     <h3 style={{textAlign: 'center'}}>Phiếu xuất kho</h3>
@@ -64,6 +125,27 @@ const SalesOrderDetails = () => {
                     style={{
                         marginTop: '0.8rem'
                     }}
+                    extra={
+                        <React.Fragment>
+                            <Button
+                                color="primary"
+                                variant='solid'
+                                onClick={handleExportSalesOrder}
+                                style={{
+                                    marginRight: '0.8rem'
+                                }}
+                            >
+                                Xuất phiếu
+                            </Button>
+                            <Button
+                                color="primary"
+                                variant='solid'
+                                onClick={handleExportSalesInvoice}
+                            >
+                                Xuất hóa đơn
+                            </Button>
+                        </React.Fragment>
+                    }
                 >
                     <ConfirmSalesOrderItems
                         salesOrderId={salesOrderId}

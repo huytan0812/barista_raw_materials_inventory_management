@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react'
-import {Row, Col, Descriptions, Card, Image} from 'antd'
+import {Row, Col, Descriptions, Card, Image, Button, message} from 'antd'
 import { useAuthContext } from '../../../contexts/AuthContext'
 import grnHTTP from '../../../services/GoodsReceiptNoteService'
 
@@ -14,6 +14,14 @@ const VerifiedGrnDetails = (props) => {
     const {token} = useAuthContext();
     const persistToken = useRef(token);
     const [grn, setGrn] = useState({});
+    const [messageApi, contextHolder] = message.useMessage();
+
+    const successMsg = (msg) => {
+        messageApi.open({
+            type: 'success',
+            content: msg
+        })
+    }
 
     // side effect for fetching GRN
     useEffect(() => {
@@ -33,13 +41,49 @@ const VerifiedGrnDetails = (props) => {
         fetchGrn();
     }, [grnId]);
 
+    const handleExportGrn = () => {
+        const exportGrn = async() => {
+            try {
+                const response = await grnHTTP.get(`/export-pdf/${grnId}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    },
+                    responseType: "blob", // very important
+                });
+
+                // Create blob link to download
+                const url = window.URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement("a");
+                link.href = url;
+                link.setAttribute("download", `phieu-nhap-kho-${grnId}.pdf`); // filename
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+                successMsg("Phiếu nhập kho được xuất thành công")
+            } catch (error) {
+                console.error("Export PDF failed", error);
+            }
+        }
+        exportGrn();
+    }
+
     return (
         <Card
             className="mb-6 shadow-md rounded-2xl"
             title={
                 <span style={{ fontWeight: "bold" }}>Thông tin phiếu</span>
             }
+            extra={
+                <Button
+                    color="primary"
+                    variant='solid'
+                    onClick={handleExportGrn}
+                >
+                    Xuất phiếu
+                </Button>
+            }
         >
+            {contextHolder}
         <Row gutter={24} align="middle">
             <Col span={18}>
                 <Descriptions column={2} bordered size="small">
