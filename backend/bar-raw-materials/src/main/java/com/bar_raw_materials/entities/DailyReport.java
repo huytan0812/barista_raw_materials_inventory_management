@@ -25,10 +25,6 @@ public class DailyReport {
     private LocalDate reportDate;
 
     @NotNull
-    @Column(name = "dateCreate", nullable = false)
-    private Instant dateCreate;
-
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @ColumnDefault("(0)")
     @JoinColumn(name = "createdBy", nullable = false)

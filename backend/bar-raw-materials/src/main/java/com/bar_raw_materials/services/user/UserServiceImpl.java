@@ -1,8 +1,17 @@
 package com.bar_raw_materials.services.user;
 
+import com.bar_raw_materials.dto.user.CreateUserDTO;
+import com.bar_raw_materials.dto.user.LightUserDTO;
+import com.bar_raw_materials.entities.Role;
 import com.bar_raw_materials.entities.User;
+import com.bar_raw_materials.exceptions.user.ConfirmPasswordDifferentException;
+import com.bar_raw_materials.exceptions.user.DuplicatedUserEmailException;
+import com.bar_raw_materials.exceptions.user.DuplicatedUserPhoneNumberException;
 import com.bar_raw_materials.repositories.UserRepository;
+import com.bar_raw_materials.utils.HashingUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final HashingUtils hashingUtils;
 
     @Override
     public List<User> getAll() {
@@ -29,5 +39,44 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getDetails(int id) {
         return userRepository.findById(id);
+    }
+
+    @Override
+    public List<Role> getAllRole() {
+        return userRepository.findAllRole();
+    }
+
+    @Override
+    public void addUser(CreateUserDTO createUserDTO) {
+        String password = createUserDTO.getPassword();
+        String confirmPassword = createUserDTO.getConfirmPassword();
+        if (!password.equals(confirmPassword)) {
+            throw new ConfirmPasswordDifferentException("Mật khẩu nhắc lại không khớp");
+        }
+
+        if (isDuplicatedEmail(createUserDTO.getEmail())) {
+            throw new DuplicatedUserEmailException("Email đã tồn tại");
+        }
+        if (isDuplicatedPhoneNumber(createUserDTO.getPhoneNumber())) {
+            throw new DuplicatedUserPhoneNumberException("Số điện thoại đã tồn tại");
+        }
+        Role role = userRepository.findRoleById(createUserDTO.getRoleId());
+        User user = new User();
+        user.setRole(role);
+        BeanUtils.copyProperties(createUserDTO, user);
+        String hashPassword = hashingUtils.hash(user.getPassword());
+        user.setPassword(hashPassword);
+        System.out.println("Gender: " + user.getGender());
+        userRepository.save(user);
+    }
+
+    @Override
+    public Boolean isDuplicatedPhoneNumber(String phoneNumber) {
+        return userRepository.findByPhoneNumber(phoneNumber) != null;
+    }
+
+    @Override
+    public Boolean isDuplicatedEmail(String email) {
+        return userRepository.findByEmail(email) != null;
     }
 }

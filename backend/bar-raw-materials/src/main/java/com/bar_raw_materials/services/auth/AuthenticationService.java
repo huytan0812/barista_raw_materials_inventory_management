@@ -37,12 +37,19 @@ public class AuthenticationService {
 
         UserDetails userDetails = new UserDetailsServiceImpl.UserDetailsImpl(user);
         HashMap<String, Object> claims = new HashMap<>();
-        claims.put("role", user.getRole().getRole());
+        claims.put("username", request.getUsername());
+        String role = user.getRole().getRole();
+        claims.put("role", role);
 
         String jwtToken = jwtService.generateToken(claims, userDetails);
         String refreshToken = jwtService.generateRefreshToken(userDetails);
 
-        return AuthenticationResponse.builder().accessToken(jwtToken).refreshToken(refreshToken).build();
+        return AuthenticationResponse.builder().
+                accessToken(jwtToken).
+                refreshToken(refreshToken).
+                username(user.getUsername()).
+                role(role).
+                build();
     }
 
     public Boolean isTokenValid(String jwt) {

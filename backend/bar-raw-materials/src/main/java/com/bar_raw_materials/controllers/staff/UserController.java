@@ -1,5 +1,7 @@
 package com.bar_raw_materials.controllers.staff;
 
+import com.bar_raw_materials.dto.user.CreateUserDTO;
+import com.bar_raw_materials.entities.Role;
 import com.bar_raw_materials.entities.User;
 import com.bar_raw_materials.services.user.UserService;
 import com.bar_raw_materials.dto.user.LightUserDTO;
@@ -8,10 +10,9 @@ import com.bar_raw_materials.utils.AuthUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,12 @@ public class UserController extends BaseStaffController {
         return ResponseEntity.ok(responseData);
     }
 
+    @GetMapping("allRole")
+    public ResponseEntity<List<Role>> getAllRole() {
+        List<Role> roles = userService.getAllRole();
+        return ResponseEntity.ok(roles);
+    }
+
     @GetMapping("lightInfo")
     public ResponseEntity<LightUserDTO> getLightInfo() {
         User user = authUtils.getCurrentAuthorizedUser();
@@ -50,5 +57,13 @@ public class UserController extends BaseStaffController {
         lightUserDTO.setGender(user.getGender());
         lightUserDTO.setRole(user.getRole().getRole());
         return ResponseEntity.ok(lightUserDTO);
+    }
+
+    @PostMapping("add")
+    public ResponseEntity<String> add(
+            @RequestPart("data") CreateUserDTO createUserDTO
+    ) {
+        userService.addUser(createUserDTO);
+        return ResponseEntity.ok("User added successfully");
     }
 }

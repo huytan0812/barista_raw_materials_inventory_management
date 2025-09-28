@@ -1,14 +1,17 @@
 package com.bar_raw_materials.services.category;
 
 import com.bar_raw_materials.dto.category.CategoryDTO;
+import com.bar_raw_materials.dto.category.CreateCategoryDTO;
 import com.bar_raw_materials.dto.category.LightCategoryDTO;
 import com.bar_raw_materials.entities.Category;
 import com.bar_raw_materials.repositories.CategoryRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -44,17 +47,27 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryRepository.findAllLightCategoryDTO();
     }
 
-    ;
-
     @Override
     public Page<CategoryDTO> getPage(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
         return categoryRepository.pagination(pageable);
     }
 
     @Override
     public Category getDetails(int id) {
         return categoryRepository.findById(id);
+    }
+
+    @Override
+    public void addCategory(CreateCategoryDTO createCategoryDTO) {
+        Category category = new Category();
+        if (createCategoryDTO.getParentId() != null) {
+            int parentId = createCategoryDTO.getParentId();
+            Category parent = categoryRepository.findById(parentId);
+            category.setParent(parent);
+        }
+        BeanUtils.copyProperties(createCategoryDTO, category);
+        categoryRepository.save(category);
     }
 
 

@@ -8,6 +8,9 @@ import com.bar_raw_materials.exceptions.grnItem.GoodsReceiptItemDoesNotExistExce
 import com.bar_raw_materials.exceptions.product.ProductDoesNotExistException;
 import com.bar_raw_materials.exceptions.salesItem.SalesOrderItemDoesNotExistException;
 import com.bar_raw_materials.exceptions.salesOrder.SalesOrderDoesNotExistException;
+import com.bar_raw_materials.exceptions.user.ConfirmPasswordDifferentException;
+import com.bar_raw_materials.exceptions.user.DuplicatedUserEmailException;
+import com.bar_raw_materials.exceptions.user.DuplicatedUserPhoneNumberException;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -77,6 +80,27 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ProductDoesNotExistException.class)
     public ResponseEntity<String> handleProductDoesNotExist(ProductDoesNotExistException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(DuplicatedUserPhoneNumberException.class)
+    public ResponseEntity<Map<String, String>> handleDuplicatedUserPhoneNumber(DuplicatedUserPhoneNumberException ex) {
+        Map<String, String> errors = new HashMap<>();
+        errors.put("duplicatedUserPhoneNumber", ex.getMessage());
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DuplicatedUserEmailException.class)
+    public ResponseEntity<Map<String, String>> handleDuplicatedUserEmail(DuplicatedUserEmailException ex) {
+        Map<String, String> errors = new HashMap<>();
+        errors.put("duplicatedUserEmail", ex.getMessage());
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ConfirmPasswordDifferentException.class)
+    public ResponseEntity<Map<String, String>> handleConfirmPasswordDifferent(ConfirmPasswordDifferentException ex) {
+        Map<String, String> errors = new HashMap<>();
+        errors.put("confirmPasswordDifferent", ex.getMessage());
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)

@@ -1,7 +1,6 @@
 package com.bar_raw_materials.services.salesOrder;
 
 import com.bar_raw_materials.dto.productInventory.ExportValueDTO;
-import com.bar_raw_materials.dto.productInventory.ImportValueDTO;
 import com.bar_raw_materials.dto.salesOrder.CreateSalesOrderDTO;
 import com.bar_raw_materials.dto.salesOrder.SalesOrderDTO;
 import com.bar_raw_materials.entities.*;
@@ -64,6 +63,11 @@ public class SalesOrderServiceImpl implements SalesOrderService{
     @Override
     public SalesOrder getSalesOrder(int id) {
         return salesOrderRepository.findSalesOrderById(id);
+    }
+
+    @Override
+    public SalesOrder getSalesOrderAlongCustomer(int id) {
+        return salesOrderRepository.findSalesOrderAlongCustomer(id);
     }
 
     @Override

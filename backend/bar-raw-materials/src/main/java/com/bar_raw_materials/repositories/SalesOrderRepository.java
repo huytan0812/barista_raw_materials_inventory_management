@@ -40,4 +40,10 @@ public interface SalesOrderRepository extends JpaRepository<SalesOrder, Integer>
         value="SELECT s FROM SalesOrder s WHERE s.id=:id"
     )
     SalesOrder findSalesOrderById(int id);
+
+    @Query(
+        value="SELECT s FROM SalesOrder s JOIN FETCH s.customer JOIN FETCH s.createdBy " +
+                " WHERE s.id=:id"
+    )
+    SalesOrder findSalesOrderAlongCustomer(int id);
 }

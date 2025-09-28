@@ -1,7 +1,9 @@
 package com.bar_raw_materials.controllers.staff;
 
+import com.bar_raw_materials.dto.date.StartAndEndDateDTO;
 import com.bar_raw_materials.dto.salesOrderItem.CreateSalesOrderItemDTO;
 import com.bar_raw_materials.dto.salesOrderItem.SalesOrderItemDTO;
+import com.bar_raw_materials.dto.salesOrderItem.StatsCardDTO;
 import com.bar_raw_materials.dto.salesOrderItem.UpdateSalesOrderItemDTO;
 import com.bar_raw_materials.entities.SalesOrderItem;
 import com.bar_raw_materials.services.salesOrderItem.SalesOrderItemService;
@@ -11,6 +13,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.*;
 
 @RestController
 @RequestMapping("${apiStaff}/salesOrderItem")
@@ -67,5 +71,20 @@ public class SalesOrderItemController extends BaseStaffController{
     ) {
         salesOrderItemService.delete(id);
         return ResponseEntity.ok("Đơn hàng bán được xóa thành công");
+    }
+
+    @PostMapping("filterRevenue")
+    public ResponseEntity<StatsCardDTO> filterRevenueByDate(
+            @RequestBody StartAndEndDateDTO datesDTO
+    ) {
+        LocalDate startDate = datesDTO.getStartDate();
+        LocalDate endDate = datesDTO.getEndDate();
+        Instant startDateIns = startDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
+        Instant endDateIns = endDate.atTime(LocalTime.MAX).atZone(ZoneId.systemDefault()).toInstant();
+        StatsCardDTO responseData = salesOrderItemService.getStatsCardInfo(
+                startDateIns, endDateIns
+        );
+
+        return ResponseEntity.ok(responseData);
     }
 }

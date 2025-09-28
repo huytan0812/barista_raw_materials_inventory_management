@@ -92,6 +92,11 @@
 			<artifactId>liquibase-core</artifactId>
 			<version>4.27.0</version>
 		</dependency>
+		<dependency>
+			<groupId>com.itextpdf</groupId>
+			<artifactId>itextpdf</artifactId>
+			<version>5.5.13.3</version>
+		</dependency>
 
 		<!--        jwt library  -->
 		<dependency>

@@ -4,13 +4,15 @@ import com.bar_raw_materials.dto.goodsReceiptItem.LightGrnItemDTO;
 import com.bar_raw_materials.dto.goodsReceiptNote.CreateGrnDTO;
 import com.bar_raw_materials.entities.GoodsReceiptItem;
 import com.bar_raw_materials.entities.GoodsReceiptNote;
-import com.bar_raw_materials.entities.ProductInventory;
 import com.bar_raw_materials.entities.User;
 import com.bar_raw_materials.services.goodsReceiptItem.GoodsReceiptItemService;
-import com.bar_raw_materials.services.productInventory.ProductInventoryService;
+import com.bar_raw_materials.services.exportFile.GrnPDFService;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +22,7 @@ import com.bar_raw_materials.utils.ImageUtils;
 import com.bar_raw_materials.utils.AuthUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +33,7 @@ import java.util.Map;
 public class GoodsReceiptNoteController extends BaseStaffController{
     GoodsReceiptNoteService goodsReceiptNoteService;
     GoodsReceiptItemService grnItemService;
+    GrnPDFService grnPDFService;
     ImageUtils imageUtils;
     AuthUtils authUtils;
 
@@ -37,12 +41,14 @@ public class GoodsReceiptNoteController extends BaseStaffController{
     public GoodsReceiptNoteController(
                 GoodsReceiptNoteService goodsReceiptNoteService,
                 GoodsReceiptItemService grnItemService,
+                GrnPDFService grnPDFService,
                 ImageUtils imageUtils,
                 AuthUtils authUtils
             ) {
         super(goodsReceiptNoteService);
         this.goodsReceiptNoteService = goodsReceiptNoteService;
         this.grnItemService = grnItemService;
+        this.grnPDFService = grnPDFService;
         this.imageUtils = imageUtils;
         this.authUtils = authUtils;
     }
@@ -177,5 +183,24 @@ public class GoodsReceiptNoteController extends BaseStaffController{
         }
 
         return ResponseEntity.ok("Phiếu nhập kho "+id+" được xóa thành công");
+    }
+
+    @GetMapping("/export-pdf/{id}")
+    public ResponseEntity<byte[]> exportPdf(
+            @PathVariable("id") Integer id
+    ) {
+        GoodsReceiptNote grn = goodsReceiptNoteService.getDetails(id);
+        List<GoodsReceiptItem> items = grnItemService.getAllByGrnId(id);
+
+        ByteArrayInputStream bis = grnPDFService.exportPdf(grn, items);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "inline; filename=grn_" + id + ".pdf");
+
+        return ResponseEntity
+                .ok()
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(bis.readAllBytes());
     }
 }

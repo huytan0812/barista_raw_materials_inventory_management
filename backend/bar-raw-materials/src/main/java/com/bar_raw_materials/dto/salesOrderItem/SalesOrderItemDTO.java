@@ -16,6 +16,7 @@ public class SalesOrderItemDTO {
     private Integer salesOrderId;
     private Integer quantitySold;
     private BigDecimal unitPrice;
+    private BigDecimal cogs;
     private Float discount;
     private Float vatRate;
     private String note;
