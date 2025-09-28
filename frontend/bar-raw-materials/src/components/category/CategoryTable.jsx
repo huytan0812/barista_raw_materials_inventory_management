@@ -4,10 +4,63 @@ import {useNavigate} from 'react-router-dom'
 import {useAuthContext} from '../../contexts/AuthContext'
 import axiosHTTP from '../../services/CategoryService'
 
-const CategoryTable = () => {
+const CategoryTable = (props) => {
+    const {
+        currentPage,
+        pageSize,
+        setPageMetadata,
+        refreshCtgs,
+        setRefreshCtgs
+    } = props;
     const [categories, setCategories] = useState([]);
     const navigate = useNavigate();
     const {token} = useAuthContext();
+
+    const columns= [
+        {
+          'title': 'STT',
+          'key': 'index',
+          render: (text, record, index) => index + 1,
+          align: "center"
+        },
+        {
+          'title': 'Tên danh mục',
+          'dataIndex': 'name',
+          'key': 'name',
+          align: "center"
+        },
+        {
+          'title': 'Mô tả',
+          'dataIndex': 'description',
+          'key': 'description',
+          align: 'left',
+          titleAlign: "center"
+        },
+        {
+          'title': "Danh mục cha",
+          'dataIndex': 'parentName',
+          'key': 'parentName',
+          align: 'left',
+          titleAlign: "center"
+        },
+        {
+          'title': "Hành động",
+          'key': 'action',
+          'render': () => {
+            return (
+              <Flex gap="1rem" justify='center'>
+                <Button color="primary" variant="solid">
+                  <span style={{fontSize: '1.4rem'}}>Sửa</span>
+                </Button>
+                <Button color="red" variant="solid">
+                  <span style={{fontSize: '1.4rem'}}>Xóa</span>
+                </Button>
+              </Flex>
+            )
+          },
+          align: "center"
+        }
+      ];
 
     useEffect(() => {
       const fetchCategories = async () => {
@@ -16,10 +69,17 @@ const CategoryTable = () => {
           {
             headers: {
               'Authorization': `Bearer ${token}`
+            },
+            params: {
+              page: currentPage - 1,
+              size: pageSize
             }
+          });
+          if (response.status === 200) {
+            setCategories(response.data.content);
+            const {content:_, ...rest} = response.data;
+            setPageMetadata(rest);
           }
-        )
-        setCategories(response.data.content);
         }
         catch(error) {
           console.log(error);
@@ -28,54 +88,13 @@ const CategoryTable = () => {
   
       }
       fetchCategories();
-    }, [token, navigate]);
+    }, [token, navigate, currentPage, pageSize, refreshCtgs]);
     
     return (
       <Table
-        // loop through categories array by map() method
-        // each item in dataSource array is an object
-        // so that we copy all propeties of each category record, and add a unique key with category.id
+        columns={columns}
         dataSource={categories.map(category => ({...category, key: category.id}))}
-        columns={
-          [
-            {
-              'title': 'ID',
-              'dataIndex': 'id',
-              'key': 'id'
-            },
-            {
-              'title': 'Tên danh mục',
-              'dataIndex': 'name',
-              'key': 'name'
-            },
-            {
-              'title': 'Mô tả',
-              'dataIndex': 'description',
-              'key': 'description'
-            },
-            {
-              'title': "Danh mục cha",
-              'dataIndex': 'parentName',
-              'key': 'parentName'
-            },
-            {
-              'title': "Hành động",
-              'key': 'action',
-              'render': () => {
-                return (
-                  <Flex gap="1rem">
-                    <Button color="primary" variant="solid">
-                      <span style={{fontSize: '1.4rem'}}>Sửa</span>
-                    </Button>
-                    <Button color="red" variant="solid">
-                      <span style={{fontSize: '1.4rem'}}>Xóa</span>
-                    </Button>
-                  </Flex>
-                )
-              }
-            }
-          ]
-        }
+        pagination={false}
       />
     )
 }

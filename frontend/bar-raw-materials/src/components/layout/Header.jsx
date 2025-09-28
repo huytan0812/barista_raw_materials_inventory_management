@@ -1,38 +1,17 @@
 import React, {useState, useEffect, useRef} from 'react'
 import { Header } from 'antd/es/layout/layout'
 import { useLayoutContext } from '../../contexts/LayoutContext'
-import { BellOutlined, UserOutlined, SettingFilled, LogoutOutlined } from '@ant-design/icons'
+import { UserOutlined, SettingFilled, LogoutOutlined } from '@ant-design/icons'
 import { Avatar, Divider, Flex, Dropdown, Tag } from 'antd'
 import { useAuthContext } from '../../contexts/AuthContext.jsx'
 import { useNavigate, NavLink } from 'react-router-dom'
-import userHTTP from '../../services/UserService.js'
-
-const notifyItems = [
-  {
-    key: '1',
-    label: (
-      <a href="#">
-        Thông báo 1
-      </a>
-    ),
-  },
-  {
-    key: '2',
-    label: (
-      <a href="#">
-        Thông báo 2
-      </a>
-    ),
-  }
-];
 
 const ImsHeader = () => {
     const navigate = useNavigate();
     const { colorBgContainer } = useLayoutContext();
-    const { logout, token } = useAuthContext();
+    const { logout, user, token } = useAuthContext();
     const persistToken = useRef(token);
     const [businessPeriod, setBusinessPeriod] = useState(null);
-    const [userInfo, setUserInfo] = useState({});
 
     // side effect for fetching current business period
     useEffect(() => {
@@ -50,26 +29,6 @@ const ImsHeader = () => {
             }
         }
         getBusinessPeriod();
-    }, []);
-
-    // side effect for fetching current login user
-    useEffect(() => {
-        const fetchUser = async() => {
-            try {
-                const response = await userHTTP.get('lightInfo', {
-                    headers: {
-                        Authorization: `Bearer ${persistToken.current}`
-                    }
-                });
-                if (response.status === 200) {
-                    setUserInfo(response.data);
-                }
-            }
-            catch (error) {
-                console.log(error);
-            }
-        }
-        fetchUser();
     }, []);
 
     const handleLogoutClick = () => {
@@ -130,36 +89,6 @@ const ImsHeader = () => {
                     alignItems: 'center'
                 }}
             >
-                <div 
-                    style={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center'
-                    }}
-                >
-                    <Dropdown
-                        menu={{items: notifyItems}}
-                        placement='bottomRight'
-                        trigger={["click"]}
-                        arrow
-                    >
-                        <BellOutlined 
-                            style={{ 
-                                fontSize: '3.2rem',
-                                cursor: 'pointer' 
-                            }}
-                        />
-                    </Dropdown>
-                </div>
-                    <Divider 
-                        variant='solid' 
-                        type="vertical" 
-                        style={{ 
-                            fontSize: '24px', 
-                            borderColor: 'rgba(0, 0, 0, 1)',
-                            marginright: '8px' 
-                        }}
-                    />
                 <div style={{
                     display: 'flex',
                     justifyContent: 'center',
@@ -183,20 +112,19 @@ const ImsHeader = () => {
                     > 
                         <p
                             style={{
-                                fontSize: '12px',
-
+                                fontSize: '1.4rem',
                             }}
                         >
-                            {userInfo?.username}
+                            {user?.username}
                         </p>
                         <p
                             style={{
-                                fontSize: '12px',
+                                fontSize: '1.4rem',
 
                             }}
                         >
                             <strong>
-                                {userInfo?.role}
+                                {user?.role}
                             </strong>
                         </p>
                     </Flex>   

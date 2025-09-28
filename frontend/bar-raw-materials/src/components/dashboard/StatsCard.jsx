@@ -2,12 +2,33 @@ import React from 'react'
 import {Row, Col, Card} from 'antd'
 import { DollarCircleOutlined, RiseOutlined, ShoppingCartOutlined, UserAddOutlined } from '@ant-design/icons';
 
-const StatsCard = () => {
+const StatsCard = (props) => {
+    const {statsCard} = props;
+    const {totalRevenue, totalCogs, grossProfit, numberOfOrders} = statsCard;
     const stats = [
-        { title: 'Doanh thu', value: '$12,340', icon: <DollarCircleOutlined style={{ fontSize: 30, color: '#3f8600' }} />, color: '#f6ffed' },
-        { title: 'Lợi nhuận', value: '$4,560', icon: <RiseOutlined style={{ fontSize: 30, color: '#cf1322' }} />, color: '#fff1f0' },
-        { title: 'Đơn bán hàng', value: '1,230', icon: <ShoppingCartOutlined style={{ fontSize: 30, color: '#096dd9' }} />, color: '#e6f7ff' },
-        { title: 'Khách hàng mới', value: '320', icon: <UserAddOutlined style={{ fontSize: 30, color: '#531dab' }} />, color: '#f9f0ff' },
+        { 
+            title: 'Doanh thu',
+            value: new Intl.NumberFormat('vn-VN', { style: 'currency', currency: 'VND' }).format(totalRevenue), 
+            icon: <DollarCircleOutlined style={{ fontSize: 30, color: '#3f8600' }} />, 
+            color: '#f6ffed' 
+        },
+        { 
+            title: 'GVHB', 
+            value: new Intl.NumberFormat('vn-VN', { style: 'currency', currency: 'VND' }).format(totalCogs), 
+            icon: <DollarCircleOutlined style={{ fontSize: 30, color: '#cf1322' }} />, 
+            color: '#fff1f0' 
+        },
+        { 
+            title: 'Lợi nhuận', 
+            value: new Intl.NumberFormat('vn-VN', { style: 'currency', currency: 'VND' }).format(grossProfit), 
+            icon: <DollarCircleOutlined style={{ fontSize: 30, color: '#096dd9' }} />, 
+            color: '#e6f7ff' 
+        },
+        { 
+            title: 'Đơn hàng mới', 
+            value: numberOfOrders, 
+            icon: <ShoppingCartOutlined style={{ fontSize: 30, color: '#531dab' }} />, 
+            color: '#f9f0ff' },
     ];
 
     return (

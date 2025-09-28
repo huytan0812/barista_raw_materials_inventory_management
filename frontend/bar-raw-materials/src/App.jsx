@@ -21,7 +21,7 @@ import AddSalesOrder from './pages/export/AddSalesOrder.jsx'
 import AddSalesOrderItems from './pages/export/AddSalesOrderItems.jsx'
 import SalesOrderDetails from './pages/export/SalesOrderDetails.jsx'
 import Customer from './pages/Customer'
-import Permission from './pages/Permission'
+import Accounts from './pages/Accounts.jsx'
 import Report from './pages/Report'
 import UserDetails from './pages/UserDetails.jsx'
 import { useAuthContext } from './contexts/AuthContext.jsx'
@@ -57,7 +57,7 @@ function App() {
           <Route path='/export/salesOrder/:salesOrderId' element={<SalesOrderDetails />} />
         </Route>
         <Route path='/customer' element={<Customer /> } />
-        <Route path='/permissions' element={<Permission /> } />
+        <Route path='/accounts' element={<Accounts /> } />
         <Route path='/reports' element={<Report /> } />
         <Route path='/userDetails' element={<UserDetails />} />
       </Route>

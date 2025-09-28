@@ -83,10 +83,11 @@ const BaseGrnForm = (props) => {
                 rules={[{ required: false }]}
             >
                 <DatePicker
-                format="DD/MM/YYYY"
-                size="middle" 
-                onChange={onDateChange} 
-                needConfirm 
+                    placeholder='Chọn ngày nhận'
+                    format="DD/MM/YYYY"
+                    size="middle" 
+                    onChange={onDateChange} 
+                    needConfirm 
                 />
             </Form.Item>
 
@@ -106,6 +107,7 @@ const BaseGrnForm = (props) => {
                 rules={[{ required: true, message: 'Ngày tạo hóa đơn không được để trống' }]}
             >
                 <DatePicker
+                    placeholder='Chọn ngày tạo hóa đơn'
                     format="DD/MM/YYYY"
                     size="middle" 
                     onChange={onDateChange} 
