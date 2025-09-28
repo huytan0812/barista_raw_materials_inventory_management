@@ -82,15 +82,6 @@ const ImsMenu = () => {
             ),
         },
         {
-            key: 'Customer',
-            label: (
-                <NavLink to="/customer">
-                    <DesktopOutlined />
-                    <span className={"menu-item"}>Khách hàng</span>
-                </NavLink>
-            ),
-        },
-        {
             key: 'report',
             label: (
                 <NavLink to="/reports">

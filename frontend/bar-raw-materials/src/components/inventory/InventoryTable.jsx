@@ -93,16 +93,24 @@ const InventoryTable = ({
       align: "right",
     },
     {
+      title: "Doanh thu",
+      dataIndex: "revenue",
+      key: "revenue",
+      align: "right",
+      render: (value) => new Intl.NumberFormat('vn-VN', { style: 'currency', currency: 'VND' }).format(value)
+    },
+    {
       title: "GVHB",
       dataIndex: "cogs",
       key: "cogs",
       align: "right",
+      render: (value) => new Intl.NumberFormat('vn-VN', { style: 'currency', currency: 'VND' }).format(value)
     }
   ];
 
   return (
     <Table
-      rowKey="id" // make sure each item has an "id"
+      rowKey="id"
       columns={columns}
       dataSource={data}
       loading={loading}

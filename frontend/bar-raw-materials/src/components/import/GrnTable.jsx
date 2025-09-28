@@ -72,7 +72,7 @@ const GrnTable = ({
             dataIndex: "dateCreate",
             key: "dateCreate",
             render: (value) => {
-                return new Intl.DateTimeFormat("vn-VN", {
+                return new Intl.DateTimeFormat("vi-VN", {
                     day: "2-digit",
                     month: "2-digit",
                     year: "numeric",

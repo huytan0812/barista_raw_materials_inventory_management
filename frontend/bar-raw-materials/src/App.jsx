@@ -24,6 +24,8 @@ import Customer from './pages/Customer'
 import Accounts from './pages/Accounts.jsx'
 import Report from './pages/Report'
 import UserDetails from './pages/UserDetails.jsx'
+import MainReportPage from './pages/MainReportPage.jsx'
+import ReportDetails from './pages/reports/ReportDetails.jsx'
 import { useAuthContext } from './contexts/AuthContext.jsx'
 
 function App() {
@@ -58,7 +60,10 @@ function App() {
         </Route>
         <Route path='/customer' element={<Customer /> } />
         <Route path='/accounts' element={<Accounts /> } />
-        <Route path='/reports' element={<Report /> } />
+        <Route path='/reports' element={<MainReportPage />} >
+          <Route index element={<Report /> } />
+          <Route path='/reports/:reportId' element={<ReportDetails />} />
+        </Route>
         <Route path='/userDetails' element={<UserDetails />} />
       </Route>
     </Routes>
