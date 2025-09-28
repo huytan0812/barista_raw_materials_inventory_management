@@ -19,6 +19,11 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findAllOrderByProductIdAsc();
 
     @Query(
+            value="SELECT p FROM Product p"
+    )
+    List<Product> findAllWithoutRelatedEntities();
+
+    @Query(
             value="SELECT new com.bar_raw_materials.dto.product.LightProductDTO(" +
                     "p.id, p.name, p.listPrice)" + " FROM Product p "
     )

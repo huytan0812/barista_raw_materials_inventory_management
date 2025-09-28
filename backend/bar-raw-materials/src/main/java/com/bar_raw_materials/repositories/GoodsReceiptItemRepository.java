@@ -12,6 +12,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.Instant;
 import java.util.List;
 
 public interface GoodsReceiptItemRepository extends JpaRepository<GoodsReceiptItem, Integer> {
@@ -76,4 +77,15 @@ public interface GoodsReceiptItemRepository extends JpaRepository<GoodsReceiptIt
             , nativeQuery=true
     )
     public Integer getQuantityRemainByGrnItemId(int grnItemId);
+
+    @Query("SELECT grnItem FROM GoodsReceiptItem grnItem " +
+            "JOIN FETCH grnItem.grn g " +
+            "JOIN FETCH grnItem.product p " +
+            "WHERE g.dateCreate >= :startOfDay " +
+            "AND g.dateCreate < :endOfDay " +
+            "AND p.id = :productId")
+    List<GoodsReceiptItem> findAllByDateAndProductId(
+            @Param("startOfDay") Instant startOfDay,
+            @Param("endOfDay") Instant endOfDay,
+            @Param("productId") int productId);
 }

@@ -14,7 +14,7 @@ public interface ProductInventoryRepository extends JpaRepository<ProductInvento
             value="SELECT new com.bar_raw_materials.dto.productInventory.ProductInventoryDTO(" +
                     "p.id, p.product.name AS productName, p.businessPeriod.label AS periodLabel" +
                     ", p.startingQuantity, p.startingInventory, p.importQuantity, p.importAmount" +
-                    ", p.exportQuantity, p.cogs" +
+                    ", p.exportQuantity, p.revenue, p.cogs" +
                     ") FROM ProductInventory p JOIN p.product JOIN p.businessPeriod"
     )
     Page<ProductInventoryDTO> pagination(Pageable pageable);

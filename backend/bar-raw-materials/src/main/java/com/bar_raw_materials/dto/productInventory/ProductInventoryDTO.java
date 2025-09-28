@@ -23,5 +23,6 @@ public class ProductInventoryDTO {
     private Integer importQuantity;
     private BigDecimal importAmount;
     private Integer exportQuantity;
+    private BigDecimal revenue;
     private BigDecimal cogs;
 }

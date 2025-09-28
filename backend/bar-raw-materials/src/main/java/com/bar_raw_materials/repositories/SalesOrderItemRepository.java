@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -52,4 +53,15 @@ public interface SalesOrderItemRepository extends JpaRepository<SalesOrderItem, 
                     "s.salesOrder.dateCreated <= :endDate"
     )
     StatsCardDTO getStatsCardInfo(Instant startDate, Instant endDate);
+
+    @Query("SELECT s FROM SalesOrderItem s " +
+            "JOIN FETCH s.salesOrder so " +
+            "JOIN FETCH s.product p " +
+            "WHERE so.dateCreated >= :startOfDay " +
+            "AND so.dateCreated < :endOfDay " +
+            "AND p.id = :productId")
+    List<SalesOrderItem> findAllByDateAndProductId(
+            @Param("startOfDay") Instant startOfDay,
+            @Param("endOfDay") Instant endOfDay,
+            @Param("productId") int productId);
 }
