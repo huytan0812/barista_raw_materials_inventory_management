@@ -60,6 +60,8 @@ public class DailyReportServiceImpl implements DailyReportService {
         dailyReportRepository.save(dailyReport);
         // get all product
         List<Product> products = productRepository.findAllWithoutRelatedEntities();
+        // datetime or instant comparison will compare both date and time
+        // so to get all records in a day, use both the start and end of the day
         Instant startOfDay = reportDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
         Instant endOfDay = reportDate.plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant();
         List<ProductDailyReport> productDailyReports = new ArrayList<>();
@@ -95,7 +97,7 @@ public class DailyReportServiceImpl implements DailyReportService {
             for (SalesOrderItem salesItem : salesItems) {
                 totalQuantityExport += salesItem.getQuantitySold();
                 BigDecimal quantityExport = new BigDecimal(salesItem.getQuantitySold());
-                BigDecimal discount = new BigDecimal(1 - salesItem.getDiscount());
+                BigDecimal discount = BigDecimal.valueOf(1 - salesItem.getDiscount());
                 totalCogs = totalCogs.add(salesItem.getCogs());
                 totalRevenue = totalRevenue.add(
                         quantityExport

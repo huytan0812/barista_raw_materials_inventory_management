@@ -135,6 +135,14 @@ public class SalesOrderServiceImpl implements SalesOrderService{
                         exportValue.getRevenue().add(revenue)
                 );
 
+                // update outputVAT
+                BigDecimal outputVAT = revenue.multiply(
+                        BigDecimal.valueOf(salesItem.getVatRate())
+                );
+                exportValue.setOutputVAT(
+                        exportValue.getOutputVAT().add(outputVAT)
+                );
+
                 // update for total amount field in SalesOrder
                 totalAmount = totalAmount.add(
                         revenue.multiply(
@@ -162,6 +170,12 @@ public class SalesOrderServiceImpl implements SalesOrderService{
                 ).subtract(discount);
                 exportValue.setRevenue(revenue);
                 exportValues.put(salesItem.getProduct().getId(), exportValue);
+
+                // set outputVAT
+                BigDecimal outputVAT = revenue.multiply(
+                        BigDecimal.valueOf(salesItem.getVatRate())
+                );
+                exportValue.setOutputVAT(outputVAT);
 
                 // set totalAmount for SalesOrder
                 totalAmount = totalAmount.add(

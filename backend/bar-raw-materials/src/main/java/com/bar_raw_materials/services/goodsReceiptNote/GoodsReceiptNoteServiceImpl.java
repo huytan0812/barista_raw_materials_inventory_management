@@ -100,15 +100,25 @@ public class GoodsReceiptNoteServiceImpl implements GoodsReceiptNoteService {
             }
             if (importValues.containsKey(grnItem.getProductId())) {
                 ImportValueDTO importValue = importValues.get(grnItem.getProductId());
+                // set quantity import
                 importValue.setQuantityImport(
                         importValue.getQuantityImport() + grnItem.getQuantityImport()
                 );
+                // set import amount
                 BigDecimal unitCost = grnItem.getUnitCost();
                 BigDecimal importAmount = unitCost.multiply(
                         BigDecimal.valueOf(grnItem.getQuantityImport())
                 );
                 importValue.setImportAmount(
                         importValue.getImportAmount().add(importAmount)
+                );
+
+                // set inputVAT
+                BigDecimal inputVAT = importAmount.multiply(
+                        BigDecimal.valueOf(grnItem.getVatRate())
+                );
+                importValue.setInputVAT(
+                        importValue.getInputVAT().add(inputVAT)
                 );
 
                 // update for total amount field in GRN
@@ -129,6 +139,11 @@ public class GoodsReceiptNoteServiceImpl implements GoodsReceiptNoteService {
                 );
                 importValue.setImportAmount(importAmount);
                 importValues.put(grnItem.getProductId(), importValue);
+
+                BigDecimal inputVat = importAmount.multiply(
+                        BigDecimal.valueOf(grnItem.getVatRate())
+                );
+                importValue.setInputVAT(inputVat);
 
                 totalAmount = totalAmount.add(
                         importAmount.multiply(

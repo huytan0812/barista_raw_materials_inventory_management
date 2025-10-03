@@ -1,6 +1,6 @@
 package com.bar_raw_materials.controllers.staff;
 
-import com.bar_raw_materials.entities.ProductDailyReport;
+import com.bar_raw_materials.dto.productDailyReport.ProductDailyReportDTO;
 import com.bar_raw_materials.services.productDailyReport.ProductDailyReportService;
 import io.micrometer.common.lang.Nullable;
 import org.springframework.data.domain.Page;
@@ -17,12 +17,12 @@ public class ProductDailyReportController extends BaseStaffController{
     }
 
     @GetMapping("dailyReport/{id}/list")
-    public ResponseEntity<Page<ProductDailyReport>> getPageByDailyReportId(
+    public ResponseEntity<Page<ProductDailyReportDTO>> getPageByDailyReportId(
             @PathVariable("id") Integer id,
             @Nullable @RequestParam(defaultValue="0", name="page") Integer page,
             @Nullable @RequestParam(defaultValue="5", name="size") Integer size
     ) {
-        Page<ProductDailyReport> responseData = productDailyReportService.findByDailyReportId(id, page, size);
+        Page<ProductDailyReportDTO> responseData = productDailyReportService.findByDailyReportId(id, page, size);
         return ResponseEntity.ok(responseData);
     }
 }

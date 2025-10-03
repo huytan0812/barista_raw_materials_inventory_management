@@ -9,8 +9,7 @@ import java.math.BigDecimal;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ImportValueDTO {
-    private Integer quantityImport;
-    private BigDecimal importAmount;
-    private BigDecimal inputVAT;
+public class VATOverallDTO {
+    private BigDecimal totalInputVAT;
+    private BigDecimal totalOutputVAT;
 }

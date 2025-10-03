@@ -1,5 +1,6 @@
 package com.bar_raw_materials.repositories;
 
+import com.bar_raw_materials.dto.productDailyReport.ProductDailyReportDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,4 +13,13 @@ public interface ProductDailyReportRepository extends JpaRepository<ProductDaily
                     " JOIN FETCH p.report WHERE p.report.id=:dailyReportId"
     )
     Page<ProductDailyReport> findByDailyReportId(Pageable pageable, int dailyReportId);
+
+    @Query(
+            value="SELECT new com.bar_raw_materials.dto.productDailyReport.ProductDailyReportDTO(" +
+                    " p.id, p.product.name AS productName, p.importQuantity, p.importAmount, " +
+                    "p.exportQuantity, p.cogs, p.revenue" +
+                    ") FROM ProductDailyReport p JOIN p.product JOIN p.report" +
+                    " WHERE p.report.id=:reportId"
+    )
+    Page<ProductDailyReportDTO> getPageOfPdrDTOByReportId(Integer reportId, Pageable pageable);
 }

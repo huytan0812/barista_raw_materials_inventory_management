@@ -1,5 +1,7 @@
 package com.bar_raw_materials.repositories;
 
+import com.bar_raw_materials.dto.productInventory.VATOverallDTO;
+import com.bar_raw_materials.dto.productInventory.VatDTO;
 import com.bar_raw_materials.entities.ProductInventory;
 import com.bar_raw_materials.dto.productInventory.ProductInventoryDTO;
 
@@ -25,4 +27,19 @@ public interface ProductInventoryRepository extends JpaRepository<ProductInvento
                     " WHERE p.product.id IN :productIds"
     )
     List<ProductInventory> findAllByProductIds(List<Integer> productIds);
+
+    @Query(
+            value="SELECT new com.bar_raw_materials.dto.productInventory.VatDTO(" +
+                    "productInv.id, productInv.product.name AS productName," +
+                    "productInv.inputVAT, productInv.outputVAT " +
+                    ") FROM ProductInventory productInv JOIN productInv.product"
+    )
+    Page<VatDTO> findAllVat(Pageable pageable);
+
+    @Query(
+            value="SELECT new com.bar_raw_materials.dto.productInventory.VATOverallDTO(" +
+                    "SUM(productInv.inputVAT), SUM(productInv.outputVAT)" +
+                    ") FROM ProductInventory productInv"
+    )
+    VATOverallDTO findVatOverall();
 }

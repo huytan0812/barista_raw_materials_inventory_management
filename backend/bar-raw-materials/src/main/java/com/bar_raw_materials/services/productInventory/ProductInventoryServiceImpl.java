@@ -1,6 +1,8 @@
 package com.bar_raw_materials.services.productInventory;
 
 import com.bar_raw_materials.dto.productInventory.ProductInventoryDTO;
+import com.bar_raw_materials.dto.productInventory.VATOverallDTO;
+import com.bar_raw_materials.dto.productInventory.VatDTO;
 import com.bar_raw_materials.entities.BusinessPeriod;
 import com.bar_raw_materials.entities.Product;
 import com.bar_raw_materials.entities.ProductInventory;
@@ -41,6 +43,17 @@ public class ProductInventoryServiceImpl implements ProductInventoryService {
     @Override
     public List<ProductInventory> getAllByProductIds(List<Integer> productIds) {
         return productInventoryRepository.findAllByProductIds(productIds);
+    }
+
+    @Override
+    public Page<VatDTO> getAllVats(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return productInventoryRepository.findAllVat(pageable);
+    }
+
+    @Override
+    public VATOverallDTO getVatOverall() {
+        return productInventoryRepository.findVatOverall();
     }
 
     @Override

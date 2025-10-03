@@ -1,5 +1,6 @@
 package com.bar_raw_materials.services.productDailyReport;
 
+import com.bar_raw_materials.dto.productDailyReport.ProductDailyReportDTO;
 import com.bar_raw_materials.entities.ProductDailyReport;
 import com.bar_raw_materials.repositories.ProductDailyReportRepository;
 import lombok.RequiredArgsConstructor;
@@ -32,8 +33,8 @@ public class ProductDailyReportServiceImpl implements ProductDailyReportService 
     }
 
     @Override
-    public Page<ProductDailyReport> findByDailyReportId(int dailyReportId, int page, int size) {
+    public Page<ProductDailyReportDTO> findByDailyReportId(int dailyReportId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("importQuantity", "cogs").descending());
-        return productDailyReportRepository.findByDailyReportId(pageable, dailyReportId);
+        return productDailyReportRepository.getPageOfPdrDTOByReportId(dailyReportId, pageable);
     }
 }
