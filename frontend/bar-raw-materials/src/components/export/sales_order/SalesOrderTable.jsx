@@ -69,7 +69,7 @@ const SalesOrderTable = (props) => {
             dataIndex: "dateCreated",
             key: "dateCreated",
             render: (value) => {
-                return new Intl.DateTimeFormat("vn-VN", {
+                return new Intl.DateTimeFormat("vi-VN", {
                     day: "2-digit",
                     month: "2-digit",
                     year: "numeric",
@@ -77,8 +77,7 @@ const SalesOrderTable = (props) => {
                     minute: "2-digit",
                 }).format(new Date(value));
             },
-            align: "right",
-            titleAlign: "center"
+            align: "center"
         },
         {
             title: "Người tạo",

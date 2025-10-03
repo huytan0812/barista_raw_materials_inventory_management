@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react'
-import {Table, Button} from 'antd'
+import {Table, Button, Flex} from 'antd'
 import { useNavigate } from 'react-router-dom'
 import { useAuthContext } from '../../contexts/AuthContext'
 import dailyReportHTTP from '../../services/DailyReportService'
@@ -59,8 +59,7 @@ const ReportsTable = (props) => {
                     year: "numeric"
                 }).format(new Date(value));
             },
-            align: "right",
-            titleAlign: "center"
+            align: "center"
         },
         {
             title: "Người tạo",
@@ -75,13 +74,15 @@ const ReportsTable = (props) => {
             key: "action",
             render: (_, record) => {
                 return (
-                  <Button 
+                  <Flex justify='center'>
+                    <Button 
                       color="blue" 
                       variant="solid" 
                       onClick={() => navigate(`/reports/${record?.id}`)}
-                  >
+                    >
                       <span style={{fontSize: '1.4rem'}}>Chi tiết</span>
-                  </Button>
+                    </Button>
+                  </Flex>
                 )
             }
         }

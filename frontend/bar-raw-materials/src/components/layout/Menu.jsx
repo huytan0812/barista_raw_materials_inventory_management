@@ -99,6 +99,15 @@ const ImsMenu = () => {
                 </NavLink>
             ),
         },
+        user.role === "admin" && {
+            key: 'vat',
+            label: (
+                <NavLink to="/vat">
+                    <DesktopOutlined />
+                    <span className={"menu-item"}>Thuế</span>
+                </NavLink>
+            )
+        }
     ];
 
     return (

@@ -26,6 +26,7 @@ import Report from './pages/Report'
 import UserDetails from './pages/UserDetails.jsx'
 import MainReportPage from './pages/MainReportPage.jsx'
 import ReportDetails from './pages/reports/ReportDetails.jsx'
+import VAT from './pages/VAT.jsx'
 import { useAuthContext } from './contexts/AuthContext.jsx'
 
 function App() {
@@ -65,6 +66,7 @@ function App() {
           <Route path='/reports/:reportId' element={<ReportDetails />} />
         </Route>
         <Route path='/userDetails' element={<UserDetails />} />
+        <Route path='/vat' element={<VAT />} />
       </Route>
     </Routes>
   )
