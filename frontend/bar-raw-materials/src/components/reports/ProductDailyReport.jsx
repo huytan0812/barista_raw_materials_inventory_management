@@ -49,58 +49,55 @@ const ProductDailyReport = (props) => {
         align: "center",
         },
         {
-        title: "Sản phẩm",
-        key: "productName",
-        render: (_, record) => {
-            return record?.product?.name
-        },
-        onCell: () => ({
-            style: {
-            maxWidth: '20rem',
-            whiteSpace: "normal", 
-            wordBreak: "break-word"
-            },
-        }),
-        align: "left",
-        titleAlign: "center"
+            title: "Sản phẩm",
+            dataIndex: 'productName',
+            key: "productName",
+            onCell: () => ({
+                style: {
+                maxWidth: '20rem',
+                whiteSpace: "normal", 
+                wordBreak: "break-word"
+                },
+            }),
+            align: "left",
+            titleAlign: "center"
         },
         {
-        title: "SL nhập kho",
-        dataIndex: "importQuantity",
-        key: "importQuantity",
-        align: "right",
-        titleAlign: "center"
+            title: "SL nhập kho",
+            dataIndex: "importQuantity",
+            key: "importQuantity",
+            align: "right",
+            titleAlign: "center"
         },
         {
-        title: "Giá trị nhập kho",
-        dataIndex: "importAmount",
-        key: "importAmount",
-        align: "right",
-        titleAlign: "center",
-        render: (value) => new Intl.NumberFormat('vn-VN', { style: 'currency', currency: 'VND' }).format(value)
+            title: "Giá trị nhập kho",
+            dataIndex: "importAmount",
+            key: "importAmount",
+            align: "right",
+            titleAlign: "center",
+            render: (value) => new Intl.NumberFormat('vn-VN', { style: 'currency', currency: 'VND' }).format(value)
         },
         {
-        title: "SL xuất kho",
-        dataIndex: "exportQuantity",
-        key: "exportQuantity",
-        align: "right",
-        titleAlign: "center",
-        
+            title: "SL xuất kho",
+            dataIndex: "exportQuantity",
+            key: "exportQuantity",
+            align: "right",
+            titleAlign: "center",
         },
         {
-        title: "GVHB",
-        dataIndex: "cogs",
-        key: "cogs",
-        align: "right",
-        titleAlign: "center",
-        render: (value) => new Intl.NumberFormat('vn-VN', { style: 'currency', currency: 'VND' }).format(value)
+            title: "GVHB",
+            dataIndex: "cogs",
+            key: "cogs",
+            align: "right",
+            titleAlign: "center",
+            render: (value) => new Intl.NumberFormat('vn-VN', { style: 'currency', currency: 'VND' }).format(value)
         },
         {
-        title: "Doanh thu",
-        dataIndex: "revenue",
-        key: "revenue",
-        align: "right",
-        titleAlign: "center"
+            title: "Doanh thu",
+            dataIndex: "revenue",
+            key: "revenue",
+            align: "right",
+            titleAlign: "center"
         },
         ];
     return (
