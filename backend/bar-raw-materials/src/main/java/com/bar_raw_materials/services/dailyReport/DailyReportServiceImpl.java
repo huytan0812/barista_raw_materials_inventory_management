@@ -40,7 +40,7 @@ public class DailyReportServiceImpl implements DailyReportService {
 
     @Override
     public Page<DailyReport> getPage(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("reportDate").descending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
         return dailyReportRepository.getPage(pageable);
     }
 

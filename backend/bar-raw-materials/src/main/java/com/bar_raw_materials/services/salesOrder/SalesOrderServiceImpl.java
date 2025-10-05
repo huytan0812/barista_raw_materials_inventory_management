@@ -202,6 +202,10 @@ public class SalesOrderServiceImpl implements SalesOrderService{
                 p.setRevenue(
                         p.getRevenue().add(exportValue.getRevenue())
                 );
+                // set ouputVAT
+                p.setOutputVAT(
+                        p.getOutputVAT().add(exportValue.getOutputVAT())
+                );
             }
         }
         prdInvRepository.saveAll(productInventories);

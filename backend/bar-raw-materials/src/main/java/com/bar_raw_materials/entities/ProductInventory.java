@@ -36,7 +36,7 @@ public class ProductInventory {
 
     @NotNull
     @ColumnDefault("(0)")
-    @Column(name = "startingInventory", nullable = true, precision = 20, scale = 6)
+    @Column(name = "startingInventory", nullable = true, precision = 20, scale = 2)
     private BigDecimal startingInventory;
 
     @NotNull
@@ -46,7 +46,7 @@ public class ProductInventory {
 
     @NotNull
     @ColumnDefault("(0)")
-    @Column(name = "importAmount", nullable = true, precision = 20, scale = 6)
+    @Column(name = "importAmount", nullable = true, precision = 20, scale = 2)
     private BigDecimal importAmount;
 
     @NotNull
@@ -56,22 +56,22 @@ public class ProductInventory {
 
     @NotNull
     @ColumnDefault("(0)")
-    @Column(name = "cogs", nullable = true, precision = 20, scale = 6)
+    @Column(name = "cogs", nullable = true, precision = 20, scale = 2)
     private BigDecimal cogs;
 
     @NotNull
     @ColumnDefault("(0)")
-    @Column(name = "revenue", nullable = true, precision = 20, scale = 6)
+    @Column(name = "revenue", nullable = true, precision = 20, scale = 2)
     private BigDecimal revenue;
 
     @NotNull
     @ColumnDefault("(0)")
-    @Column(name = "outputVAT", nullable = true, precision = 20, scale = 6)
+    @Column(name = "outputVAT", nullable = true, precision = 20, scale = 2)
     private BigDecimal outputVAT;
 
     @NotNull
     @ColumnDefault("(0)")
-    @Column(name = "inputVAT", nullable = true, precision = 20, scale = 6)
+    @Column(name = "inputVAT", nullable = true, precision = 20, scale = 2)
     private BigDecimal inputVAT;
 
     public ProductInventory() {}

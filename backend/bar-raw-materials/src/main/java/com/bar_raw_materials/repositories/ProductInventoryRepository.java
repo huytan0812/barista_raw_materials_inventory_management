@@ -32,7 +32,8 @@ public interface ProductInventoryRepository extends JpaRepository<ProductInvento
             value="SELECT new com.bar_raw_materials.dto.productInventory.VatDTO(" +
                     "productInv.id, productInv.product.name AS productName," +
                     "productInv.inputVAT, productInv.outputVAT " +
-                    ") FROM ProductInventory productInv JOIN productInv.product"
+                    ") FROM ProductInventory productInv JOIN productInv.product" +
+                    " ORDER BY productInv.inputVAT DESC, productInv.outputVAT DESC"
     )
     Page<VatDTO> findAllVat(Pageable pageable);
 

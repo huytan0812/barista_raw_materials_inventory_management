@@ -39,7 +39,7 @@ public class GoodsReceiptNote {
     @Column(name = "dateCreate")
     private Instant dateCreate;
 
-    @Column(name = "totalAmount", precision = 20, scale = 6)
+    @Column(name = "totalAmount", precision = 20, scale = 2)
     private BigDecimal totalAmount;
 
     @Size(max = 30)

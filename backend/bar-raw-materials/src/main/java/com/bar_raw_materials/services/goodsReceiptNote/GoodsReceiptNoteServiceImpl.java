@@ -157,12 +157,19 @@ public class GoodsReceiptNoteServiceImpl implements GoodsReceiptNoteService {
         for (ProductInventory p : productInventories) {
             if (importValues.containsKey(p.getProduct().getId())) {
                 ImportValueDTO importValue = importValues.get(p.getProduct().getId());
+                // set import quantity
                 p.setImportQuantity(
                         p.getImportQuantity() + importValue.getQuantityImport()
                 );
+                // set import amount
                 BigDecimal importAmount = importValue.getImportAmount();
                 p.setImportAmount(
                         p.getImportAmount().add(importAmount)
+                );
+                // set inputVAT
+                BigDecimal inputVAT = importValue.getInputVAT();
+                p.setInputVAT(
+                        p.getInputVAT().add(inputVAT)
                 );
             }
         }

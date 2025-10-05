@@ -40,7 +40,7 @@ public class SalesOrder {
 
     @NotNull
     @ColumnDefault("(0)")
-    @Column(name = "totalAmount", nullable = false, precision = 20, scale = 6)
+    @Column(name = "totalAmount", nullable = false, precision = 20, scale = 2)
     private BigDecimal totalAmount;
 
 }

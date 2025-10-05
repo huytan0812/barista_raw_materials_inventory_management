@@ -37,7 +37,7 @@ public class ProductDailyReport {
 
     @NotNull
     @ColumnDefault("(0)")
-    @Column(name = "importAmount", nullable = false, precision = 20, scale = 6)
+    @Column(name = "importAmount", nullable = false, precision = 20, scale = 2)
     private BigDecimal importAmount;
 
     @NotNull
@@ -47,12 +47,12 @@ public class ProductDailyReport {
 
     @NotNull
     @ColumnDefault("(0)")
-    @Column(name = "cogs", nullable = false, precision = 20, scale = 6)
+    @Column(name = "cogs", nullable = false, precision = 20, scale = 2)
     private BigDecimal cogs;
 
     @NotNull
     @ColumnDefault("(0)")
-    @Column(name = "revenue", nullable = false, precision = 20, scale = 6)
+    @Column(name = "revenue", nullable = false, precision = 20, scale = 2)
     private BigDecimal revenue;
 
 }

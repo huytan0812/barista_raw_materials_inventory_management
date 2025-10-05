@@ -44,7 +44,7 @@ public class SalesOrderItem {
     @Column(name = "discount", nullable = false)
     private Float discount;
 
-    @Column(name = "cogs", precision = 20, scale = 6)
+    @Column(name = "cogs", precision = 20, scale = 2)
     private BigDecimal cogs;
 
     @NotNull
