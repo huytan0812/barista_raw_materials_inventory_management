@@ -1,10 +1,7 @@
 package com.bar_raw_materials.services.salesOrderItem;
 
 import com.bar_raw_materials.dto.salesOrder.SalesOrderDTO;
-import com.bar_raw_materials.dto.salesOrderItem.CreateSalesOrderItemDTO;
-import com.bar_raw_materials.dto.salesOrderItem.SalesOrderItemDTO;
-import com.bar_raw_materials.dto.salesOrderItem.StatsCardDTO;
-import com.bar_raw_materials.dto.salesOrderItem.UpdateSalesOrderItemDTO;
+import com.bar_raw_materials.dto.salesOrderItem.*;
 import com.bar_raw_materials.entities.ExportItemDetail;
 import com.bar_raw_materials.entities.Product;
 import com.bar_raw_materials.entities.SalesOrder;
@@ -32,6 +29,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 @Service
@@ -139,6 +137,13 @@ public class SalesOrderItemServiceImpl implements SalesOrderItemService {
             Instant start, Instant end
     ) {
         return salesOrderItemRepository.getStatsCardInfo(start, end);
+    }
+
+    @Override
+    public List<RevenueByDayDTO> getRevenueByDay(LocalDate start) {
+        Instant startDate = start.atStartOfDay(ZoneId.systemDefault()).toInstant();
+        System.out.println("Start date: " + startDate);
+        return salesOrderItemRepository.getRevenueByDayDTO(startDate);
     }
 
     @Override
