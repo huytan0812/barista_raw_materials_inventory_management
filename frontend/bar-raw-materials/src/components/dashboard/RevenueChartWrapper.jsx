@@ -1,42 +1,111 @@
 import React, {useState, useEffect, useRef} from 'react'
-import {Card, Select, DatePicker} from 'antd'
+import {Card, Select } from 'antd'
 import RevenueChart from './RevenueChart'
-import { useContainerReady } from '../../hooks/useContainerReady';
+import { useContainerReady } from '../../hooks/useContainerReady'
+import {useAuthContext} from '../../contexts/AuthContext'
+import salesItemHTTP from '../../services/SalesOrderItemService'
 
 const {Option} = Select;
-const onChange = (date, dateString) => {
-  console.log(date, dateString);
-};
 
 const RevenueChartWrapper = ({chartHeight}) => {
     const lineCardRef = useRef(null);
     const isLineCardReady = useContainerReady(lineCardRef);
+    const {token} = useAuthContext();
+    const persistToken = useRef(token);
+
     // state for handling filter
     const [filter, setFilter] = useState('day');
 
-    // states for handling filter by day
-    const [recentDays, setRecentDays] = useState(7);
+    // state for handling revenueData
+    const [revenueData, setRevenueData] = useState([]);
+    const [xField, setXField] = useState("daily");
+
+    // state for handling filter by day
     const [displayDaySelect, setDisplayDaySelect] = useState(false);
 
-    // states for handling filter by month
-    const [recentMonths, setRecentMonths] = useState(5);
+    // state for handling filter by month
     const [displayMonthSelect, setDisplayMonthSelect] = useState(false);
+
+    // side effect for fetching revenueData by default
+    useEffect(() => {
+        const fetchRevenueData = async() => {
+            try {
+                const response = await salesItemHTTP.get('getRevenue', {
+                    headers: {
+                        Authorization: `Bearer ${persistToken.current}`
+                    },
+                    params: {
+                        type: 'days',
+                        value: 7
+                    }
+                });
+                if (response.status === 200) {
+                    setRevenueData(response.data);
+                }
+            }
+            catch (error) {
+                console.log(error);
+            }
+        }
+        fetchRevenueData();
+    }, []);
 
     // side effect for handling filter change
     useEffect(() => {
         if (filter === 'day') {
             setDisplayDaySelect(true);
             setDisplayMonthSelect(false);
+            fetchRevenueByDays(7);
         }
         if (filter === 'month') {
             setDisplayMonthSelect(true);
             setDisplayDaySelect(false);
+            fetchRevenueByMonths(3);
         }
-        if (filter === 'year') {
-            setDisplayDaySelect(false);
-            setDisplayMonthSelect(false);
+    }, [filter]);
+
+    const fetchRevenueByDays = async(value) => {
+        // set revenueData and xField
+        try {
+            const response = await salesItemHTTP.get('getRevenue', {
+                headers: {
+                    Authorization: `Bearer ${persistToken.current}`
+                },
+                params: {
+                    type: 'days',
+                    value: value
+                }
+            });
+            if (response.status === 200) {
+                setRevenueData(response.data);
+                setXField('daily');
+            }
         }
-    }, [filter])
+        catch (error) {
+            console.log(error);
+        }
+    };
+
+    const fetchRevenueByMonths = async(value) => {
+        try {
+            const response = await salesItemHTTP.get('getRevenue', {
+                headers: {
+                    Authorization: `Bearer ${persistToken.current}`
+                },
+                params: {
+                    type: 'months',
+                    value: value
+                }
+            });
+            if (response.status === 200) {
+                setRevenueData(response.data);
+                setXField('monthly');
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
+    };
 
     return (
         <Card
@@ -46,14 +115,13 @@ const RevenueChartWrapper = ({chartHeight}) => {
                     <Select defaultValue={filter} onChange={setFilter} style={{ width: '12rem' }}>
                         <Option value="day">Ngày</Option>
                         <Option value="month">Tháng</Option>
-                        <Option value="year">Năm</Option>
                     </Select>
                     {
                         displayDaySelect
                         &&
                         <Select
-                            defaultValue={recentDays}
-                            onChange={(value) => setRecentDays(value)}
+                            defaultValue={7}
+                            onChange={(value) => fetchRevenueByDays(value)}
                             style={{
                                 width: '12rem',
                                 marginLeft: '0.8rem',
@@ -67,14 +135,17 @@ const RevenueChartWrapper = ({chartHeight}) => {
                     {
                         displayMonthSelect
                         &&
-                        <DatePicker 
-                            onChange={onChange} 
-                            picker="month"
+                        <Select
+                            defaultValue={3}
+                            onChange={(value) => fetchRevenueByMonths(value)}
                             style={{
                                 width: '12rem',
                                 marginLeft: '0.8rem',
                             }}
-                        />
+                        >
+                            <Option value={3}>3 tháng</Option>
+                            <Option value={6}>6 tháng</Option>
+                        </Select>
                     }
                 </React.Fragment>
             }
@@ -83,7 +154,8 @@ const RevenueChartWrapper = ({chartHeight}) => {
             {isLineCardReady && 
             <RevenueChart 
                 chartHeight={chartHeight}
-                days={recentDays}
+                revenueData={revenueData}
+                xField={xField}
             />}
         </Card>
     )
