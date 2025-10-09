@@ -140,10 +140,20 @@ public class SalesOrderItemServiceImpl implements SalesOrderItemService {
     }
 
     @Override
-    public List<RevenueByDayDTO> getRevenueByDay(LocalDate start) {
-        Instant startDate = start.atStartOfDay(ZoneId.systemDefault()).toInstant();
+    public List<RevenueByDayDTO> getRevenueByDay(Long days) {
+        LocalDate date = LocalDate.now().minusDays(days);
+        Instant startDate = date.atStartOfDay(ZoneId.systemDefault()).toInstant();
         System.out.println("Start date: " + startDate);
         return salesOrderItemRepository.getRevenueByDayDTO(startDate);
+    }
+
+    @Override
+    public List<RevenueByMonthDTO> getRevenueByMonth(Long months) {
+        LocalDate date = LocalDate.now().minusMonths(months);
+        // construct first date of month
+        LocalDate startDateOfMonth = LocalDate.of(date.getYear(), date.getMonth(), 1);
+        Instant startDate = startDateOfMonth.atStartOfDay(ZoneId.systemDefault()).toInstant();
+        return salesOrderItemRepository.getRevenueByMonthDTO(startDate);
     }
 
     @Override

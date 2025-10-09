@@ -1,6 +1,7 @@
 package com.bar_raw_materials.repositories;
 
 import com.bar_raw_materials.dto.salesOrderItem.RevenueByDayDTO;
+import com.bar_raw_materials.dto.salesOrderItem.RevenueByMonthDTO;
 import com.bar_raw_materials.dto.salesOrderItem.StatsCardDTO;
 import com.bar_raw_materials.entities.SalesOrderItem;
 import com.bar_raw_materials.dto.salesOrderItem.SalesOrderItemDTO;
@@ -68,7 +69,7 @@ public interface SalesOrderItemRepository extends JpaRepository<SalesOrderItem, 
 
     @Query(
             value="SELECT DATE(so.dateCreated) as daily," +
-                    " SUM(si.unitPrice*si.quantitySold*(1-si.discount)) as revenue" +
+                    " CEIL(SUM(si.unitPrice*si.quantitySold*(1-si.discount))) as revenue" +
                     " FROM sales_order_item si JOIN sales_order so" +
                     " ON si.salesOrderId=so.id WHERE so.dateCreated >= :startDate" +
                     " GROUP BY daily"
@@ -76,4 +77,14 @@ public interface SalesOrderItemRepository extends JpaRepository<SalesOrderItem, 
             nativeQuery=true
     )
     List<RevenueByDayDTO> getRevenueByDayDTO(Instant startDate);
+
+    @Query(
+            value="SELECT MONTH(so.dateCreated) as monthly," +
+                    " CEIL(SUM(si.unitPrice*si.quantitySold*(1-si.discount))) as revenue" +
+                    " FROM sales_order_item si JOIN sales_order so" +
+                    " ON si.salesOrderId = so.id WHERE so.dateCreated >= :startDate" +
+                    " GROUP BY monthly"
+            , nativeQuery=true
+    )
+    List<RevenueByMonthDTO> getRevenueByMonthDTO(Instant startDate);
 }

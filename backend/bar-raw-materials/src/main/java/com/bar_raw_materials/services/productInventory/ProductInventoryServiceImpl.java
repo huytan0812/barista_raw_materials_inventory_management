@@ -1,8 +1,6 @@
 package com.bar_raw_materials.services.productInventory;
 
-import com.bar_raw_materials.dto.productInventory.ProductInventoryDTO;
-import com.bar_raw_materials.dto.productInventory.VATOverallDTO;
-import com.bar_raw_materials.dto.productInventory.VatDTO;
+import com.bar_raw_materials.dto.productInventory.*;
 import com.bar_raw_materials.entities.BusinessPeriod;
 import com.bar_raw_materials.entities.Product;
 import com.bar_raw_materials.entities.ProductInventory;
@@ -17,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Sort;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -65,6 +64,22 @@ public class ProductInventoryServiceImpl implements ProductInventoryService {
                 businessPeriod
         );
         productInventoryRepository.save(productInventory);
+    }
+
+    @Override
+    public List<CurrentInventoryDTO> getCurrentInventoryByLimit(int limit) {
+        return productInventoryRepository.getTopInventory(limit);
+    }
+
+    @Override
+    public BigDecimal getRemainsInventory(List<Integer> ids) {
+        return productInventoryRepository.getRemainsInventory(ids);
+    }
+
+    @Override
+    public List<ExportQuantityDTO> getExportQuantityByLimit(int limit, Boolean DESC) {
+        if (DESC) return productInventoryRepository.getTopExportQuantity(limit);
+        return productInventoryRepository.getBottomExportQuantity(limit);
     }
 
     @Override

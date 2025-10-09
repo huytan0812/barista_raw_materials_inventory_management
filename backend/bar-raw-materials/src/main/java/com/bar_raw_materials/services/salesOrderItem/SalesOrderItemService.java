@@ -20,5 +20,6 @@ public interface SalesOrderItemService extends EntityService {
 
     // services for dashboard page
     StatsCardDTO getStatsCardInfo(Instant start, Instant end);
-    List<RevenueByDayDTO> getRevenueByDay(LocalDate start);
+    List<RevenueByDayDTO> getRevenueByDay(Long days);
+    List<RevenueByMonthDTO> getRevenueByMonth(Long months);
 }

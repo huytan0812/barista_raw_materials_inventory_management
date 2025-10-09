@@ -1,14 +1,14 @@
 package com.bar_raw_materials.repositories;
 
-import com.bar_raw_materials.dto.productInventory.VATOverallDTO;
-import com.bar_raw_materials.dto.productInventory.VatDTO;
+import com.bar_raw_materials.dto.productInventory.*;
 import com.bar_raw_materials.entities.ProductInventory;
-import com.bar_raw_materials.dto.productInventory.ProductInventoryDTO;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface ProductInventoryRepository extends JpaRepository<ProductInventory, Integer> {
@@ -43,4 +43,40 @@ public interface ProductInventoryRepository extends JpaRepository<ProductInvento
                     ") FROM ProductInventory productInv"
     )
     VATOverallDTO findVatOverall();
+
+    @Query(
+            value="SELECT new com.bar_raw_materials.dto.productInventory.CurrentInventoryDTO(" +
+                    "p.id, p.product.name AS productName," +
+                    " (p.startingInventory + p.importAmount - p.cogs) AS currentInventory" +
+                    ") FROM ProductInventory p JOIN p.product" +
+                    " ORDER BY (p.startingInventory + p.importAmount - p.cogs) DESC LIMIT :limit"
+    )
+    List<CurrentInventoryDTO> getTopInventory(int limit);
+
+    @Query(
+            value="SELECT SUM(p.startingInventory + p.importAmount - p.cogs)" +
+                    " FROM ProductInventory p" +
+                    " WHERE p.id NOT IN :ids"
+    )
+    BigDecimal getRemainsInventory(List<Integer> ids);
+
+    // for top sellers
+    @Query(
+            value="SELECT new com.bar_raw_materials.dto.productInventory.ExportQuantityDTO(" +
+                    "p.product.name AS productName," +
+                    "p.exportQuantity" +
+                    ") FROM ProductInventory p JOIN p.product" +
+                    " ORDER BY p.exportQuantity DESC LIMIT :limit"
+    )
+    List<ExportQuantityDTO> getTopExportQuantity(int limit);
+
+    // for slow sellers
+    @Query(
+            value="SELECT new com.bar_raw_materials.dto.productInventory.ExportQuantityDTO(" +
+                    "p.product.name AS productName," +
+                    "p.exportQuantity" +
+                    ") FROM ProductInventory p JOIN p.product" +
+                    " ORDER BY p.exportQuantity ASC LIMIT :limit"
+    )
+    List<ExportQuantityDTO> getBottomExportQuantity(int limit);
 }

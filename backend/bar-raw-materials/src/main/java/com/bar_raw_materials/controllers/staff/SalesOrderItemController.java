@@ -12,6 +12,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -86,12 +87,21 @@ public class SalesOrderItemController extends BaseStaffController{
         return ResponseEntity.ok(responseData);
     }
 
-    @GetMapping("getRevenueByDays")
-    public ResponseEntity<List<RevenueByDayDTO>> getRevenueByDays(
-            @RequestParam("days") Long days
+    @GetMapping("getRevenue")
+    public ResponseEntity<List<?>> getRevenue(
+            @RequestParam("type") String type,
+            @RequestParam("value") Long value
     ) {
-        LocalDate startDate = LocalDate.now().minusDays(days);
-        List<RevenueByDayDTO> responseData = salesOrderItemService.getRevenueByDay(startDate);
+        List<?> responseData = new ArrayList<>();
+        if (type.equals("days")) {
+            responseData = salesOrderItemService.getRevenueByDay(value);
+        }
+        else if (type.equals("months")) {
+            responseData = salesOrderItemService.getRevenueByMonth(value);
+        }
+        else {
+
+        }
         return ResponseEntity.ok(responseData);
     }
 }

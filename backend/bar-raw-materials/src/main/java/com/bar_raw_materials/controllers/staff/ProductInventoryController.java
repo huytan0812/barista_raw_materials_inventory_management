@@ -1,7 +1,6 @@
 package com.bar_raw_materials.controllers.staff;
 
-import com.bar_raw_materials.dto.productInventory.VATOverallDTO;
-import com.bar_raw_materials.dto.productInventory.VatDTO;
+import com.bar_raw_materials.dto.productInventory.*;
 import com.bar_raw_materials.services.productInventory.ProductInventoryService;
 import jakarta.validation.constraints.Null;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +11,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("${apiStaff}/productInventory")
@@ -36,6 +41,31 @@ public class ProductInventoryController extends BaseStaffController{
     @GetMapping("vatOverall")
     public ResponseEntity<VATOverallDTO> getVatOverall() {
         VATOverallDTO responseData = productInventoryService.getVatOverall();
+        return ResponseEntity.ok(responseData);
+    }
+
+    @GetMapping("getCurrentInventory")
+    public ResponseEntity<TopInventoryWithRemainDTO> getCurrentInventory(
+            @Nullable @RequestParam(defaultValue="5", name="limit") Integer limit
+    ) {
+        List<CurrentInventoryDTO> topInventories = productInventoryService.getCurrentInventoryByLimit(limit);
+        List<Integer> ids = new ArrayList<>();
+        for (CurrentInventoryDTO c : topInventories) {
+            ids.add(c.getId());
+        }
+        BigDecimal totalRemainInventories = productInventoryService.getRemainsInventory(ids);
+        TopInventoryWithRemainDTO topInventoryWithRemainDTO = new TopInventoryWithRemainDTO(
+                topInventories, totalRemainInventories
+        );
+        return ResponseEntity.ok(topInventoryWithRemainDTO);
+    }
+
+    @GetMapping("getExportQuantity")
+    public ResponseEntity<List<ExportQuantityDTO>> getExportQuantity(
+            @Nullable @RequestParam(defaultValue="5", name="limit") Integer limit,
+            @Nullable @RequestParam(defaultValue="true", name="DESC") Boolean DESC
+    ) {
+        List<ExportQuantityDTO> responseData = productInventoryService.getExportQuantityByLimit(limit, DESC);
         return ResponseEntity.ok(responseData);
     }
 }
