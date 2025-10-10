@@ -8,9 +8,7 @@ import com.bar_raw_materials.exceptions.grnItem.GoodsReceiptItemDoesNotExistExce
 import com.bar_raw_materials.exceptions.product.ProductDoesNotExistException;
 import com.bar_raw_materials.exceptions.salesItem.SalesOrderItemDoesNotExistException;
 import com.bar_raw_materials.exceptions.salesOrder.SalesOrderDoesNotExistException;
-import com.bar_raw_materials.exceptions.user.ConfirmPasswordDifferentException;
-import com.bar_raw_materials.exceptions.user.DuplicatedUserEmailException;
-import com.bar_raw_materials.exceptions.user.DuplicatedUserPhoneNumberException;
+import com.bar_raw_materials.exceptions.user.*;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -100,6 +98,18 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, String>> handleConfirmPasswordDifferent(ConfirmPasswordDifferentException ex) {
         Map<String, String> errors = new HashMap<>();
         errors.put("confirmPasswordDifferent", ex.getMessage());
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<String> handleUserNotFound(UserNotFoundException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(DuplicatedUsernameException.class)
+    public ResponseEntity<Map<String, String>> handleDuplicatedUsername(DuplicatedUsernameException ex) {
+        Map<String, String> errors = new HashMap<>();
+        errors.put("duplicatedUsername", ex.getMessage());
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 

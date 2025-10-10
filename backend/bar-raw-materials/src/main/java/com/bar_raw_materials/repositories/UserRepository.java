@@ -27,7 +27,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
             value="SELECT u FROM User u JOIN FETCH u.role"
     )
     Page<User> pagination(Pageable pageable);
-
+    
     User findByPhoneNumber(String phoneNumber);
     User findByEmail(String email);
 

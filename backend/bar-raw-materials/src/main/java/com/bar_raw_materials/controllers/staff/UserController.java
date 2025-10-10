@@ -1,6 +1,7 @@
 package com.bar_raw_materials.controllers.staff;
 
 import com.bar_raw_materials.dto.user.CreateUserDTO;
+import com.bar_raw_materials.dto.user.EditUserDTO;
 import com.bar_raw_materials.entities.Role;
 import com.bar_raw_materials.entities.User;
 import com.bar_raw_materials.services.user.UserService;
@@ -65,5 +66,14 @@ public class UserController extends BaseStaffController {
     ) {
         userService.addUser(createUserDTO);
         return ResponseEntity.ok("User added successfully");
+    }
+
+    @PostMapping("update/{id}")
+    public ResponseEntity<String> update(
+            @PathVariable("id") Integer id,
+            @RequestPart("data") EditUserDTO editUserDTO
+    ) {
+        userService.updateUser(id, editUserDTO);
+        return ResponseEntity.ok("User updated successfully");
     }
 }

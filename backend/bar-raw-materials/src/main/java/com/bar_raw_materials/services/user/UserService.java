@@ -1,6 +1,7 @@
 package com.bar_raw_materials.services.user;
 
 import com.bar_raw_materials.dto.user.CreateUserDTO;
+import com.bar_raw_materials.dto.user.EditUserDTO;
 import com.bar_raw_materials.entities.Role;
 import com.bar_raw_materials.entities.User;
 import com.bar_raw_materials.services.EntityService;
@@ -17,6 +18,8 @@ public interface UserService extends EntityService {
     User getDetails(int id);
     List<Role> getAllRole();
     void addUser(CreateUserDTO createUserDTO);
+    void updateUser(Integer userId, EditUserDTO editUserDTO);
+    Boolean isDuplicatedUsername(String username);
     Boolean isDuplicatedPhoneNumber(String phoneNumber);
     Boolean isDuplicatedEmail(String email);
 }
