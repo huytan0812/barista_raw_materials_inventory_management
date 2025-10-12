@@ -17,6 +17,7 @@ const ResetPasswordModal = (props) => {
         resetPasswordForm.submit();
     };
     const handleCancel = () => {
+        resetPasswordForm.resetFields();
         resetActiveResetModal(0);
         setOpen(false);
     };
@@ -24,6 +25,7 @@ const ResetPasswordModal = (props) => {
         popUpMsg('error', "Cấp lại mật khẩu thất bại");
     };
     const handleResetSuccess = () => {
+        resetPasswordForm.resetFields();
         resetActiveResetModal(0);
         setOpen(false);
         popUpMsg('success', "Cấp lại mật khẩu thành công");

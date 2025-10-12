@@ -21,11 +21,13 @@ const EditAccountModal = (props) => {
     const handleCancel = () => {
         setOpen(false);
         resetActiveEditModal();
+        editAccountForm.resetFields();
     }
     const handleEditFailure = () => {
         popUpMsg('error', "Cập nhật tài khoản thất bại");
     }
     const handleEditSuccess = () => {
+        editAccountForm.resetFields();
         setOpen(false);
         resetActiveEditModal();
         setRefreshUsers(prev=>!prev);
