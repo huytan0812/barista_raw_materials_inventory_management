@@ -2,6 +2,7 @@ package com.bar_raw_materials.services.user;
 
 import com.bar_raw_materials.dto.user.CreateUserDTO;
 import com.bar_raw_materials.dto.user.EditUserDTO;
+import com.bar_raw_materials.dto.user.PasswordDTO;
 import com.bar_raw_materials.entities.Role;
 import com.bar_raw_materials.entities.User;
 import com.bar_raw_materials.services.EntityService;
@@ -19,7 +20,11 @@ public interface UserService extends EntityService {
     List<Role> getAllRole();
     void addUser(CreateUserDTO createUserDTO);
     void updateUser(Integer userId, EditUserDTO editUserDTO);
+    void checkPassword(Integer userId, String password);
+    void changePassword(Integer userId, PasswordDTO passwordDTO);
     Boolean isDuplicatedUsername(String username);
     Boolean isDuplicatedPhoneNumber(String phoneNumber);
     Boolean isDuplicatedEmail(String email);
+    Boolean isMatchedHashPassword(String currentPassword, String inputPassword);
+    Boolean isMatchedConfirmPassword(String password, String confirmPassword);
 }

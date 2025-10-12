@@ -2,21 +2,20 @@ package com.bar_raw_materials.services.user;
 
 import com.bar_raw_materials.dto.user.CreateUserDTO;
 import com.bar_raw_materials.dto.user.EditUserDTO;
-import com.bar_raw_materials.dto.user.LightUserDTO;
+import com.bar_raw_materials.dto.user.PasswordDTO;
 import com.bar_raw_materials.entities.Role;
 import com.bar_raw_materials.entities.User;
 import com.bar_raw_materials.exceptions.user.*;
 import com.bar_raw_materials.repositories.UserRepository;
-import com.bar_raw_materials.utils.HashingUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
-import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.net.UnknownServiceException;
 import java.util.List;
 import java.util.Objects;
 
@@ -24,7 +23,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
-    private final HashingUtils hashingUtils;
+    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Override
     public List<User> getAll() {
@@ -51,7 +50,7 @@ public class UserServiceImpl implements UserService {
     public void addUser(CreateUserDTO createUserDTO) {
         String password = createUserDTO.getPassword();
         String confirmPassword = createUserDTO.getConfirmPassword();
-        if (!password.equals(confirmPassword)) {
+        if (!isMatchedConfirmPassword(password, confirmPassword)) {
             throw new ConfirmPasswordDifferentException("Mật khẩu nhắc lại không khớp");
         }
 
@@ -65,9 +64,8 @@ public class UserServiceImpl implements UserService {
         User user = new User();
         user.setRole(role);
         BeanUtils.copyProperties(createUserDTO, user);
-        String hashPassword = hashingUtils.hash(user.getPassword());
+        String hashPassword = passwordEncoder.encode(password);
         user.setPassword(hashPassword);
-        System.out.println("Gender: " + user.getGender());
         userRepository.save(user);
     }
 
@@ -101,6 +99,32 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void checkPassword(Integer userId, String password) {
+        User user = userRepository.findById(userId);
+        if (user == null) {
+            throw new UserNotFoundException("Không tìm thấy tài khoản");
+        }
+        if (!isMatchedHashPassword(user.getPassword(), password)) {
+            throw new PasswordDoesNotMatchException("Mật khẩu không khớp");
+        }
+    }
+
+    @Override
+    public void changePassword(Integer userId, PasswordDTO passwordDTO) {
+        User user = userRepository.findById(userId);
+        if (user == null) {
+            throw new UserNotFoundException("Không tìm thấy tài khoản");
+        }
+        String password = passwordDTO.getPassword();
+        String confirmPassword = passwordDTO.getConfirmPassword();
+        if (!isMatchedConfirmPassword(password, confirmPassword)) {
+            throw new ConfirmPasswordDifferentException("Mật khẩu nhắc lại không khớp");
+        }
+        user.setPassword(passwordEncoder.encode(password));
+        userRepository.save(user);
+    }
+
+    @Override
     public Boolean isDuplicatedUsername(String username) {
         return userRepository.findByUsername(username) != null;
     }
@@ -113,5 +137,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public Boolean isDuplicatedEmail(String email) {
         return userRepository.findByEmail(email) != null;
+    }
+
+    @Override
+    public Boolean isMatchedHashPassword(String currentPassword, String inputPassword) {
+        String hashCurrentPassword = passwordEncoder.encode(currentPassword);
+        String hashInputPassword = passwordEncoder.encode(inputPassword);
+        return hashCurrentPassword.equals(hashInputPassword);
+    }
+
+    @Override
+    public Boolean isMatchedConfirmPassword(String password, String confirmPassword) {
+        return confirmPassword.equals(password);
     }
 }

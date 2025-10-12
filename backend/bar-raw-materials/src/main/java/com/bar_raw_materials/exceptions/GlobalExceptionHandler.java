@@ -113,6 +113,11 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(PasswordDoesNotMatchException.class)
+    public ResponseEntity<String> handlePasswordDoesNotMatch(PasswordDoesNotMatchException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleGeneralException(Exception ex) {
         ex.printStackTrace();
