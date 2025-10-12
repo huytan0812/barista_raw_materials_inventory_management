@@ -51,7 +51,7 @@ const InventoryChart = ({chartHeight}) => {
         height: chartHeight,
         label: {
             text: (record) => {
-                return `${Math.round(record?.currentInventory/totalInventory*100)}%`
+                return `${Math.round(record?.currentInventory/totalInventory*10000)/100}%`
             },
             style: { fontSize: '1.2rem', textAlign: 'center' },
         },

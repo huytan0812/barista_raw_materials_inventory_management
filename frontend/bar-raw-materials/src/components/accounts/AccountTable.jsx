@@ -1,5 +1,7 @@
 import React, {useState, useEffect, useRef} from 'react'
-import {Table, Button, Modal, Flex} from 'antd'
+import {Table, Button, Flex, Tag} from 'antd'
+import EditAccountModal from './EditAccountModal'
+import ResetPasswordModal from './ResetPasswordModal'
 import { useAuthContext } from '../../contexts/AuthContext'
 import userHTTP from '../../services/UserService'
 
@@ -9,12 +11,22 @@ const AccountTable = (props) => {
         pageSize,
         setPageMetadata,
         refreshUsers,
-        setRefreshUsers
+        setRefreshUsers,
+        popUpMsg
     } = props;
     const {token} = useAuthContext();
     const persistToken = useRef(token);
     const [users, setUsers] = useState([]);
+    const [activeEditModal, setActiveEditModal] = useState(0);
+    const [activeResetModal, setActiveResetModal] = useState(0);
     
+    const handleEditClick = (userId) => {
+        setActiveEditModal(parseInt(userId));
+    };
+    const handleResetClick = (userId) => {
+        setActiveResetModal(parseInt(userId));
+    };
+
     useEffect(() => {
         const fetchUsers = async() => {
             try {
@@ -38,7 +50,7 @@ const AccountTable = (props) => {
             }
         }
         fetchUsers();
-    }, [currentPage, pageSize, refreshUsers])
+    }, [currentPage, pageSize, refreshUsers]);
 
     const columns = [
         {
@@ -85,24 +97,51 @@ const AccountTable = (props) => {
             align: "center"
         },
         {
+            title: "Trạng thái",
+            key: "status",
+            render: (_,record) => {
+                return record.isActive ? 
+                <Tag color="green">Đã kích hoạt</Tag> 
+                : 
+                <Tag color="red">Chưa kích hoạt</Tag> 
+            },
+            align: "center"
+        },
+        {
             title: "Hành động",
             key: "action",
             render: (record) => {
                 return (
-                  <Flex gap="1rem">
+                  <Flex gap="1rem" justify='center'>
                     <Button 
                         color="blue" 
                         variant="solid" 
-                        value={record.productId}
+                        value={record.id}
+                        onClick={() => handleEditClick(record.id)}
                     >
                         <span style={{fontSize: '1.4rem'}}>Sửa</span>
                     </Button>
-                    <Button 
-                        color="red" 
-                        variant="solid"
+                    <EditAccountModal
+                        isActive={record.id === activeEditModal}
+                        user={record}
+                        resetActiveEditModal={() => setActiveEditModal(0)}
+                        popUpMsg={popUpMsg}
+                        setRefreshUsers={setRefreshUsers}
+                    />
+                    <Button
+                        color="default"
+                        variant="outlined"
+                        onClick={() => handleResetClick(record.id)}
                     >
-                      <span value={record.productId} style={{fontSize: '1.4rem'}}>Xóa</span>
+                        <span style={{fontSize: '1.4rem'}}>Reset MK</span>
                     </Button>
+                    <ResetPasswordModal
+                        isActive={activeResetModal===record.id}
+                        username={record.username}
+                        userId={record.id}
+                        resetActiveResetModal={() => setActiveResetModal(0)}
+                        popUpMsg={popUpMsg}
+                    />
                   </Flex>
                 )
             },

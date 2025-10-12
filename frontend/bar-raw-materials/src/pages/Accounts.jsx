@@ -87,6 +87,7 @@ const Accounts = () => {
         setPageMetadata={setPageMetadata}
         refreshUsers={refreshUsers}
         setRefreshUsers={setRefreshUsers}
+        popUpMsg={popUpMsg}
       />
       <div style={{ textAlign: "right", marginTop: 16 }}>
         <Pagination
