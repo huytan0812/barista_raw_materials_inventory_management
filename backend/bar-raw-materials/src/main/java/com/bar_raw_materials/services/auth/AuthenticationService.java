@@ -40,6 +40,7 @@ public class AuthenticationService {
         claims.put("username", request.getUsername());
         String role = user.getRole().getRole();
         claims.put("role", role);
+        claims.put("tokenVersion", user.getTokenVersion());
 
         String jwtToken = jwtService.generateToken(claims, userDetails);
         String refreshToken = jwtService.generateRefreshToken(userDetails);

@@ -65,4 +65,8 @@ public class User {
     @JoinColumn(name = "roleId", nullable = false)
     private Role role;
 
+    @ColumnDefault("0")
+    @Column(name = "tokenVersion")
+    private Integer tokenVersion;
+
 }

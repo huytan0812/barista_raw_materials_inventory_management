@@ -1,10 +1,14 @@
 package com.bar_raw_materials.services.auth;
 
+import com.bar_raw_materials.entities.User;
+import com.bar_raw_materials.repositories.UserRepository;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -24,13 +28,26 @@ public class JwtService {
     @Value("${application.security.jwt.refresh-token.expiration}")
     private long refreshExpiration;
 
+    UserRepository userRepository;
+
+    @Autowired
+    public JwtService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
     public String extractUsername(String token) {
         // username is set as subject when build
         return extractClaim(token, Claims::getSubject);
     }
 
     public String extractRole(String token) {
-        return extractClaim(token, Claims::getSubject);
+        Claims claims = extractAllClaims(token);
+        return claims.get("role", String.class);
+    }
+
+    public Integer extractTokenVersion(String token) {
+        Claims claims = extractAllClaims(token);
+        return claims.get("tokenVersion", Integer.class);
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
@@ -70,9 +87,19 @@ public class JwtService {
                 .compact();
     }
 
+    public boolean isMatchTokenVersion(String token, User user) {
+        final Integer tokenVersion = extractTokenVersion(token);
+        System.out.println("Token version from jwt: " + tokenVersion);
+        System.out.println("Token version from user: " + user.getTokenVersion());
+        return tokenVersion.equals(user.getTokenVersion());
+    }
+
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
+        User user = userRepository.findByUsername(username);
+        return (username.equals(userDetails.getUsername()))
+                && isMatchTokenVersion(token, user)
+                && !isTokenExpired(token);
     }
 
     private boolean isTokenExpired(String token) {

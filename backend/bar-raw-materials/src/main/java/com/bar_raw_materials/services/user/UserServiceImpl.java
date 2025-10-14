@@ -121,6 +121,7 @@ public class UserServiceImpl implements UserService {
             throw new ConfirmPasswordDifferentException("Mật khẩu nhắc lại không khớp");
         }
         user.setPassword(passwordEncoder.encode(password));
+        user.setTokenVersion(user.getTokenVersion() + 1);
         userRepository.save(user);
     }
 

@@ -50,7 +50,6 @@ public class UserController extends BaseStaffController {
     @GetMapping("lightInfo")
     public ResponseEntity<User> getLightInfo() {
         User user = authUtils.getCurrentAuthorizedUser();
-        System.out.println(user.getId());
         return ResponseEntity.ok(user);
     }
 
