@@ -25,6 +25,5 @@ public interface UserService extends EntityService {
     Boolean isDuplicatedUsername(String username);
     Boolean isDuplicatedPhoneNumber(String phoneNumber);
     Boolean isDuplicatedEmail(String email);
-    Boolean isMatchedHashPassword(String currentPassword, String inputPassword);
     Boolean isMatchedConfirmPassword(String password, String confirmPassword);
 }

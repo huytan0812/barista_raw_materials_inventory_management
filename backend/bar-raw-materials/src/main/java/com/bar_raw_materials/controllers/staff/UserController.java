@@ -48,18 +48,10 @@ public class UserController extends BaseStaffController {
     }
 
     @GetMapping("lightInfo")
-    public ResponseEntity<LightUserDTO> getLightInfo() {
+    public ResponseEntity<User> getLightInfo() {
         User user = authUtils.getCurrentAuthorizedUser();
-        LightUserDTO lightUserDTO = new LightUserDTO();
-        lightUserDTO.setId(user.getId());
-        lightUserDTO.setUsername(user.getUsername());
-        lightUserDTO.setFirstName(user.getFirstName());
-        lightUserDTO.setLastName(user.getLastName());
-        lightUserDTO.setEmail(user.getEmail());
-        lightUserDTO.setPhoneNumber(user.getPhoneNumber());
-        lightUserDTO.setGender(user.getGender());
-        lightUserDTO.setRole(user.getRole().getRole());
-        return ResponseEntity.ok(lightUserDTO);
+        System.out.println(user.getId());
+        return ResponseEntity.ok(user);
     }
 
     @PostMapping("add")
@@ -82,29 +74,18 @@ public class UserController extends BaseStaffController {
     @PostMapping("checkPassword/{id}")
     public ResponseEntity<String> checkPassword(
             @PathVariable("id") Integer id,
-            @RequestBody String password
+            @RequestBody Map<String, String> password
     ) {
-        userService.checkPassword(id, password);
+        userService.checkPassword(id, password.get("password"));
         return ResponseEntity.ok("Password check successfully");
     }
 
-    // used for staff
-    @PostMapping("changePassword/{id}")
-    public ResponseEntity<String> changePassword(
-            @PathVariable("id") Integer id,
-            @Valid @RequestBody PasswordDTO passwordDTO
-    ) {
-        userService.changePassword(id, passwordDTO);
-        return ResponseEntity.ok("Đổi mật khẩu thành công");
-    }
-
-    // used for admin only
     @PostMapping("resetPassword/{id}")
     public ResponseEntity<String> resetPassword(
             @PathVariable("id") Integer id,
             @Valid @RequestBody PasswordDTO passwordDTO
     ) {
         userService.changePassword(id, passwordDTO);
-        return ResponseEntity.ok("Cấp lại mật khẩu thành công");
+        return ResponseEntity.ok("Đổi mật khẩu thành công");
     }
 }

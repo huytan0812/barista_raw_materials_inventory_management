@@ -104,7 +104,7 @@ public class UserServiceImpl implements UserService {
         if (user == null) {
             throw new UserNotFoundException("Không tìm thấy tài khoản");
         }
-        if (!isMatchedHashPassword(user.getPassword(), password)) {
+        if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new PasswordDoesNotMatchException("Mật khẩu không khớp");
         }
     }
@@ -137,13 +137,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public Boolean isDuplicatedEmail(String email) {
         return userRepository.findByEmail(email) != null;
-    }
-
-    @Override
-    public Boolean isMatchedHashPassword(String currentPassword, String inputPassword) {
-        String hashCurrentPassword = passwordEncoder.encode(currentPassword);
-        String hashInputPassword = passwordEncoder.encode(inputPassword);
-        return hashCurrentPassword.equals(hashInputPassword);
     }
 
     @Override
