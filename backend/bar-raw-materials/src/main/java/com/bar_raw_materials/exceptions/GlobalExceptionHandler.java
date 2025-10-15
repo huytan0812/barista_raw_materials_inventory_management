@@ -9,6 +9,8 @@ import com.bar_raw_materials.exceptions.product.ProductDoesNotExistException;
 import com.bar_raw_materials.exceptions.salesItem.SalesOrderItemDoesNotExistException;
 import com.bar_raw_materials.exceptions.salesOrder.SalesOrderDoesNotExistException;
 import com.bar_raw_materials.exceptions.user.*;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -116,6 +118,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(PasswordDoesNotMatchException.class)
     public ResponseEntity<String> handlePasswordDoesNotMatch(PasswordDoesNotMatchException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ExpiredJwtException.class)
+    public ResponseEntity<String> handleExpiredJwtException(ExpiredJwtException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(MalformedJwtException.class)
+    public ResponseEntity<String> handleMalformedJwtException(MalformedJwtException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(Exception.class)

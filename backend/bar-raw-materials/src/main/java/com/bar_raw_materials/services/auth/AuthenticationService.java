@@ -4,6 +4,8 @@ import com.bar_raw_materials.config.UserDetailsServiceImpl;
 import com.bar_raw_materials.dto.auth.AuthenticationResponse;
 import com.bar_raw_materials.entities.User;
 import com.bar_raw_materials.repositories.UserRepository;
+import com.bar_raw_materials.exceptions.user.PasswordDoesNotMatchException;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -32,7 +34,7 @@ public class AuthenticationService {
         }
         // check if password is match
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new UsernameNotFoundException("Mật khẩu sai");
+            throw new PasswordDoesNotMatchException("Mật khẩu sai");
         }
 
         UserDetails userDetails = new UserDetailsServiceImpl.UserDetailsImpl(user);
