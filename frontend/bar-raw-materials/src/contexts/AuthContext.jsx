@@ -1,7 +1,9 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 import axiosHTTP from '../services/AuthService.js';
 
 const AuthContext = createContext();
+
+let externalLogout = null;
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null);
@@ -28,6 +30,10 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
     }
+
+    useEffect(() => {
+        externalLogout = logout;
+    }, []);
 
     const verifyJWT = async() => {
         if (token) {
@@ -76,3 +82,6 @@ export const AuthProvider = ({ children }) => {
 export const useAuthContext = () => {
     return useContext(AuthContext);
 }
+
+// eslint-disable-next-line react-refresh/only-export-components
+export const getLogout = () => externalLogout;
