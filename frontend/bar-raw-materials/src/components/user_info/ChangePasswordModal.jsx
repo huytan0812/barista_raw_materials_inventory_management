@@ -1,5 +1,7 @@
 import React, {useState} from 'react'
 import {Form, Modal, Button} from 'antd'
+import { useNavigate } from 'react-router-dom'
+import { useMessageContext } from '../../contexts/MessageContext'
 import CheckPasswordForm from './CheckPasswordForm'
 import ChangePasswordForm from './ChangePasswordForm'
 
@@ -10,6 +12,8 @@ const ChangePasswordModal = (props) => {
         open,
         setOpen
     } = props;
+    const navigate = useNavigate();
+    const {setMessage} = useMessageContext();
     const [changePasswordForm] = Form.useForm();
     const [checkedPassword, setCheckedPassword] = useState(false);
 
@@ -29,6 +33,9 @@ const ChangePasswordModal = (props) => {
         setCheckedPassword(false);
         changePasswordForm.resetFields();
         popUpMsg('success', "Đổi mật khẩu thành công");
+        // update message in MessageContext
+        setMessage("Đổi mật khẩu thành công, vui lòng đăng nhập lại");
+        navigate('/login');
     };
     
     return (
