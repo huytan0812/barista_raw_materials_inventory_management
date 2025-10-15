@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Flex, Form, Input, Tag } from 'antd';
+import { Form, Button, Flex, Input, Tag } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../contexts/AuthContext.jsx';
 import { useMessageContext } from '../contexts/MessageContext.jsx';
@@ -8,20 +8,33 @@ const Login = () => {
   const { login } = useAuthContext();
   const { message } = useMessageContext();
   let navigate = useNavigate();
+  const [loginForm] = Form.useForm();
 
   const handleSubmit = async (fields) => {
     const username = fields.username;
     const password = fields.password;
 
-    await login(username, password);
-
-    // if login success, redirect to home page
-    navigate('/');
+    try {
+      await login(username, password);
+      // if login success, redirect to home page
+      navigate('/');
+    }
+    catch (error) {
+      const responseErr = error.response;
+      console.log(responseErr.data);
+      if (responseErr.data) {
+        loginForm.setFields([
+          {
+            name: 'password',
+            errors: [responseErr.data]
+          }
+        ]);
+      }
+    }
   }
 
   return (
     <React.Fragment>
-      <Tag color="green">{message}</Tag>
       <Flex 
         justify='center' 
         style={{
@@ -30,6 +43,7 @@ const Login = () => {
         }}
       >
         <Form
+          form={loginForm}
           name="basic"
           labelCol={{ span: 8 }}
           wrapperCol={{ span: 16 }}
@@ -42,10 +56,17 @@ const Login = () => {
           autoComplete="off"
           onFinish={ handleSubmit }
         >
+          {
+            message &&
+            <Tag color="green">{message}</Tag>
+          }
           <Form.Item
             label="Username"
             name="username"
             rules={[{ required: true, message: 'Nhập tên tài khoản' }]}
+            style={{
+              marginTop: '0.8rem'
+            }}
           >
               <Input />
           </Form.Item>

@@ -9,21 +9,16 @@ export const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
     const login = async(username, password) => {
-        try {
-            const response = await axiosHTTP.post('/login', {
-                username: username,
-                password: password,
-                expiresInMins: 30,
-            })
-            setUser(response.data);
-            setToken(response.data.accessToken);
-            localStorage.setItem('user', JSON.stringify(response.data));
-            localStorage.setItem('token', response.data.accessToken);
-            setIsAuthenticated(true);
-        }
-        catch (error) {
-            console.log(error);
-        }
+        const response = await axiosHTTP.post('/login', {
+            username: username,
+            password: password,
+            expiresInMins: 30,
+        })
+        setUser(response.data);
+        setToken(response.data.accessToken);
+        localStorage.setItem('user', JSON.stringify(response.data));
+        localStorage.setItem('token', response.data.accessToken);
+        setIsAuthenticated(true);
     }
 
     const logout = () => {
