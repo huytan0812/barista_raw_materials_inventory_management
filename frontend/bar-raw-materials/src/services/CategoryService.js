@@ -1,4 +1,5 @@
 import { default as axios } from 'axios';
+import {handleAuthError} from './AuthorizationErrorService'
 
 const axiosHTTP = axios.create(
     {
@@ -13,8 +14,12 @@ axiosHTTP.interceptors.request.use((config) => {
     return config;
 })
 
-axiosHTTP.interceptors.response.use((response) => {
-    return response;
-})
+axiosHTTP.interceptors.response.use(
+    (response) => response, 
+    (err) => {
+        return handleAuthError(err);
+    }
+)
+
 
 export default axiosHTTP;
