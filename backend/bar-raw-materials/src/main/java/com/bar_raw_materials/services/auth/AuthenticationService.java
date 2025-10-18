@@ -6,6 +6,7 @@ import com.bar_raw_materials.entities.User;
 import com.bar_raw_materials.repositories.UserRepository;
 import com.bar_raw_materials.exceptions.user.PasswordDoesNotMatchException;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -25,6 +26,7 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
 
+    @Transactional
     public AuthenticationResponse login(User request) {
         // get user by username if username is valid
         // check if username is valid
@@ -37,12 +39,17 @@ public class AuthenticationService {
             throw new PasswordDoesNotMatchException("Mật khẩu sai");
         }
 
+        // update token version after login successfully
+        Integer newTokenVersion = user.getTokenVersion() + 1;
+        user.setTokenVersion(newTokenVersion);
+        userRepository.save(user);
+
         UserDetails userDetails = new UserDetailsServiceImpl.UserDetailsImpl(user);
         HashMap<String, Object> claims = new HashMap<>();
         claims.put("username", request.getUsername());
         String role = user.getRole().getRole();
         claims.put("role", role);
-        claims.put("tokenVersion", user.getTokenVersion());
+        claims.put("tokenVersion", newTokenVersion);
 
         String jwtToken = jwtService.generateToken(claims, userDetails);
         String refreshToken = jwtService.generateRefreshToken(userDetails);
