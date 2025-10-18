@@ -89,8 +89,6 @@ public class JwtService {
 
     public boolean isMatchTokenVersion(String token, User user) {
         final Integer tokenVersion = extractTokenVersion(token);
-        System.out.println("Token version from jwt: " + tokenVersion);
-        System.out.println("Token version from user: " + user.getTokenVersion());
         return tokenVersion.equals(user.getTokenVersion());
     }
 

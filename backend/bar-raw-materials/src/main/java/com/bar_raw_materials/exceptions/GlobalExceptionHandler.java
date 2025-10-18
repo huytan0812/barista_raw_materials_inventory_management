@@ -11,6 +11,7 @@ import com.bar_raw_materials.exceptions.salesOrder.SalesOrderDoesNotExistExcepti
 import com.bar_raw_materials.exceptions.user.*;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -120,11 +121,19 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
+    // this exception is thrown from io.jsonwebtoken
+    @ExceptionHandler(SignatureException.class)
+    public ResponseEntity<String> handleSignatureException(SignatureException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.UNAUTHORIZED);
+    }
+
+    // this exception is thrown from io.jsonwebtoken
     @ExceptionHandler(ExpiredJwtException.class)
     public ResponseEntity<String> handleExpiredJwtException(ExpiredJwtException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.UNAUTHORIZED);
     }
 
+    // this exception is thrown from io.jsonwebtoken
     @ExceptionHandler(MalformedJwtException.class)
     public ResponseEntity<String> handleMalformedJwtException(MalformedJwtException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.UNAUTHORIZED);
