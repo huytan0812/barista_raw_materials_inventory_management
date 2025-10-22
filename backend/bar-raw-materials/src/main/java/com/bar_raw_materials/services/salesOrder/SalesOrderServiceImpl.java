@@ -52,7 +52,8 @@ public class SalesOrderServiceImpl implements SalesOrderService{
     @Override
     public Page<SalesOrderDTO> getPage(int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
-        return salesOrderRepository.findAllSalesOrderDTO(pageable);
+        BusinessPeriod businessPeriod = businessPeriodService.getCurrent();
+        return salesOrderRepository.findAllSalesOrderDTO(pageable, businessPeriod.getId());
     }
 
     @Override

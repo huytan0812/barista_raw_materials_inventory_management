@@ -13,13 +13,20 @@ import java.util.List;
 
 public interface ProductInventoryRepository extends JpaRepository<ProductInventory, Integer> {
     @Query(
+            value="SELECT p FROM ProductInventory p JOIN FETCH p.businessPeriod JOIN FETCH p.product" +
+                    " WHERE p.businessPeriod.id=:periodId"
+    )
+    List<ProductInventory> findAllByPeriod(Integer periodId);
+
+    @Query(
             value="SELECT new com.bar_raw_materials.dto.productInventory.ProductInventoryDTO(" +
                     "p.id, p.product.name AS productName, p.businessPeriod.label AS periodLabel" +
                     ", p.startingQuantity, p.startingInventory, p.importQuantity, p.importAmount" +
                     ", p.exportQuantity, p.revenue, p.cogs" +
-                    ") FROM ProductInventory p JOIN p.product JOIN p.businessPeriod"
+                    ") FROM ProductInventory p JOIN p.product JOIN p.businessPeriod" +
+                    " WHERE p.businessPeriod.id=:currentBusinessPeriodId"
     )
-    Page<ProductInventoryDTO> pagination(Pageable pageable);
+    Page<ProductInventoryDTO> pagination(Pageable pageable, Integer currentBusinessPeriodId);
 
     @Query(
             value="SELECT p FROM ProductInventory p" +

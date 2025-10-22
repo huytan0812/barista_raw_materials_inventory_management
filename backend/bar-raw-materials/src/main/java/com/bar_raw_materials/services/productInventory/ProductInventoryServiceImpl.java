@@ -32,7 +32,8 @@ public class ProductInventoryServiceImpl implements ProductInventoryService {
     @Override
     public Page<ProductInventoryDTO> getPage(int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("importAmount").descending());
-        return productInventoryRepository.pagination(pageable);
+        BusinessPeriod businessPeriod = businessPeriodRepository.getCurrent();
+        return productInventoryRepository.pagination(pageable, businessPeriod.getId());
     }
 
     @Override

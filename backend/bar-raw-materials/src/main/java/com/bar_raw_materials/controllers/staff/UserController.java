@@ -11,6 +11,7 @@ import com.bar_raw_materials.dto.user.LightUserDTO;
 import com.bar_raw_materials.utils.AuthUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -48,9 +49,12 @@ public class UserController extends BaseStaffController {
     }
 
     @GetMapping("lightInfo")
-    public ResponseEntity<User> getLightInfo() {
+    public ResponseEntity<LightUserDTO> getLightInfo() {
         User user = authUtils.getCurrentAuthorizedUser();
-        return ResponseEntity.ok(user);
+        LightUserDTO lightUserDTO = new LightUserDTO();
+        BeanUtils.copyProperties(user, lightUserDTO);
+        lightUserDTO.setRoleId(user.getRole().getId());
+        return ResponseEntity.ok(lightUserDTO);
     }
 
     @PostMapping("add")

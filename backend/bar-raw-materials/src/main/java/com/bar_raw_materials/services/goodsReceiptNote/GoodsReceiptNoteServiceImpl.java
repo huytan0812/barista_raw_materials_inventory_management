@@ -44,7 +44,8 @@ public class GoodsReceiptNoteServiceImpl implements GoodsReceiptNoteService {
     @Override
     public Page<GrnDTO> getPage(int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
-        return goodsReceiptNoteRepository.pagination(pageable);
+        BusinessPeriod businessPeriod = businessPeriodRepository.getCurrent();
+        return goodsReceiptNoteRepository.pagination(pageable, businessPeriod.getId());
     }
 
     @Override

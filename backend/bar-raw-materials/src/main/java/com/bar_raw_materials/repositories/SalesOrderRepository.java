@@ -23,9 +23,10 @@ public interface SalesOrderRepository extends JpaRepository<SalesOrder, Integer>
             value="SELECT new com.bar_raw_materials.dto.salesOrder.SalesOrderDTO(" +
                     "s.id, s.customer.name AS customerName, s.customer.phoneNumber AS customerPhoneNumber, " +
                     "s.createdBy.username AS createdByUser, s.dateCreated, s.totalAmount" +
-                    ") FROM SalesOrder s JOIN s.customer JOIN s.createdBy"
+                    ") FROM SalesOrder s JOIN s.customer JOIN s.createdBy" +
+                    " WHERE s.businessPeriod.id=:currentBusinessPeriodId"
     )
-    Page<SalesOrderDTO> findAllSalesOrderDTO(Pageable pageable);
+    Page<SalesOrderDTO> findAllSalesOrderDTO(Pageable pageable, Integer currentBusinessPeriodId);
 
     @Query(
             value="SELECT new com.bar_raw_materials.dto.salesOrder.SalesOrderDTO(" +

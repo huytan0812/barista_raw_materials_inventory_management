@@ -91,4 +91,23 @@ public class ProductInventory {
         this.outputVAT = BigDecimal.ZERO;
         this.inputVAT = BigDecimal.ZERO;
     }
+
+    public ProductInventory(
+            Product product,
+            BusinessPeriod businessPeriod,
+            Integer startingQuantity,
+            BigDecimal startingInventory
+    ) {
+        this.product = product;
+        this.businessPeriod = businessPeriod;
+        this.startingQuantity = startingQuantity;
+        this.startingInventory = startingInventory;
+        this.importQuantity = 0;
+        this.importAmount = BigDecimal.ZERO;
+        this.exportQuantity = 0;
+        this.cogs = BigDecimal.ZERO;
+        this.revenue = BigDecimal.ZERO;
+        this.outputVAT = BigDecimal.ZERO;
+        this.inputVAT = BigDecimal.ZERO;
+    }
 }

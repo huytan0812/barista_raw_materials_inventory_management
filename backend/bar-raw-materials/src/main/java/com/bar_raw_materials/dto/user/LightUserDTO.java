@@ -16,4 +16,6 @@ public class LightUserDTO {
     private String phoneNumber;
     private Boolean gender;
     private String role;
+    private Integer roleId;
+    private Boolean isActive;
 }

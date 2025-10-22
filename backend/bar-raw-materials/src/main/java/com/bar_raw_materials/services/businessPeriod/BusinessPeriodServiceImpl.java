@@ -13,10 +13,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.time.LocalDate;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.math.BigDecimal;
 
 @Service
 @RequiredArgsConstructor
@@ -48,8 +49,7 @@ public class BusinessPeriodServiceImpl implements BusinessPeriodService {
     }
 
     @Override
-    @Transactional
-    public void create() {
+    public BusinessPeriod createPeriod() {
         LocalDate today = LocalDate.now();
         int quarter = dateTimeUtils.getQuarter(today);
         int year = today.getYear();
@@ -66,8 +66,19 @@ public class BusinessPeriodServiceImpl implements BusinessPeriodService {
                 getEndDate,
                 label
         );
-        // save() will return void
-        businessPeriodRepository.save(businessPeriod);
+        return businessPeriodRepository.save(businessPeriod);
+    }
+
+    @Override
+    public List<ProductInventory> getAllCurrentPeriodProductINVs() {
+        BusinessPeriod businessPeriod = getCurrent();
+        return productInventoryRepository.findAllByPeriod(businessPeriod.getId());
+    }
+
+    @Override
+    @Transactional
+    public void createPeriodWithProductInventories() {
+       BusinessPeriod businessPeriod = createPeriod();
 
         List<Product> products = productRepository.findAllOrderByProductIdAsc();
         List<ProductInventory> productInventories = new ArrayList<>();
@@ -79,5 +90,35 @@ public class BusinessPeriodServiceImpl implements BusinessPeriodService {
         }
         // bulk update
         productInventoryRepository.saveAll(productInventories);
+    }
+
+    @Override
+    @Transactional
+    public void endOfPeriod() {
+        // get current period inventories
+        BusinessPeriod businessPeriod = getCurrent();
+        List<ProductInventory> productINVs = productInventoryRepository.findAllByPeriod(businessPeriod.getId());
+
+        // create new period
+        BusinessPeriod nextPeriod = createPeriod();
+        List<ProductInventory> nextPeriodINVs = new ArrayList<>();
+        for (ProductInventory productInv : productINVs) {
+            ProductInventory nextProductInv = getNextProductInv(productInv, nextPeriod);
+            nextPeriodINVs.add(nextProductInv);
+        }
+        productInventoryRepository.saveAll(nextPeriodINVs);
+    }
+
+    private static ProductInventory getNextProductInv(ProductInventory productInv, BusinessPeriod nextPeriod) {
+        Integer endingQuantity = productInv.getStartingQuantity() + productInv.getImportQuantity() - productInv.getExportQuantity();
+        BigDecimal endingInventory = productInv.getStartingInventory().
+                add(productInv.getImportAmount()).
+                subtract(productInv.getCogs());
+        return new ProductInventory(
+                productInv.getProduct(),
+                nextPeriod,
+                endingQuantity,
+                endingInventory
+        );
     }
 }

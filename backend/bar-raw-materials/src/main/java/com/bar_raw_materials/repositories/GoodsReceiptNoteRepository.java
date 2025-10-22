@@ -16,9 +16,10 @@ public interface GoodsReceiptNoteRepository extends JpaRepository<GoodsReceiptNo
                     "grn.id, grn.vendor.name AS vendorName, grn.dateCreate," +
                     " grn.createdBy.username AS createdByUser, grn.invoiceNumber, grn.invoiceDate" +
                     ", grn.isConfirmed" +
-                    ")" + " FROM GoodsReceiptNote grn JOIN grn.createdBy JOIN grn.vendor"
+                    ")" + " FROM GoodsReceiptNote grn JOIN grn.createdBy JOIN grn.vendor" +
+                    " WHERE grn.businessPeriod.id=:currentBusinessPeriodId"
     )
-    Page<GrnDTO> pagination(Pageable pageable);
+    Page<GrnDTO> pagination(Pageable pageable, Integer currentBusinessPeriodId);
 
     @Query(
             value="SELECT grn FROM GoodsReceiptNote grn JOIN FETCH grn.businessPeriod" +
