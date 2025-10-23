@@ -16,9 +16,18 @@ const Sales = () => {
   const [filterDateForm] = Form.useForm();
   const [dates, setDates] = useState([dayjs(), dayjs()]);
   const [statsCard, setStatsCard] = useState({});
+  const [resetFilter, setResetFilter] = useState(false);
 
   const onDatesChange = (values) => {
-    setDates(values);
+    if (!values) {
+      // when clear button is triggered
+      filterDateForm.setFieldsValue({
+        dateRange:[dayjs(), dayjs()]
+      });
+      // reset to today
+      setDates([dayjs(), dayjs()]);
+      setResetFilter(prev=>!prev);
+    }
   }
 
   useEffect(() => {
@@ -33,7 +42,6 @@ const Sales = () => {
           }
         });
         if (response.status === 200) {
-          console.log(response.data);
           setStatsCard(response.data);
         }
       }
@@ -42,20 +50,20 @@ const Sales = () => {
       }
     }
     initFilter();
-  }, [])
+  }, [resetFilter]);
 
   const handleFilterDate = (values) => {
     const filterDate = async() => {
       try {
-        values.startDate = dates?.[0].format("YYYY-MM-DD");
-        values.endDate = dates?.[1].format("YYYY-MM-DD");
+        values.startDate = values?.dateRange?.[0].format("YYYY-MM-DD");
+        values.endDate = values?.dateRange?.[1].format("YYYY-MM-DD");
         const response = await salesItemHTTP.post('filterRevenue', values, {
           headers: {
             Authorization: `Bearer ${token}`
           }
         });
         if (response.status === 200) {
-          console.log(response.data);
+          setDates(values.dateRange);
           setStatsCard({...response.data});
         }
       }
@@ -82,6 +90,7 @@ const Sales = () => {
               rules={[
                 { required: true, message: "Vui lòng chọn ngày bắt đầu và ngày kết thúc" },
               ]}
+              initialValue={dates}
             >
               <RangePicker
                 format={dateFormat}
@@ -91,6 +100,7 @@ const Sales = () => {
                 separator={<ArrowRightOutlined style={{ fontSize: "1.4rem" }} />}
                 suffixIcon={<CalendarOutlined style={{ fontSize: "1.4rem" }} />}
                 onChange={onDatesChange}
+                allowClear={true}
               />
             </Form.Item>
             <Form.Item

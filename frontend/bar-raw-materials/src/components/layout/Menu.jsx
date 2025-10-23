@@ -15,8 +15,6 @@ import { useAuthContext } from '../../contexts/AuthContext';
 const ImsMenu = () => {
     const {user} = useAuthContext();
 
-    console.log("User role:", user.role);
-
     const items = [
         {
             key: 'dashboard',

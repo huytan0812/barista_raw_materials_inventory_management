@@ -98,7 +98,7 @@ const EditUserForm = (props) => {
             'lastName': user?.lastName,
             'email': user?.email,
             'phoneNumber': user?.phoneNumber,
-            'roleId': user?.role.id,
+            'roleId': user?.roleId,
             'gender': user?.gender ? 1 : 0,
             'isActive': user?.isActive
         });

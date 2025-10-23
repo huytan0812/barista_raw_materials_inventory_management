@@ -32,7 +32,7 @@ const InventoryTable = ({
         const { content: _, ...rest } = response.data;
         setPageMetadata(rest);
       } catch (error) {
-        console.error("Failed to fetch inventory:", error);
+        console.error(error);
       } finally {
         setLoading(false);
       }
