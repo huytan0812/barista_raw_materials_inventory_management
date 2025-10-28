@@ -63,12 +63,21 @@ const ImsMenu = () => {
         },
         {
             key: 'Import',
-            label: (
-                <NavLink to="/import">
-                    <BankOutlined />
-                    <span className={"menu-item"}>Nhập kho</span>
-                </NavLink>
-            ),
+            label: "Nhập kho",
+            icon: <BankOutlined />,
+            children: [ 
+                { key: 'grn', 
+                label: (
+                    <NavLink to="/import">
+                        <span className={"menu-item"}>Phiếu nhập kho</span>
+                    </NavLink>
+                ) },
+                { key: 'batch', label: (
+                    <NavLink to="/import/batches">
+                        <span className={"menu-item"}>Lô hàng</span>
+                    </NavLink>
+                ) }
+            ],
         },
         {
             key: 'Export',
@@ -109,7 +118,12 @@ const ImsMenu = () => {
     ];
 
     return (
-        <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items} />
+        <Menu 
+            theme="dark" 
+            defaultSelectedKeys={['1']}
+            mode="inline"
+            items={items} 
+        />
     )
 }
 

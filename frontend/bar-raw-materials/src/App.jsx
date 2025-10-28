@@ -12,6 +12,7 @@ import Product from './pages/Product'
 import Vendor from './pages/Vendor'
 import MainImportPage from './pages/MainImportPage.jsx'
 import Import from './pages/import/Import.jsx'
+import Batches from './pages/import/Batches.jsx'
 import AddGrn from './pages/import/AddGrn.jsx'
 import AddGrnItems from './pages/import/AddGrnItems.jsx'
 import VerifiedGrn from './pages/import/VerifiedGrn.jsx'
@@ -49,6 +50,7 @@ function App() {
         <Route path='/vendor' element={<Vendor /> } />
         <Route path='/import' element={<MainImportPage /> }>
           <Route index element={<Import />} />
+          <Route path='/import/batches' element={<Batches />} />
           <Route path='/import/add_grn' element={<AddGrn />} />
           <Route path='/import/add_grn/:grnId/add_grn_item' element={<AddGrnItems />} />
           <Route path='/import/grn/:grnId' element={<VerifiedGrn />} />

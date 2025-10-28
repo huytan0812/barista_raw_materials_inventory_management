@@ -74,14 +74,25 @@ const ImsHeader = () => {
         }}>
             <div>
                 <p>
-                    <strong style={{fontSize: '2.4rem'}}>
+                    <strong 
+                        style={{
+                            fontSize: '2.4rem',
+                        }}
+                    >
                         Bar Raw Materials Inventory Management
                     </strong>
                 </p>
             </div>
             <div>
                 <p>
-                    {businessPeriod ? <Tag color="geekblue">{businessPeriod.label}</Tag> : 'Đang tải kỳ kinh doanh...'}
+                    {
+                    businessPeriod ? 
+                    <Tag color="geekblue">
+                        <NavLink to='/inventory'>
+                            {businessPeriod.label}
+                        </NavLink>
+                    </Tag> 
+                    : 'Đang tải kỳ kinh doanh...'}
                 </p>
             </div>
             <Flex
