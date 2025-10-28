@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("${apiStaff}/batch")
-public class BatchController extends BaseStaffController{
+public class BatchController extends BaseStaffController {
     BatchService batchService;
 
     @Autowired

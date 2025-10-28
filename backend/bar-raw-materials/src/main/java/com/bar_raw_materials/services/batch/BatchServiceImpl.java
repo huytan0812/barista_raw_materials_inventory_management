@@ -5,8 +5,13 @@ import com.bar_raw_materials.dto.goodsReceiptItem.CreateGrnItemDTO;
 import com.bar_raw_materials.entities.Batch;
 import com.bar_raw_materials.entities.Product;
 import com.bar_raw_materials.repositories.BatchRepository;
+import com.bar_raw_materials.dto.batch.BatchDTO;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,8 +32,9 @@ public class BatchServiceImpl implements BatchService {
     }
 
     @Override
-    public Page<?> getPage(int page, int size) {
-        return null;
+    public Page<BatchDTO> getPage(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
+        return batchRepository.pagination(pageable);
     }
 
     @Override

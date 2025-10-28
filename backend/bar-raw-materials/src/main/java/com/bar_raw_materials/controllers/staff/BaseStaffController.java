@@ -16,7 +16,7 @@ public class BaseStaffController {
     public BaseStaffController(EntityService entityService) {
         this.entityService = entityService;
     }
-    
+
     public BaseStaffController() {}
 
     @GetMapping("all")
