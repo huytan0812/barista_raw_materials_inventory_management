@@ -166,13 +166,13 @@ const Product = () => {
         indicator={<LoadingOutlined spin />}
       >
         <ProductTable 
-        currentPage={currentPage} 
-        pageSize={pageSize} 
-        refresh={refresh} 
-        setPageMetadata={setPageMetadata}
-        searchText={searchText}
-        categoryText={categoryFilter}
-        setLoadingTable={setLoadingTable}
+          currentPage={currentPage} 
+          pageSize={pageSize} 
+          refresh={refresh} 
+          setPageMetadata={setPageMetadata}
+          searchText={searchText}
+          categoryText={categoryFilter}
+          setLoadingTable={setLoadingTable}
         />
       </Spin>
       <div style={{ textAlign: "right", marginTop: 16 }}>
