@@ -38,4 +38,8 @@ public class Batch {
     @Column(name = "lotNumber", nullable = false, length = 50)
     private String lotNumber;
 
+    @ColumnDefault("(0)")
+    @Column(name = "isDisposed")
+    private Boolean isDisposed;
+
 }

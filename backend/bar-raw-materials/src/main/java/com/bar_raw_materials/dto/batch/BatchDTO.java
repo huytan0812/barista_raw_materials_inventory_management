@@ -14,6 +14,7 @@ public class BatchDTO {
     private Integer id;
     private String lotNumber;
     private String productName;
+    private Integer expiryWarningThreshold;
     private LocalDate mfgDate;
     private LocalDate expDate;
     private BigDecimal quantityRemain;
@@ -23,6 +24,7 @@ public class BatchDTO {
             Integer id,
             String lotNumber,
             String productName,
+            Integer expiryWarningThreshold,
             Date mfgDate,
             Date expDate,
             BigDecimal quantityRemain,
@@ -31,6 +33,7 @@ public class BatchDTO {
        this.id = id;
        this.lotNumber = lotNumber;
        this.productName = productName;
+       this.expiryWarningThreshold = expiryWarningThreshold;
        this.mfgDate = mfgDate.toLocalDate();
        this.expDate = expDate.toLocalDate();
        this.quantityRemain = quantityRemain;

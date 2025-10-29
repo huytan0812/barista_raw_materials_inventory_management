@@ -31,15 +31,85 @@ public interface BatchRepository extends JpaRepository<Batch, Integer> {
     List<LightBatchDTO> getAllLightBatchDTO();
 
     @Query(
-            value="SELECT b.id, b.lotNumber, p.name AS productName, b.mfgDate, b.expDate, agg.quantityRemain, agg.currentValue FROM batch b " +
+            value="SELECT b.id, b.lotNumber, p.name AS productName, p.expiryWarningThreshold AS expiryWarningThreshold, " +
+                    "b.mfgDate, b.expDate, agg.quantityRemain, agg.currentValue FROM batch b " +
                     "JOIN (" +
                     "SELECT grnItem.batchId AS batchId, grnItem.productId AS productId, " +
                     "SUM(grnItem.quantityRemain) AS quantityRemain, SUM(grnItem.quantityRemain*grnItem.unitCost) AS currentValue " +
                     "FROM goods_receipt_item grnItem GROUP BY batchId, productId" +
                     ") AS agg ON b.id = agg.batchId " +
                     "JOIN product p ON agg.productId = p.id " +
-                    "ORDER BY quantityRemain DESC"
+                    "ORDER BY agg.quantityRemain DESC"
             , nativeQuery=true
     )
     Page<BatchDTO> pagination(Pageable pageable);
+
+    @Query(
+            value="SELECT b.id, b.lotNumber, p.name AS productName, p.expiryWarningThreshold AS expiryWarningThreshold, " +
+                    "b.mfgDate, b.expDate, agg.quantityRemain, agg.currentValue FROM batch b " +
+                    "JOIN (" +
+                    "SELECT grnItem.batchId AS batchId, grnItem.productId AS productId, " +
+                    "SUM(grnItem.quantityRemain) AS quantityRemain, SUM(grnItem.quantityRemain*grnItem.unitCost) AS currentValue " +
+                    "FROM goods_receipt_item grnItem GROUP BY batchId, productId" +
+                    ") AS agg ON b.id = agg.batchId " +
+                    "JOIN product p ON agg.productId = p.id " +
+                    "WHERE p.name LIKE %:productName%"
+            , nativeQuery=true
+    )
+    Page<BatchDTO> findByProductName(Pageable pageable, String productName);
+
+    @Query(
+            value="SELECT b.id, b.lotNumber, p.name AS productName, p.expiryWarningThreshold AS expiryWarningThreshold, " +
+                    "b.mfgDate, b.expDate, agg.quantityRemain, agg.currentValue FROM batch b " +
+                    "JOIN (" +
+                    "SELECT grnItem.batchId AS batchId, grnItem.productId AS productId, " +
+                    "SUM(grnItem.quantityRemain) AS quantityRemain, SUM(grnItem.quantityRemain*grnItem.unitCost) AS currentValue " +
+                    "FROM goods_receipt_item grnItem GROUP BY batchId, productId" +
+                    ") AS agg ON b.id = agg.batchId " +
+                    "JOIN product p ON agg.productId = p.id"
+            , nativeQuery=true
+    )
+    Page<BatchDTO> sortByQuantityRemain(Pageable pageable);
+
+    @Query(
+            value="SELECT b.id, b.lotNumber, p.name AS productName, p.expiryWarningThreshold AS expiryWarningThreshold, " +
+                    "b.mfgDate, b.expDate, agg.quantityRemain, agg.currentValue FROM batch b " +
+                    "JOIN (" +
+                    "SELECT grnItem.batchId AS batchId, grnItem.productId AS productId, " +
+                    "SUM(grnItem.quantityRemain) AS quantityRemain, SUM(grnItem.quantityRemain*grnItem.unitCost) AS currentValue " +
+                    "FROM goods_receipt_item grnItem GROUP BY batchId, productId" +
+                    ") AS agg ON b.id = agg.batchId " +
+                    "JOIN product p ON agg.productId = p.id " +
+                    "WHERE b.expDate < CURDATE()"
+            , nativeQuery=true
+    )
+    Page<BatchDTO> findExpiredBatch(Pageable pageable);
+
+    @Query(
+            value="SELECT b.id, b.lotNumber, p.name AS productName, p.expiryWarningThreshold AS expiryWarningThreshold, " +
+                    "b.mfgDate, b.expDate, agg.quantityRemain, agg.currentValue FROM batch b " +
+                    "JOIN (" +
+                    "SELECT grnItem.batchId AS batchId, grnItem.productId AS productId, " +
+                    "SUM(grnItem.quantityRemain) AS quantityRemain, SUM(grnItem.quantityRemain*grnItem.unitCost) AS currentValue " +
+                    "FROM goods_receipt_item grnItem GROUP BY batchId, productId" +
+                    ") AS agg ON b.id = agg.batchId " +
+                    "JOIN product p ON agg.productId = p.id " +
+                    "WHERE DATE_ADD(CURDATE(), INTERVAL p.expiryWarningThreshold DAY) > b.expDate AND b.expDate > CURDATE()"
+            , nativeQuery=true
+    )
+    Page<BatchDTO> findAboutToExpireBatch(Pageable pageable);
+
+    @Query(
+            value="SELECT b.id, b.lotNumber, p.name AS productName, p.expiryWarningThreshold AS expiryWarningThreshold, " +
+                    "b.mfgDate, b.expDate, agg.quantityRemain, agg.currentValue FROM batch b " +
+                    "JOIN (" +
+                    "SELECT grnItem.batchId AS batchId, grnItem.productId AS productId, " +
+                    "SUM(grnItem.quantityRemain) AS quantityRemain, SUM(grnItem.quantityRemain*grnItem.unitCost) AS currentValue " +
+                    "FROM goods_receipt_item grnItem GROUP BY batchId, productId" +
+                    ") AS agg ON b.id = agg.batchId " +
+                    "JOIN product p ON agg.productId = p.id " +
+                    "WHERE DATE_ADD(CURDATE(), INTERVAL p.expiryWarningThreshold DAY) < b.expDate"
+            , nativeQuery=true
+    )
+    Page<BatchDTO> findValidBatch(Pageable pageable);
 }

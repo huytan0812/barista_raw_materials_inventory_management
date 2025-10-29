@@ -33,7 +33,7 @@ public class BatchServiceImpl implements BatchService {
 
     @Override
     public Page<BatchDTO> getPage(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by("expDate").ascending());
         return batchRepository.pagination(pageable);
     }
 
@@ -61,5 +61,41 @@ public class BatchServiceImpl implements BatchService {
         newBatch.setExpDate(grnItemDTO.getExpDate());
         batchRepository.save(newBatch);
         return newBatch;
+    }
+
+    @Override
+    public Page<BatchDTO> searchAndSort(String productName, String sort, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("quantityRemain").descending());
+        if (sort.equals("asc")) pageable = PageRequest.of(page, size, Sort.by("quantityRemain").ascending());
+        return batchRepository.findByProductName(pageable, productName);
+    }
+
+    @Override
+    public Page<BatchDTO> searchByProductName(
+            String productName,
+            int page,
+            int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("expDate").ascending());
+        return batchRepository.findByProductName(pageable, productName);
+    }
+
+    @Override
+    public Page<BatchDTO> sortByQuantityRemain(String sort, int page, int size) {
+        // sort by quantity remain DESC by default
+        Pageable pageable = PageRequest.of(page, size, Sort.by("quantityRemain").descending());
+        if (sort.equals("asc")) pageable = PageRequest.of(page, size, Sort.by("quantityRemain").ascending());
+        return batchRepository.sortByQuantityRemain(pageable);
+    }
+
+    @Override
+    public Page<BatchDTO> filterByExpDate(String filter, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("expDate").ascending());
+        return switch (filter) {
+            case "expired" -> batchRepository.findExpiredBatch(pageable);
+            case "aboutToExpire" -> batchRepository.findAboutToExpireBatch(pageable);
+            case "valid" -> batchRepository.findValidBatch(pageable);
+            default -> batchRepository.pagination(pageable);
+        };
     }
 }

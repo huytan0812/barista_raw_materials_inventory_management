@@ -56,7 +56,6 @@ public class ProductController extends BaseStaffController {
             responseData = productService.searchByProductName(search, page, size);
         }
         else {
-            System.out.println("Filter");
             responseData = productService.filterByCategory(filter, page, size);
         }
 
