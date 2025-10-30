@@ -28,7 +28,7 @@ const BaseSalesItemForm = (props) => {
     const {token} = useAuthContext();
     const persistToken = useRef(token); 
 
-    // states for fetching a list of produc, selected product and selected GrnItem
+    // states for fetching a list of product, selected product and selected GrnItem
     const [products, setProducts] = useState([]);
     // once chosen, never change
     const [selectedProduct, setSelectedProduct] = useState(null);

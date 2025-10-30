@@ -108,7 +108,7 @@ const SalesOrderDetails = () => {
                                 </NavLink>)
                     },
                     {
-                        title: `Chi tiết phiếu xuất kho có mã só ${salesOrderId}` 
+                        title: `Chi tiết phiếu xuất kho có mã số ${salesOrderId}` 
                     }
                     ]
                 }
@@ -153,7 +153,14 @@ const SalesOrderDetails = () => {
                         pageSize={PAGE_SIZE}
                         setPageMetadata={setPageMetadata}
                     />
-                    <div style={{ textAlign: "right", marginTop: 16 }}>
+                    <div 
+                        style={{
+                            display: 'flex',
+                            justifyContent: 'space-between', 
+                            textAlign: "right", 
+                            marginTop: 16 
+                        }}
+                    >
                         <Pagination
                             current={currentPage}
                             pageSize={PAGE_SIZE}
@@ -161,9 +168,23 @@ const SalesOrderDetails = () => {
                             onChange={(page) => setCurrentPage(page)}
                             showTotal={(total) => `Hiện đang có ${total} phiếu xuất kho`}
                         />
+                        <p>
+                            Tổng số tiền khách hàng phải thanh toán: <span> </span>
+                            <strong
+                                style={{
+                                    fontSize: '1.4rem'
+                                }}
+                            >
+                                {
+                                    new Intl.NumberFormat(
+                                        'vn-VN', { style: 'currency', currency: 'VND' }
+                                    ).format(salesOrder?.totalAmount)
+                                }
+                            </strong>
+                        </p>
                     </div>
                 </Card>
-              <Row>
+              {/* <Row>
                 <Col
                   style={{ textAlign: 'right' }}
                 >
@@ -174,7 +195,7 @@ const SalesOrderDetails = () => {
                       }
                     </p>
                 </Col>
-              </Row>
+              </Row> */}
             </Card>
         </React.Fragment>
     )
