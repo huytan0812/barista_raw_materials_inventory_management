@@ -51,6 +51,16 @@ public class DailyReportServiceImpl implements DailyReportService {
 
     @Override
     @Transactional
+    public DailyReport generateOrUpdate() {
+        DailyReport dailyReport = dailyReportRepository.getCurrentDailyReport();
+        if (dailyReport == null || !isExistingDailyReportToday(dailyReport)) {
+            return generateDailyReport();
+        }
+        return updateDailyReport(dailyReport);
+    }
+
+    @Override
+    @Transactional
     public DailyReport generateDailyReport() {
         DailyReport dailyReport = new DailyReport();
         User createdBy = authUtils.getCurrentAuthorizedUser();
@@ -112,5 +122,63 @@ public class DailyReportServiceImpl implements DailyReportService {
         }
         pdrRepository.saveAll(productDailyReports);
         return dailyReport;
+    }
+
+    @Override
+    @Transactional
+    public DailyReport updateDailyReport(DailyReport dailyReport) {
+        LocalDate reportDate = LocalDate.now();
+        Instant startOfDay = reportDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
+        Instant endOfDay = reportDate.plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant();
+        List<ProductDailyReport> productDailyReports = pdrRepository.findAllByDailyReportId(dailyReport.getId());
+
+        for (ProductDailyReport pdr : productDailyReports) {
+            Integer totalImportQuantity = 0;
+            BigDecimal totalImportAmount = BigDecimal.ZERO;
+            // get all grn items
+            List<GoodsReceiptItem> grnItems = grnItemRepository.findAllByDateAndProductId(
+                    startOfDay, endOfDay, pdr.getProduct().getId()
+            );
+            for (GoodsReceiptItem grnItem : grnItems) {
+                totalImportQuantity += grnItem.getQuantityImport();
+                totalImportAmount = totalImportAmount.add(
+                        BigDecimal.valueOf(grnItem.getQuantityImport())
+                                .multiply(grnItem.getUnitCost())
+                );
+            }
+            pdr.setImportQuantity(totalImportQuantity);
+            pdr.setImportAmount(totalImportAmount);
+
+            Integer totalQuantityExport = 0;
+            BigDecimal totalCogs = BigDecimal.ZERO;
+            BigDecimal totalRevenue = BigDecimal.ZERO;
+            // get all sales items
+            List<SalesOrderItem> salesItems = salesItemRepository.findAllByDateAndProductId(
+                    startOfDay, endOfDay, pdr.getProduct().getId()
+            );
+            for (SalesOrderItem salesItem : salesItems) {
+                totalQuantityExport += salesItem.getQuantitySold();
+                BigDecimal quantityExport = new BigDecimal(salesItem.getQuantitySold());
+                BigDecimal discount = BigDecimal.valueOf(1 - salesItem.getDiscount());
+                totalCogs = totalCogs.add(salesItem.getCogs());
+                totalRevenue = totalRevenue.add(
+                        quantityExport
+                                .multiply(salesItem.getUnitPrice())
+                                .multiply(discount)
+                );
+            }
+            pdr.setExportQuantity(totalQuantityExport);
+            pdr.setCogs(totalCogs);
+            pdr.setRevenue(totalRevenue);
+            productDailyReports.add(pdr);
+        }
+        pdrRepository.saveAll(productDailyReports);
+        return dailyReport;
+    }
+
+    @Override
+    public boolean isExistingDailyReportToday(DailyReport dailyReport) {
+        LocalDate reportDate = dailyReport.getReportDate();
+        return reportDate.isEqual(LocalDate.now());
     }
 }

@@ -16,4 +16,9 @@ public interface DailyReportRepository extends JpaRepository<DailyReport, Intege
             value="SELECT d FROM DailyReport d JOIN FETCH d.createdBy"
     )
     Page<DailyReport> getPage(Pageable pageable);
+
+    @Query(
+            value="SELECT d FROM DailyReport d ORDER BY d.id DESC limit 1"
+    )
+    DailyReport getCurrentDailyReport();
 }

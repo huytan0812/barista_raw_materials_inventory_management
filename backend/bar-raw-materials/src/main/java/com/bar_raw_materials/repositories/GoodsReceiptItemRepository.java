@@ -49,7 +49,8 @@ public interface GoodsReceiptItemRepository extends JpaRepository<GoodsReceiptIt
                     "grnItem.id, grnItem.batch.lotNumber AS lotNumber, grnItem.product.id AS productId," +
                     " grnItem.quantityRemain, grnItem.unitCost, grnItem.batch.expDate AS expDate" +
                     ") FROM GoodsReceiptItem grnItem JOIN grnItem.product JOIN grnItem.batch" +
-                    " WHERE grnItem.product.id=:productId AND grnItem.quantityRemain > 0"
+                    " WHERE grnItem.product.id=:productId AND grnItem.quantityRemain > 0" +
+                    " AND grnItem.batch.expDate >= CURRENT_DATE"
     )
     public List<GrnItemForExportingDTO> findGrnItemForExportingByProductId(Integer productId);
 
