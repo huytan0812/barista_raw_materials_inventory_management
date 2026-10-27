@@ -15,7 +15,7 @@ import com.bar_raw_materials.services.goodsReceiptItem.GoodsReceiptItemService;
 import com.bar_raw_materials.services.salesOrderItem.SalesOrderItemService;
 import com.bar_raw_materials.repositories.SalesOrderItemRepository;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;

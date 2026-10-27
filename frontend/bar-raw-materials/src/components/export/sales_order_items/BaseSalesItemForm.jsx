@@ -4,6 +4,7 @@ import {useAuthContext} from '../../../contexts/AuthContext'
 import productHTTP from '../../../services/ProductService'
 import grnItemHTTP from '../../../services/GoodsReceiptItemService'
 import exportItemHTTP from '../../../services/ExportItemService'
+import {getErrorMessage, isConflictError} from '../../../services/apiErrors'
 import EditExpItemModal from '../exp_items/EditExpItemModal'
 
 const {Option} = Select
@@ -178,7 +179,9 @@ const BaseSalesItemForm = (props) => {
       catch (error) {
         const responseErr = error.response;
         console.log(responseErr);
-        popUpMsg('error', responseErr?.data);
+        popUpMsg('error', getErrorMessage(error));
+        // stock was changed by another request: reload lots so quantity remain is current
+        if (isConflictError(error)) setRefreshGrnItems(prev=>!prev);
       }
     };
     // edit
@@ -213,8 +216,11 @@ const BaseSalesItemForm = (props) => {
           }
         }
         catch (error) {
-          const responseErr = error.response;
-          popUpMsg('error', responseErr?.data);
+          popUpMsg('error', getErrorMessage(error));
+          if (isConflictError(error)) {
+            setRefreshGrnItems(prev=>!prev);
+            fetchExportItems();
+          }
         }
       }
       deleteExpItem();

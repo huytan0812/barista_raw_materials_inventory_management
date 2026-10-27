@@ -13,6 +13,7 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -59,6 +60,15 @@ public class GlobalExceptionHandler {
         Map<String, String> errors = new HashMap<>();
         errors.put("exceedQuantityRemain", ex.getMessage());
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    }
+
+    // thrown on commit when another request updated the same stock row (@Version mismatch);
+    // the whole transaction has been rolled back, so the client can reload and retry
+    @ExceptionHandler(OptimisticLockingFailureException.class)
+    public ResponseEntity<Map<String, String>> handleOptimisticLockingFailure(OptimisticLockingFailureException ex) {
+        Map<String, String> errors = new HashMap<>();
+        errors.put("concurrentUpdate", "Dữ liệu tồn kho vừa được cập nhật bởi một thao tác khác. Vui lòng tải lại và thử lại.");
+        return new ResponseEntity<>(errors, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(GoodsReceiptItemDoesNotExistException.class)

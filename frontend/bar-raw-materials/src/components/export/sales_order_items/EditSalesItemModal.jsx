@@ -3,6 +3,7 @@ import {Modal, Button, Form} from 'antd'
 import EditSalesItemForm from './EditSalesItemForm'
 import { useAuthContext } from '../../../contexts/AuthContext'
 import expItemHTTP from '../../../services/ExportItemService'
+import {getErrorMessage, isConflictError} from '../../../services/apiErrors'
 
 const EditSalesItemModal = (props) => {
     const {
@@ -43,7 +44,9 @@ const EditSalesItemModal = (props) => {
             }
             catch (error) {
                 console.log(error);
-                popUpMsg("error", "Hủy chỉnh sửa đơn hàng bán thất bại")
+                popUpMsg("error", isConflictError(error)
+                    ? getErrorMessage(error)
+                    : "Hủy chỉnh sửa đơn hàng bán thất bại")
             }
         }
         if (cancelExpItemIds.length > 0) cancelNewExpItems();

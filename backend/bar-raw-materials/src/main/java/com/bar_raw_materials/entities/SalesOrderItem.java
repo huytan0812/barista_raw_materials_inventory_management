@@ -55,4 +55,10 @@ public class SalesOrderItem {
     @Lob
     @Column(name = "note", nullable = false)
     private String note;
+
+    // optimistic locking: concurrent updates of quantitySold/cogs fail instead of overwriting each other
+    @Version
+    @ColumnDefault("0")
+    @Column(name = "version", nullable = false)
+    private Long version;
 }

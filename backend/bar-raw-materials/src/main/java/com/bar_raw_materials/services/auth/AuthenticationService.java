@@ -6,7 +6,7 @@ import com.bar_raw_materials.entities.User;
 import com.bar_raw_materials.repositories.UserRepository;
 import com.bar_raw_materials.exceptions.user.PasswordDoesNotMatchException;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

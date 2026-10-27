@@ -16,7 +16,7 @@ import com.bar_raw_materials.repositories.GoodsReceiptItemRepository;
 import com.bar_raw_materials.repositories.ProductInventoryRepository;
 import com.bar_raw_materials.entities.ProductInventory;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
