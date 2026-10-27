@@ -4,6 +4,7 @@ import { useAuthContext } from '../contexts/AuthContext';
 import userHTTP from '../services/UserService'
 import EditUserModal from '../components/user_info/EditUserModal'
 import ChangePasswordModal from '../components/user_info/ChangePasswordModal';
+import { API_URL } from '../services/apiConfig';
 
 const UserDetails = () => {
     const {token} = useAuthContext();
@@ -107,7 +108,7 @@ const UserDetails = () => {
                     <Col span={6}>
                         <Avatar
                             size={100}
-                            src={`http://localhost:8080/api/image/default_avatar.png`}
+                            src={`${API_URL}/image/default_avatar.png`}
                             style={{ border: "2px solid #f0f0f0" }}
                         />
                     </Col>

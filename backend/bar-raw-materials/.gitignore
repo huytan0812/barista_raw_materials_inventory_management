@@ -31,3 +31,11 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Local environment (secrets) ###
+.env
+.env.*
+!.env.example
+
+### Uploaded images (default IMAGE_PATH) ###
+/images/

@@ -8,6 +8,11 @@
     {
       "name": "image.path",
       "type": "java.lang.String",
-      "description": "Description for image.path."
+      "description": "Directory where uploaded images are stored and served from /api/image/** (env: IMAGE_PATH)."
+    },
+    {
+      "name": "app.cors.allowed-origins",
+      "type": "java.lang.String[]",
+      "description": "Comma-separated origins allowed by CORS (env: CORS_ALLOWED_ORIGINS)."
     }
   ] }

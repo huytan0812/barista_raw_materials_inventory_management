@@ -1,9 +1,10 @@
 import {default as axios} from 'axios'
 import {handleAuthError} from './AuthorizationErrorService'
+import { API_URL } from './apiConfig';
 
 const axiosHTTP = axios.create(
     {
-        baseURL: 'http://localhost:8080/api/staff/grn',
+        baseURL: `${API_URL}/staff/grn`,
         headers: {
             'Content-Type': 'application/json'
         }

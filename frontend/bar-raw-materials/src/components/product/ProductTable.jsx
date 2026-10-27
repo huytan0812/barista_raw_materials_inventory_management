@@ -5,6 +5,7 @@ import { useAuthContext } from '../../contexts/AuthContext';
 import EditProductModal from './EditProductModal';
 import DeleteProductModal from './DeleteProductModal'
 import axiosHTTP from '../../services/ProductService'
+import { API_URL } from '../../services/apiConfig';
 
 const ProductTable = (props) => {
     const {
@@ -89,13 +90,13 @@ const ProductTable = (props) => {
             render: (imageName) => {
                 return (
                     <Image 
-                        src={`http://localhost:8080/api/image/product/${imageName}`}
+                        src={`${API_URL}/image/product/${imageName}`}
                         width={150}
                         height={150}
                         preview={{
                             mask: <span>Xem ảnh</span>
                         }}
-                        fallback="http://localhost:8080/api/image/default.png"
+                        fallback={`${API_URL}/image/default.png`}
                     />
                 )
             }

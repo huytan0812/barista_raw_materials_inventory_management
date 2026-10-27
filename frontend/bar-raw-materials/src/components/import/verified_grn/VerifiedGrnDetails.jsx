@@ -2,6 +2,7 @@ import React, {useState, useEffect, useRef} from 'react'
 import {Row, Col, Descriptions, Card, Image, Button, message} from 'antd'
 import { useAuthContext } from '../../../contexts/AuthContext'
 import grnHTTP from '../../../services/GoodsReceiptNoteService'
+import { API_URL } from '../../../services/apiConfig';
 
 const dateOptions = {
     day: "2-digit",
@@ -127,7 +128,7 @@ const VerifiedGrnDetails = (props) => {
                                         borderRadius: "8px",
                                     }}
                                 align="center"
-                                src={`http://localhost:8080/api/image/vendor/${grn?.invoiceImage}`}
+                                src={`${API_URL}/image/vendor/${grn?.invoiceImage}`}
                                 alt="Invoice"
                             />
                         </React.Fragment>

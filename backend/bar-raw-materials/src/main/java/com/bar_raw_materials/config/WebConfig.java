@@ -8,6 +8,8 @@ import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import java.nio.file.Paths;
+
 import static org.springframework.data.web.config.EnableSpringDataWebSupport.PageSerializationMode.VIA_DTO;
 
 @Configuration
@@ -17,11 +19,17 @@ public class WebConfig implements WebMvcConfigurer {
     @Value("${image.path}")
     String imagePath;
 
+    @Value("${app.cors.allowed-origins}")
+    String[] allowedOrigins;
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/api/image/**").addResourceLocations(
-                "file:/" + imagePath
-        );
+        // resolve relative paths against the working directory; the location must end with "/"
+        String imageLocation = Paths.get(imagePath).toAbsolutePath().normalize().toUri().toString();
+        if (!imageLocation.endsWith("/")) {
+            imageLocation += "/";
+        }
+        registry.addResourceHandler("/api/image/**").addResourceLocations(imageLocation);
     }
 
     @Override
@@ -37,7 +45,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:5173")
+                .allowedOrigins(allowedOrigins)
                 .allowedHeaders("*")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
     }

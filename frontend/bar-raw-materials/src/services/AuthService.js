@@ -1,8 +1,9 @@
 import { default as axios } from 'axios';
 import { getLogout } from '../contexts/AuthContext';
+import { API_URL } from './apiConfig';
 
 const axiosHTTP = axios.create({
-    baseURL: "http://localhost:8080/api/auth",
+    baseURL: `${API_URL}/auth`,
     headers: {
         'Content-Type': 'application/json'
     }
