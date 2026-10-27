@@ -83,7 +83,9 @@ public class ExportEntityServiceImpl implements ExportItemService{
 
         // subtract quantity remain in GrnItem and update
         grnItem.setQuantityRemain(grnItem.getQuantityRemain() - createExportItemDTO.getQuantityTake());
-        grnItemRepository.save(grnItem);
+        // flush the versioned updates before inserting the ExportItemDetail: a concurrent request then
+        // fails its optimistic lock check here instead of deadlocking on the insert's foreign-key locks
+        grnItemRepository.saveAndFlush(grnItem);
 
         ExportItemDetail exportItemDetail = new ExportItemDetail();
         exportItemDetail.setGrnItem(grnItem);
