@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,6 +31,7 @@ public class ProductInventoryController extends BaseStaffController{
     }
 
     @GetMapping("allProductVAT")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Page<VatDTO>> allProductVAT(
             @Nullable @RequestParam(defaultValue = "0", name="page") Integer page,
             @Nullable @RequestParam(defaultValue = "5", name="size") Integer size
@@ -39,6 +41,7 @@ public class ProductInventoryController extends BaseStaffController{
     }
 
     @GetMapping("vatOverall")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<VATOverallDTO> getVatOverall() {
         VATOverallDTO responseData = productInventoryService.getVatOverall();
         return ResponseEntity.ok(responseData);

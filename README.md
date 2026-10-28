@@ -17,7 +17,7 @@ Raw materials are bought repeatedly at different prices and expire at different 
 - **Sales orders (export)**: for each sales line, staff choose the lots to take stock from; quantity sold and COGS are updated per lot. Concurrent edits of the same lot are rejected instead of overselling (see *Design decisions*).
 - **Reporting**: dashboard (revenue, statistics), daily reports per product (import, export, COGS, revenue), inventory per business period, input/output VAT.
 - **PDF export** of goods receipt notes and sales orders.
-- **Accounts**: JWT login, user management with `admin` / `staff` roles.
+- **Accounts**: JWT login, user management with `admin` / `staff` roles enforced on the API.
 
 ## Tech stack
 
@@ -48,6 +48,18 @@ backend/bar-raw-materials    Spring Boot REST API
 2. The SPA stores the token and sends `Authorization: Bearer <token>` on every request.
 3. `JwtAuthenticationFilter` validates the signature, expiry and `tokenVersion` (a new login or a password change invalidates older tokens), then puts the user in the security context.
 4. Everything except `/api/auth/**` and `/api/image/**` requires authentication. A 401 response makes the SPA log out.
+
+**Authorization (roles)**
+
+The user's role (`admin` or `staff`, loaded from the database on every request) becomes `ROLE_ADMIN` / `ROLE_STAFF`, checked with `@PreAuthorize`:
+
+| Who | Endpoints |
+| --- | --- |
+| Admin only | account list/create (`/user/all`, `/user/list`, `/user/add`), goods receipt approval (`/grn/confirm/{id}`), VAT reports (`/productInventory/allProductVAT`, `/vatOverall`), business period `add` / `endPeriod` |
+| Admin or the account owner | `/user/details/{id}`, `/user/update/{id}`, `/user/checkPassword/{id}`, `/user/resetPassword/{id}`; staff cannot change their own role or active status |
+| Any authenticated user | everything else (catalogue, imports, sales, reports) |
+
+A refused request returns `403` with `{"accessDenied": "..."}`. In the SPA, the `/accounts` and `/vat` pages are wrapped in `AdminRoute`, and a 403 shows an error message. Password hashes are never serialized in API responses.
 
 ## Data model
 
@@ -197,7 +209,8 @@ npm run dev                     # http://localhost:5173
 
 ## Known limitations
 
-- **Authorization is not enforced on the backend.** Any authenticated user can call every `/api/staff/**` endpoint, including user management, password resets for other users and goods receipt approval. Admin-only features are hidden in the UI only, and the `permission` / `role_permission` tables are not used yet.
+- Authorization is role-based only; the `permission` / `role_permission` tables exist but are not used yet.
+- Changing your own password does not require the current password on the server; the UI asks for it in a separate `checkPassword` call.
 - The JWT is stored in `localStorage`, so it is readable by any script running on the page (XSS exposure). The refresh token is issued but there is no refresh endpoint, so users log in again after the access token expires.
 - No automatic FIFO/FEFO lot suggestion; lots are always chosen manually.
 - The database schema and seed data are not versioned in the repository (Liquibase is present but disabled).

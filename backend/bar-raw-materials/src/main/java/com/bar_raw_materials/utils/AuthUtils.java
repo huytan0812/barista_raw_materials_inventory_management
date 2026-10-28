@@ -17,4 +17,10 @@ public class AuthUtils {
         String username = auth.getName();
         return userRepository.findByUsername(username);
     }
+
+    public boolean isCurrentUserAdmin() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return auth != null && auth.getAuthorities().stream()
+                .anyMatch(authority -> "ROLE_ADMIN".equals(authority.getAuthority()));
+    }
 }

@@ -16,6 +16,7 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -69,6 +70,14 @@ public class GlobalExceptionHandler {
         Map<String, String> errors = new HashMap<>();
         errors.put("concurrentUpdate", "Dữ liệu tồn kho vừa được cập nhật bởi một thao tác khác. Vui lòng tải lại và thử lại.");
         return new ResponseEntity<>(errors, HttpStatus.CONFLICT);
+    }
+
+    // thrown by @PreAuthorize checks; without this handler the generic handler below would answer 400
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<Map<String, String>> handleAccessDenied(AccessDeniedException ex) {
+        Map<String, String> errors = new HashMap<>();
+        errors.put("accessDenied", "Bạn không có quyền thực hiện thao tác này");
+        return new ResponseEntity<>(errors, HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(GoodsReceiptItemDoesNotExistException.class)
