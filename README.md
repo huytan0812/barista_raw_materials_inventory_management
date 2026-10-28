@@ -173,7 +173,7 @@ CREATE USER 'bar_app'@'%' IDENTIFIED BY 'change-me';
 GRANT ALL PRIVILEGES ON bar_materials_db.* TO 'bar_app'@'%';
 ```
 
-**Schema.** Tables are managed manually: Liquibase is disabled and Hibernate does not create tables by default, and the repository does not ship a schema dump yet (see *Known limitations*). For a fresh local database you can let Hibernate create the tables from the entities on the first run by adding `SPRING_JPA_HIBERNATE_DDL_AUTO=update` to `.env`, then removing it again. For an existing database created before optimistic locking was introduced, run [`docs/sql/add-version-columns.sql`](docs/sql/add-version-columns.sql) once.
+**Schema.** Tables are managed manually: Liquibase is disabled and Hibernate does not create tables by default, and the repository does not ship a schema dump yet (see *Known limitations*). For a fresh local database you can let Hibernate create the tables from the entities on the first run by adding `SPRING_JPA_HIBERNATE_DDL_AUTO=update` to `.env`, then removing it again. SQL migrations live in [`backend/bar-raw-materials/src/main/resources/db/migration`](backend/bar-raw-materials/src/main/resources/db/migration) and are applied manually, in version order. For an existing database created before optimistic locking was introduced, run [`V1__add_version_columns.sql`](backend/bar-raw-materials/src/main/resources/db/migration/V1__add_version_columns.sql) once.
 
 **First admin account.** There is no sign-up endpoint. Insert the two roles and a first user with a BCrypt password hash, for example one generated with `htpasswd -bnBC 10 "" 'your-password' | tr -d ':\n'`:
 
