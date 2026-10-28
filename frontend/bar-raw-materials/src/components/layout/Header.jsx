@@ -5,6 +5,7 @@ import { UserOutlined, SettingFilled, LogoutOutlined } from '@ant-design/icons'
 import { Avatar, Divider, Flex, Dropdown, Tag } from 'antd'
 import { useAuthContext } from '../../contexts/AuthContext.jsx'
 import { useNavigate, NavLink } from 'react-router-dom'
+import { API_URL } from '../../services/apiConfig';
 
 const ImsHeader = () => {
     const navigate = useNavigate();
@@ -16,7 +17,7 @@ const ImsHeader = () => {
     // side effect for fetching current business period
     useEffect(() => {
         const getBusinessPeriod = async() => {
-            const response = await fetch('http://localhost:8080/api/staff/businessPeriod/current', {
+            const response = await fetch(`${API_URL}/staff/businessPeriod/current`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',

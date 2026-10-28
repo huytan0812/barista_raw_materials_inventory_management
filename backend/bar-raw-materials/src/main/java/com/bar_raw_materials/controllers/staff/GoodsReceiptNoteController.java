@@ -10,6 +10,7 @@ import com.bar_raw_materials.services.exportFile.GrnPDFService;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -145,6 +146,7 @@ public class GoodsReceiptNoteController extends BaseStaffController{
     }
 
     @GetMapping("confirm/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> confirm(
             @PathVariable("id") Integer id
     ) {

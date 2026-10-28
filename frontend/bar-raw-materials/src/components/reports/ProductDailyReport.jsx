@@ -97,7 +97,8 @@ const ProductDailyReport = (props) => {
             dataIndex: "revenue",
             key: "revenue",
             align: "right",
-            titleAlign: "center"
+            titleAlign: "center",
+            render: (value) => new Intl.NumberFormat('vn-VN', { style: 'currency', currency: 'VND' }).format(value)
         },
         ];
     return (

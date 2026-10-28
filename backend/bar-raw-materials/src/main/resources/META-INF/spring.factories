@@ -1,0 +1,4 @@
+org.springframework.boot.env.EnvironmentPostProcessor=\
+com.bar_raw_materials.config.RequiredConfigurationValidator
+org.springframework.boot.diagnostics.FailureAnalyzer=\
+com.bar_raw_materials.config.MissingConfigurationFailureAnalyzer

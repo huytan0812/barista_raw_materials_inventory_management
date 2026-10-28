@@ -4,6 +4,7 @@ import {useAuthContext} from '../../../contexts/AuthContext'
 import productHTTP from '../../../services/ProductService'
 import grnItemHTTP from '../../../services/GoodsReceiptItemService'
 import exportItemHTTP from '../../../services/ExportItemService'
+import {getErrorMessage, isConflictError} from '../../../services/apiErrors'
 import EditExpItemModal from '../exp_items/EditExpItemModal'
 
 const {Option} = Select
@@ -28,7 +29,7 @@ const BaseSalesItemForm = (props) => {
     const {token} = useAuthContext();
     const persistToken = useRef(token); 
 
-    // states for fetching a list of produc, selected product and selected GrnItem
+    // states for fetching a list of product, selected product and selected GrnItem
     const [products, setProducts] = useState([]);
     // once chosen, never change
     const [selectedProduct, setSelectedProduct] = useState(null);
@@ -178,7 +179,9 @@ const BaseSalesItemForm = (props) => {
       catch (error) {
         const responseErr = error.response;
         console.log(responseErr);
-        popUpMsg('error', responseErr?.data);
+        popUpMsg('error', getErrorMessage(error));
+        // stock was changed by another request: reload lots so quantity remain is current
+        if (isConflictError(error)) setRefreshGrnItems(prev=>!prev);
       }
     };
     // edit
@@ -213,8 +216,11 @@ const BaseSalesItemForm = (props) => {
           }
         }
         catch (error) {
-          const responseErr = error.response;
-          popUpMsg('error', responseErr?.data);
+          popUpMsg('error', getErrorMessage(error));
+          if (isConflictError(error)) {
+            setRefreshGrnItems(prev=>!prev);
+            fetchExportItems();
+          }
         }
       }
       deleteExpItem();

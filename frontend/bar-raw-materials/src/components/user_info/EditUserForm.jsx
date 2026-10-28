@@ -13,8 +13,10 @@ const EditUserForm = (props) => {
         onEditFailure,
         onEditSuccess
     } = props;
-    const {token} = useAuthContext();
+    const {token, user: currentUser} = useAuthContext();
     const persistToken = useRef(token);
+    // only an admin may change roles or account status (enforced by the backend as well)
+    const canEditRoleAndStatus = currentUser?.role === 'admin';
     const [roles, setRoles] = useState([]);
     const [gender, setGender] = useState(1);
 
@@ -167,7 +169,7 @@ const EditUserForm = (props) => {
                 name="roleId"
                 rules={[{required: true, message: 'Vai trò không được để trống'}]}
             >
-                <Select placeholder="Chọn vai trò">
+                <Select placeholder="Chọn vai trò" disabled={!canEditRoleAndStatus}>
                     {roles.map(role => (
                     <Option key={role.id} value={role.id}>{role.role}</Option>
                     ))}
@@ -179,7 +181,7 @@ const EditUserForm = (props) => {
                 name="isActive"
                 rules={[{required: true, message: 'Trạng thái không được để trống'}]}
             >
-                <Radio.Group onChange={onChange} value={gender}>
+                <Radio.Group onChange={onChange} value={gender} disabled={!canEditRoleAndStatus}>
                     <Radio value={true}>Kích hoạt</Radio>
                     <Radio value={false}>Hủy kích hoạt</Radio>
                 </Radio.Group>

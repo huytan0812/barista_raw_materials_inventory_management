@@ -2,6 +2,7 @@ import React, {useEffect} from 'react'
 import {Form, Input, Select, DatePicker, Upload, Button} from 'antd'
 import { UploadOutlined } from '@ant-design/icons';
 import dayjs from "dayjs"
+import { API_URL } from '../../../services/apiConfig';
 
 const {Option} = Select;
 
@@ -30,7 +31,7 @@ const BaseGrnForm = (props) => {
                         uid: String(grn?.id),
                         name: grn?.invoiceImage,
                         status: "done",
-                        url: `http://localhost:8080/api/image/vendor/${grn?.invoiceImage}`,
+                        url: `${API_URL}/image/vendor/${grn?.invoiceImage}`,
                     },
                 ] : null
             })

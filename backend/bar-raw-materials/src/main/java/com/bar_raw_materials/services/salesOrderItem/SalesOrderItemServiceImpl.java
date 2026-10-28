@@ -15,7 +15,7 @@ import com.bar_raw_materials.exceptions.salesOrder.SalesOrderDoesNotExistExcepti
 import com.bar_raw_materials.repositories.ExportItemDetailRepository;
 import com.bar_raw_materials.repositories.ProductRepository;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.annotation.Bean;

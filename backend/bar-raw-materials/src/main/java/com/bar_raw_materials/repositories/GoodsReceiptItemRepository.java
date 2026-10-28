@@ -64,8 +64,10 @@ public interface GoodsReceiptItemRepository extends JpaRepository<GoodsReceiptIt
     public void deleteByGrnId(int grnId);
 
     // used for returning quantityTake back from ExportItemDetails
+    // bumps version so concurrent JPA updates of the same row fail their optimistic lock check
     @Query(
-            value="UPDATE goods_receipt_item SET quantityRemain = quantityRemain + :quantityTake" +
+            value="UPDATE goods_receipt_item SET quantityRemain = quantityRemain + :quantityTake," +
+                    " version = version + 1" +
                     " WHERE goods_receipt_item.id=:grnItemId"
             , nativeQuery=true
     )

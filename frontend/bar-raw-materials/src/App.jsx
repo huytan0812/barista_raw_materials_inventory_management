@@ -2,6 +2,7 @@ import {useEffect} from 'react'
 import { Route, Routes } from 'react-router-dom'
 import './App.css'
 import ProtectedRoute from './components/ProtectedRoute'
+import AdminRoute from './components/AdminRoute'
 
 import MainLayout from './layouts/MainLayout'
 import Category from './pages/Category'
@@ -62,13 +63,13 @@ function App() {
           <Route path='/export/salesOrder/:salesOrderId' element={<SalesOrderDetails />} />
         </Route>
         <Route path='/customer' element={<Customer /> } />
-        <Route path='/accounts' element={<Accounts /> } />
+        <Route path='/accounts' element={<AdminRoute><Accounts /></AdminRoute>} />
         <Route path='/reports' element={<MainReportPage />} >
           <Route index element={<Report /> } />
           <Route path='/reports/:reportId' element={<ReportDetails />} />
         </Route>
         <Route path='/userDetails' element={<UserDetails />} />
-        <Route path='/vat' element={<VAT />} />
+        <Route path='/vat' element={<AdminRoute><VAT /></AdminRoute>} />
       </Route>
     </Routes>
   )

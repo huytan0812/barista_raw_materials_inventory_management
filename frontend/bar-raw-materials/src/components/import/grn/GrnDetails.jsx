@@ -4,6 +4,7 @@ import { useAuthContext } from '../../../contexts/AuthContext'
 import BaseGrnForm from './BaseGrnForm'
 import vendorHTTP from '../../../services/VendorService'
 import grnHTTP from '../../../services/GoodsReceiptNoteService'
+import { API_URL } from '../../../services/apiConfig';
 
 const dateOptions = {
     day: "2-digit",
@@ -193,7 +194,7 @@ const GrnDetails = (props) => {
                                         borderRadius: "8px",
                                     }}
                                 align="center"
-                                src={`http://localhost:8080/api/image/vendor/${grn?.invoiceImage}`}
+                                src={`${API_URL}/image/vendor/${grn?.invoiceImage}`}
                                 alt="Invoice"
                             />
                         </React.Fragment>

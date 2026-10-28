@@ -2,6 +2,7 @@ import React, {useEffect, useState, useRef} from 'react'
 import {Form, Input, Select, InputNumber, Upload} from 'antd'
 import { UploadOutlined } from '@ant-design/icons';
 import {useAuthContext} from '../../contexts/AuthContext'
+import { API_URL } from '../../services/apiConfig';
 
 const normFile = e => {
   if (Array.isArray(e)) {
@@ -37,7 +38,7 @@ const AddProductForm = (props) => {
 
         formData.append('data', new Blob([JSON.stringify(data)], { type: 'application/json' }));
 
-        const response = await fetch("http://localhost:8080/api/staff/product/add",
+        const response = await fetch(`${API_URL}/staff/product/add`,
           {
             method: 'POST',
             headers: {
@@ -75,7 +76,7 @@ const AddProductForm = (props) => {
     const fetchUnits = async() => {
       try {
         const response = await fetch(
-          'http://localhost:8080/api/staff/baseUnit/list',
+          `${API_URL}/staff/baseUnit/list`,
           {
             method: 'GET',
             'headers': {
@@ -98,7 +99,7 @@ const AddProductForm = (props) => {
   useEffect(() => {
     const fetchCategories = async() => {
       try {
-        const response = await fetch("http://localhost:8080/api/staff/category/list", {
+        const response = await fetch(`${API_URL}/staff/category/list`, {
           method: 'GET',
           'headers': {
             'Content-Type': "application/json",

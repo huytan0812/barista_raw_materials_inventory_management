@@ -3,6 +3,7 @@ import {Form, Input, Select, InputNumber, Upload} from 'antd'
 import { UploadOutlined } from '@ant-design/icons';
 import {useAuthContext} from '../../contexts/AuthContext'
 import axiosHTTP from '../../services/ProductService'
+import { API_URL } from '../../services/apiConfig';
 
 // Form hook use normFile for image field
 // as the resource of truth
@@ -56,7 +57,7 @@ const EditProductForm = (props) => {
 
         formData.append('data', new Blob([JSON.stringify(data)], { type: 'application/json' }));
 
-        const response = await fetch(`http://localhost:8080/api/staff/product/update/${productId}`,
+        const response = await fetch(`${API_URL}/staff/product/update/${productId}`,
           {
             method: 'POST',
             headers: {
@@ -109,7 +110,7 @@ const EditProductForm = (props) => {
             uid: String(product.id),
             name: product.imageName,
             status: "done",
-            url: `http://localhost:8080/api/image/product/${product.imageName}`,
+            url: `${API_URL}/image/product/${product.imageName}`,
           },
         ] : null,
         'listPrice': product.listPrice
@@ -123,7 +124,7 @@ const EditProductForm = (props) => {
     const fetchUnits = async() => {
       try {
         const response = await fetch(
-          'http://localhost:8080/api/staff/baseUnit/list',
+          `${API_URL}/staff/baseUnit/list`,
           {
             method: 'GET',
             'headers': {
@@ -146,7 +147,7 @@ const EditProductForm = (props) => {
   useEffect(() => {
     const fetchCategories = async() => {
       try {
-        const response = await fetch("http://localhost:8080/api/staff/category/list", {
+        const response = await fetch(`${API_URL}/staff/category/list`, {
           method: 'GET',
           'headers': {
             'Content-Type': "application/json",

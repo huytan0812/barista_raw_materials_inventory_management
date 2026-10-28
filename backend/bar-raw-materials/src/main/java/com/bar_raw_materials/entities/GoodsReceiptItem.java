@@ -57,4 +57,10 @@ public class GoodsReceiptItem {
     @JoinColumn(name = "batchId", nullable = false)
     private Batch batch;
 
+    // optimistic locking: concurrent updates of quantityRemain fail instead of overwriting each other
+    @Version
+    @ColumnDefault("0")
+    @Column(name = "version", nullable = false)
+    private Long version;
+
 }

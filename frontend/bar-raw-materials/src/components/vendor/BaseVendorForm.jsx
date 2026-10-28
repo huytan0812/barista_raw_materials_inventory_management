@@ -3,6 +3,7 @@ import {Form, Input, Select, Upload} from 'antd'
 import { UploadOutlined } from '@ant-design/icons';
 import {useAuthContext} from '../../contexts/AuthContext'
 import vendorHTTP from '../../services/VendorService'
+import { API_URL } from '../../services/apiConfig';
 
 const businessLicenseNormFile = e => {
   if (Array.isArray(e)) {
@@ -53,7 +54,7 @@ const BaseVendorForm = (props) => {
                   uid: String(vendor?.id),
                   name: vendor?.businessLicenseImgName,
                   status: "done",
-                  url: `http://localhost:8080/api/image/vendor/${vendor?.businessLicenseImgName}`,
+                  url: `${API_URL}/image/vendor/${vendor?.businessLicenseImgName}`,
                 },
               ] : null,
               'foodSafetyCertImage': vendor?.foodSafetyCertImgName ? [
@@ -61,7 +62,7 @@ const BaseVendorForm = (props) => {
                   uid: String(vendor?.id),
                   name: vendor?.foodSafetyCertImgName,
                   status: "done",
-                  url: `http://localhost:8080/api/image/vendor/${vendor?.foodSafetyCertImgName}`,
+                  url: `${API_URL}/image/vendor/${vendor?.foodSafetyCertImgName}`,
                 },
               ] : null
             })

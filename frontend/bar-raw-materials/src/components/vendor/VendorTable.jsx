@@ -5,6 +5,7 @@ import { useAuthContext } from '../../contexts/AuthContext';
 import EditVendorModal from './EditVendorModal'
 import DeleteVendorModal from './DeleteVendorModal'
 import vendorHTTP from '../../services/VendorService'
+import { API_URL } from '../../services/apiConfig';
 
 const VendorTable = (props) => {
   const {
@@ -92,13 +93,13 @@ const VendorTable = (props) => {
         render: (businessLicenseImgName) => {
             return (
               <Image 
-                src={`http://localhost:8080/api/image/vendor/${businessLicenseImgName}`}
+                src={`${API_URL}/image/vendor/${businessLicenseImgName}`}
                 width={150}
                 height={150}
                 preview={{
                     mask: <span>Xem ảnh</span>
                 }}
-                fallback="http://localhost:8080/api/image/default.png"
+                fallback={`${API_URL}/image/default.png`}
               />
             )
         }
@@ -110,13 +111,13 @@ const VendorTable = (props) => {
         render: (foodSafetyCertImgName) => {
             return (
               <Image 
-                src={`http://localhost:8080/api/image/vendor/${foodSafetyCertImgName}`}
+                src={`${API_URL}/image/vendor/${foodSafetyCertImgName}`}
                 width={150}
                 height={150}
                 preview={{
                     mask: <span>Xem ảnh</span>
                 }}
-                fallback="http://localhost:8080/api/image/default.png"
+                fallback={`${API_URL}/image/default.png`}
               />
             )
         }

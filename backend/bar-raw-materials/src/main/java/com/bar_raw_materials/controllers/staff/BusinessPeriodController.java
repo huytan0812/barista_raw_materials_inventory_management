@@ -6,6 +6,7 @@ import com.bar_raw_materials.services.businessPeriod.BusinessPeriodService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,12 +36,14 @@ public class BusinessPeriodController extends BaseStaffController {
     }
 
     @PostMapping("add")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> add() {
         businessPeriodService.createPeriodWithProductInventories();
         return new ResponseEntity<>("Successfully added", HttpStatus.CREATED);
     }
 
     @GetMapping("endPeriod")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<ProductInventory>> endPeriod() {
         businessPeriodService.endOfPeriod();
         List<ProductInventory> productINVs = businessPeriodService.getAllCurrentPeriodProductINVs();

@@ -1,5 +1,6 @@
 package com.bar_raw_materials.entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -23,6 +24,8 @@ public class User {
     @Column(name = "username", nullable = false, length = 50)
     private String username;
 
+    // accepted in requests (login) but never serialized, so the BCrypt hash does not leak in API responses
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Size(max = 255)
     @NotNull
     @Column(name = "password", nullable = false)

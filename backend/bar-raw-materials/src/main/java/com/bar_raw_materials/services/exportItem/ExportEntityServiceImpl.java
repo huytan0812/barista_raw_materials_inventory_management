@@ -15,7 +15,7 @@ import com.bar_raw_materials.services.goodsReceiptItem.GoodsReceiptItemService;
 import com.bar_raw_materials.services.salesOrderItem.SalesOrderItemService;
 import com.bar_raw_materials.repositories.SalesOrderItemRepository;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -83,7 +83,9 @@ public class ExportEntityServiceImpl implements ExportItemService{
 
         // subtract quantity remain in GrnItem and update
         grnItem.setQuantityRemain(grnItem.getQuantityRemain() - createExportItemDTO.getQuantityTake());
-        grnItemRepository.save(grnItem);
+        // flush the versioned updates before inserting the ExportItemDetail: a concurrent request then
+        // fails its optimistic lock check here instead of deadlocking on the insert's foreign-key locks
+        grnItemRepository.saveAndFlush(grnItem);
 
         ExportItemDetail exportItemDetail = new ExportItemDetail();
         exportItemDetail.setGrnItem(grnItem);

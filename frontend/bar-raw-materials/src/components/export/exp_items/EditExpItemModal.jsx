@@ -4,6 +4,7 @@ import EditExpItemForm from './EditExpItemForm';
 import { useAuthContext } from '../../../contexts/AuthContext';
 import exportItemHTTP from '../../../services/ExportItemService'
 import grnItemHTTP from '../../../services/GoodsReceiptItemService'
+import {getErrorMessage} from '../../../services/apiErrors'
 
 const EditExpItemModal = (props) => {
     const {
@@ -70,8 +71,7 @@ const EditExpItemModal = (props) => {
                 }
             }
             catch (error) {
-                const responseErr = error.response;
-                onEditFailure(responseErr?.data)
+                onEditFailure(getErrorMessage(error))
             }
         }
         editExpItem();
